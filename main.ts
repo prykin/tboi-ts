@@ -15,9 +15,9 @@ import {
     newstats,
     pffx,
     sams,
-    trixx,
+    checkItemOwned,
     upa,
-    create,
+    createProjectile,
 } from "@/foos";
 
 llev = [
@@ -277,7 +277,7 @@ if (_root.levz.length <= 1) {
         }
     }
     _root.ceye = false;
-    if (trixx(59) && random(4) == 0) {
+    if (checkItemOwned(59) && random(4) == 0) {
         _root.ceye = ups[21] = true;
     }
     _root.altchap = 0;
@@ -668,7 +668,7 @@ if (_root.levz.length <= 1) {
         _root.ups[22] = _root.ups[22] + 1;
         _root.eto = _root.eto + 1;
     }
-    if (trixx(55)) {
+    if (checkItemOwned(55)) {
         eta();
     }
 }
@@ -892,8 +892,8 @@ var tests = new flash.display.BitmapData(300, 300, false, 0);
 _root.g.gotoAndPlay(60);
 timer = [];
 alltimer = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-ballz = 0;
-ball = [];
+globalProjectileCounter = 0;
+projectileClips = [];
 if (_root.chaps >= 5) {
     mux = 1.25;
 } else {
@@ -1476,7 +1476,7 @@ if (_root.playerx <= 0 || _root.newstartt) {
     _root.playerx = 320;
     _root.playery = 400;
 }
-trg = player = create(_root.playerx, _root.playery, 0, 0, 0, 0, 1);
+trg = player = createProjectile(_root.playerx, _root.playery, 0, 0, 0, 0, 1);
 if (_root.eto >= 7) {
     _root.etol = true;
     _root.playcol[0] = 5;
@@ -1495,7 +1495,7 @@ if (_root.tell) {
 player.mhp = _root.mhp;
 player.hp = _root.hp;
 if (_root.lev == _root.bossl && !firsttime) {
-    if (trixx(53)) {
+    if (checkItemOwned(53)) {
         player.hp = player.hp + 1;
     }
 }
