@@ -702,7 +702,6 @@ declare let masks: number[];
 declare let masses: number[];
 declare let maxp: any;
 declare let maxx: any;
-declare let maxxx: any;
 declare let maxy: number;
 declare let md: boolean;
 declare let meats2: any;

@@ -35,17 +35,18 @@ function sloter(trg) {
     }
 }
 
-export function pffx(f1) {
+// Original: pffx(f1)
+export function addPathTile(index: number): void {
     var _loc3_ =
-        _root.levz[f1 + 1] +
-        _root.levz[f1 - 1] +
-        _root.levz[f1 + 10] +
-        _root.levz[f1 - 10];
-    if ((_root.levz[f1] == 0 && _loc3_ < 2 && f5 < f6) || f1 == 35) {
-        _root.levz[f1] = 1;
-        acts2.push(f1);
+        _root.levz[index + 1] +
+        _root.levz[index - 1] +
+        _root.levz[index + 10] +
+        _root.levz[index - 10];
+    if ((_root.levz[index] == 0 && _loc3_ < 2 && f5 < f6) || index == 35) {
+        _root.levz[index] = 1;
+        acts2.push(index);
         f8++;
-        if (f1 != 35) {
+        if (index != 35) {
             f5++;
         }
     }
@@ -678,7 +679,8 @@ function itemzz() {
     }
 }
 
-export function newstats() {
+// Original: newstats()
+export function initializePlayerStats(): void {
     _root.picers = [1, 2, 3, 4, 5, 6];
     picc(101);
     picc(102);
@@ -830,54 +832,60 @@ export function newstats() {
     }
 }
 
-export function ender() {
+// Original: ender()
+export function getRandomEndRoom(): any {
     var _loc1_ = random(endrooms.length);
     f2 = endrooms[_loc1_];
     endrooms.splice(_loc1_, 1);
     return f2;
 }
 
-function nch(f5) {
-    if (_root.levz[f5]) {
+// Original: nch(f5)
+function checkTileConnection(tileIndex: number): boolean {
+    if (_root.levz[tileIndex]) {
         f12 = true;
     } else {
         f12 = 2;
         f4 = false;
     }
-    if (f5 == _root.bossl || f5 == _root.bossl2 || f5 == _root.hide2) {
+    if (tileIndex == _root.bossl || tileIndex == _root.bossl2 || tileIndex == _root.hide2) {
         f12 = false;
         f4 = false;
     }
     if (f12 && f12 != 2) {
         for (z of endrooms) {
-            if (endrooms[z] == f5) {
+            if (endrooms[z] == tileIndex) {
                 f12 = false;
             }
         }
     }
-    if (f5 == _root.hide) {
+    if (tileIndex == _root.hide) {
         f12 = false;
         f4 = false;
     }
     return f12;
 }
 
-export function ncheck1(f5) {
-    return nch(f5 + 1) && nch(f5 - 1) && nch(f5 + 10) && nch(f5 - 10);
+// Original: ncheck1(f5)
+export function checkAllAdjacentTiles(tileIndex: number): boolean {
+    return checkTileConnection(tileIndex + 1) && checkTileConnection(tileIndex - 1) && checkTileConnection(tileIndex + 10) && checkTileConnection(tileIndex - 10);
 }
 
-function nxx(f1) {
-    if (_root.levz[f1] > 0) {
+// Original: nxx(f1)
+function getTileOccupancy(tileIndex: number): number {
+    if (_root.levz[tileIndex] > 0) {
         return 1;
     }
     return 0;
 }
 
-export function ncheck(f5) {
-    return nxx(f5 + 1) + nxx(f5 - 1) + nxx(f5 + 10) + nxx(f5 - 10);
+// Original: ncheck(f5)
+export function countOccupiedAdjacentTiles(tileIndex: number): number {
+    return getTileOccupancy(tileIndex + 1) + getTileOccupancy(tileIndex - 1) + getTileOccupancy(tileIndex + 10) + getTileOccupancy(tileIndex - 10);
 }
 
-export function bosschoose() {
+// Original: bosschoose()
+export function selectBossForFloor(): void {
     if (_root.chaps % 2 == 0) {
         _root.altb3 = true;
     }
@@ -1019,7 +1027,8 @@ export function bosschoose() {
     _root.swww = _root.chaps;
 }
 
-export function sams() {
+// Original: sams()
+export function updateTreasureRoomCount(): void {
     if (
         _root.beenlev[_root.boner] != 2 &&
         _root.chaps != 1 &&
@@ -1037,21 +1046,24 @@ export function sams() {
     }
 }
 
-export function hider() {
+// Original: hider()
+export function playSecretRoomSound(): void {
     if (!_root.hider) {
         _root.mmus = _root.soundy("secret room find.mp", 100);
         _root.hider = true;
     }
 }
 
-export function hider2() {
+// Original: hider2()
+export function playSuperSecretRoomSound(): void {
     if (!_root.hider2) {
         _root.mmus = _root.soundy("isaacxpsecretroomreveal2.mp3", 100);
         _root.hider2 = true;
     }
 }
 
-function itmc() {
+// Original: itmc()
+function updateItemCollectionDisplay(): void {
     if (_root.levcol[e] > 0) {
         mpiece.itmc.gotoAndStop(_root.levcol[e]);
     } else {
@@ -1059,26 +1071,27 @@ function itmc() {
     }
 }
 
-export function mapd() {
-    qq = _root._quality;
-    if (qq != "high") {
+// Original: mapd()
+export function drawMap(): void {
+    const currentQuality: string = _root._quality;
+    if (currentQuality != "high") {
         _root._quality = "high";
     }
     _root.map.fillRect(_root.map.rectangle, 0);
-    maxxx = undefined;
+    let maxxx: number | undefined = undefined;
     if (_this.satan || _this.error || _root.darks) {
         e = 35;
-        f1 = (e % 10) * 25 + 15;
-        f2 = Math.round(e / 10 - 0.5) * 10 + 7;
+        const f1_temp: number = (e % 10) * 25 + 15;
+        const f2_temp: number = Math.round(e / 10 - 0.5) * 10 + 7;
         maxx = new flash.geom.Matrix();
-        maxx.translate(f1, f2);
+        maxx.translate(f1_temp, f2_temp);
         maxx.scale(_root._xscale / 100, _root._yscale / 100);
         mpiece.gotoAndStop(7);
         _root.map.draw(mpiece, maxx);
-        minx = f1;
-        maxxx = f1;
-        miny = f2;
-        maxy = f2;
+        minx = f1_temp;
+        maxxx = f1_temp;
+        miny = f2_temp;
+        maxy = f2_temp;
     } else {
         for (e in _root.levz) {
             if (e < 110) {
@@ -1089,19 +1102,19 @@ export function mapd() {
                         (_root.beenlev[e] && (e != _root.chamb || _root.chama)))
                 ) {
                     maxx = new flash.geom.Matrix();
-                    f1 = (e % 10) * 25 + 15;
-                    f2 = Math.round(e / 10 - 0.5) * 10 + 7;
-                    if (f1 > 0) {
+                    const f1_another_temp: number = (e % 10) * 25 + 15;
+                    const f2_another_temp: number = Math.round(e / 10 - 0.5) * 10 + 7;
+                    if (f1_another_temp > 0) {
                         if (maxxx == undefined) {
-                            minx = maxxx = f1;
-                            miny = maxy = f2;
+                            minx = maxxx = f1_another_temp;
+                            miny = maxy = f2_another_temp;
                         } else {
-                            minx = Math.min(f1, minx);
-                            maxxx = Math.max(f1, maxxx);
-                            miny = Math.min(f2, miny);
-                            maxy = Math.max(f2, maxy);
+                            minx = Math.min(f1_another_temp, minx);
+                            maxxx = Math.max(f1_another_temp, maxxx);
+                            miny = Math.min(f2_another_temp, miny);
+                            maxy = Math.max(f2_another_temp, maxy);
                         }
-                        maxx.translate(f1, f2);
+                        maxx.translate(f1_another_temp, f2_another_temp);
                         if (_root.lev == e) {
                             mpiece.gotoAndStop(3);
                         } else if (_root.beenlev[e]) {
@@ -1109,50 +1122,50 @@ export function mapd() {
                         } else {
                             mpiece.gotoAndStop(1);
                         }
-                        itmc();
+                        updateItemCollectionDisplay();
                         maxx.scale(_root._xscale / 100, _root._yscale / 100);
                         _root.map.draw(mpiece, maxx);
                     }
                 }
             }
         }
-        e = 0;
-        while (e < _root.levz.length) {
-            if (_root.levz[e] != 0 && e < 110) {
+        let e_counter: number = 0;
+        while (e_counter < _root.levz.length) {
+            if (_root.levz[e_counter] != 0 && e_counter < 110) {
                 maxx = new flash.geom.Matrix();
-                f1 = (e % 10) * 25 + 15;
-                f2 = Math.round(e / 10 - 0.5) * 10 + 7;
-                maxx.translate(f1, f2);
+                const f1_temp: number = (e_counter % 10) * 25 + 15;
+                const f2_temp: number = Math.round(e_counter / 10 - 0.5) * 10 + 7;
+                maxx.translate(f1_temp, f2_temp);
                 maxx.scale(_root._xscale / 100, _root._yscale / 100);
                 mpiece.gotoAndStop(1);
-                if (_root.shopl == e && (_root.shopaz || ups[21])) {
+                if (_root.shopl == e_counter && (_root.shopaz || ups[21])) {
                     mpiece.gotoAndStop(4);
                 } else if (
-                    (_root.boner == e && (ups[21] || _root.treasd)) ||
-                    (_root.boner2 == e && (ups[21] || _root.treasd2))
+                    (_root.boner == e_counter && (ups[21] || _root.treasd)) ||
+                    (_root.boner2 == e_counter && (ups[21] || _root.treasd2))
                 ) {
                     mpiece.gotoAndStop(5);
                 } else if (
-                    ((_root.bossl == e &&
+                    ((_root.bossl == e_counter &&
                             (!_root.double || _root.bosss == _root.bosss2)) ||
-                        (_root.bossl2 == e && _root.bosss != _root.bosss2)) &&
+                        (_root.bossl2 == e_counter && _root.bosss != _root.bosss2)) &&
                     (ups[21] || _root.bossd || ups[194])
                 ) {
                     mpiece.gotoAndStop(6);
                 } else if (
-                    _root.hide == e &&
+                    _root.hide == e_counter &&
                     (ups[54] || _root.hider || _root.hiderr)
                 ) {
                     mpiece.gotoAndStop(7);
-                } else if (_root.hide2 == e && (_root.hider2 || _root.hiderr2)) {
+                } else if (_root.hide2 == e_counter && (_root.hider2 || _root.hiderr2)) {
                     mpiece.gotoAndStop(16);
-                } else if (_root.minb == e && (ups[21] || _root.minbb)) {
+                } else if (_root.minb == e_counter && (ups[21] || _root.minbb)) {
                     mpiece.gotoAndStop(8);
-                } else if (_root.gamb == e && (ups[21] || _root.gambb)) {
+                } else if (_root.gamb == e_counter && (ups[21] || _root.gambb)) {
                     mpiece.gotoAndStop(9);
-                } else if (_root.cus == e && (ups[21] || _root.cusb)) {
+                } else if (_root.cus == e_counter && (ups[21] || _root.cusb)) {
                     mpiece.gotoAndStop(14);
-                } else if (_root.chamb == e && (ups[21] || _root.chambb)) {
+                } else if (_root.chamb == e_counter && (ups[21] || _root.chambb)) {
                     if (_root.altch == 2) {
                         mpiece.gotoAndStop(17);
                     } else if (_root.altch) {
@@ -1160,28 +1173,28 @@ export function mapd() {
                     } else {
                         mpiece.gotoAndStop(10);
                     }
-                } else if (_root.lib == e && (ups[21] || _root.libb)) {
+                } else if (_root.lib == e_counter && (ups[21] || _root.libb)) {
                     mpiece.gotoAndStop(12);
-                } else if (_root.sac == e && (ups[21] || _root.sacb)) {
+                } else if (_root.sac == e_counter && (ups[21] || _root.sacb)) {
                     mpiece.gotoAndStop(13);
                 }
                 if (mpiece._currentframe > 1) {
-                    itmc();
+                    updateItemCollectionDisplay();
                     _root.map.draw(mpiece, maxx);
-                    minx = Math.min(f1, minx);
-                    maxxx = Math.max(f1, maxxx);
-                    miny = Math.min(f2, miny);
-                    maxy = Math.max(f2, maxy);
+                    minx = Math.min(f1_temp, minx);
+                    maxxx = Math.max(f1_temp, maxxx);
+                    miny = Math.min(f2_temp, miny);
+                    maxy = Math.max(f2_temp, maxy);
                 }
             }
-            e++;
+            e_counter++;
         }
     }
     _root.mapa._xscale = _root.mapa._yscale = 10000 / _root._xscale;
     _root.mapa._x = 130 - (maxxx + minx) / 2;
     _root.mapa._y = 40 - (maxy + miny) / 2;
-    if (qq != "high") {
-        _root._quality = qq;
+    if (currentQuality != "high") {
+        _root._quality = currentQuality;
     }
 }
 
@@ -4452,7 +4465,8 @@ function turd(f1, e, cent?) {
     }
 }
 
-export function upa() {
+// Original: upa()
+export function updatePlayerAnimation(): void {
     ups = _root.ups.slice(0, -1);
     if (_root.ceye) {
         ups[21] = true;
@@ -4923,10 +4937,10 @@ function golev() {
                     _root.treasd2 = true;
                 }
                 if (trg.gol == _root.hide) {
-                    hider();
+                    playSecretRoomSound();
                 }
                 if (trg.gol == _root.hide2) {
-                    hider2();
+                    playSuperSecretRoomSound();
                 }
                 if (trg.gol == _root.minb) {
                     _root.minbb = true;
@@ -4958,7 +4972,7 @@ function golev() {
                 trg.gotoAndStop(17);
                 levz[trg.blo] = 0;
                 if (trg.govo && ups[76]) {
-                    hider();
+                    playSecretRoomSound();
                 }
             } else if (
                 (_root.lev == _root.hide2 && (_root.hide != trg.gol || ups[76])) ||
@@ -4971,7 +4985,7 @@ function golev() {
                 trg.hide2 = true;
                 trg._visible = trg.govo;
                 if (trg.govo && ups[76]) {
-                    hider2();
+                    playSuperSecretRoomSound();
                 }
                 trg.gotoAndStop(17);
                 levz[trg.blo] = 0;
@@ -5071,7 +5085,7 @@ function golev() {
             trg._visible = false;
         }
     }
-    mapd();
+    drawMap();
     for (e in _root.levit[_root.lev]) {
         createProjectile(
             _root.levit[_root.lev][e][1],
@@ -5584,7 +5598,7 @@ function powerlevel() {
         }
         _root.ups[highs.it]++;
         if (highs.it == 54 || highs.it == 21) {
-            mapd();
+            drawMap();
         }
         if (!gofind) {
             _root.colss[highs.it] = true;
@@ -5630,7 +5644,7 @@ function powerlevel() {
             );
         }
         if (highs.it == 179) {
-            eta();
+            toggleHolyMantle();
         }
         if (highs.it == 137) {
             if (_root.ups[137] == 1) {
@@ -5829,7 +5843,7 @@ function powerlevel() {
                 } else if (highs.it == 30) {
                     _root.bmode = 5;
                 } else if (highs.it == 21 || highs.it == 54) {
-                    mapd();
+                    drawMap();
                 } else if (highs.it == 9) {
                     hat(9);
                 } else if (highs.it == 69) {
@@ -6021,7 +6035,7 @@ function powerlevel() {
     }
     ups[highs.it] = _root.ups[highs.it];
     if (highs.it == 54 || highs.it == 21) {
-        mapd();
+        drawMap();
     }
 }
 
@@ -6132,7 +6146,7 @@ function spidcol(trg) {
     }
 }
 
-export function eta() {
+export function toggleHolyMantle(): void {
     _root.soundy("superholy.wav", 100);
     _root.eta = !_root.eta;
     if (!_root.eta) {
@@ -6710,7 +6724,7 @@ function balljunk() {
                         }
                     } else {
                         _root.levz = undefined;
-                        moveon();
+                        moveToNextArea();
                         _root.door = undefined;
                         if (_root.chaps == 11) {
                             f1 = 24;
@@ -6732,7 +6746,7 @@ function balljunk() {
                     break;
                 case 1:
                     if (highs.col == 4) {
-                        eta();
+                        toggleHolyMantle();
                     } else if (highs.col == 3) {
                         _root.armor = _root.armor + 1;
                     } else if (player.hp < player.mhp) {
@@ -9528,9 +9542,11 @@ function killshit(v2, v3?) {
     return false;
 }
 
-export function moveon() {
-    if (_root.chaps == 11 && _root.lev == _root.bossl) {
-    }
+// Original: moveon()
+export function moveToNextArea(): void {
+    // redundant code
+    // if (_root.chaps == 11 && _root.lev == _root.bossl) {
+    // }
     _root.aloc();
     _root.lastl = _root.lev;
     _root.mapa._visible = false;
@@ -9560,7 +9576,7 @@ function bosssp() {
         nobob = true;
         trg.firsttx = true;
         if (_root.chaps == 6 && _root.lev != _root.bossl2) {
-            sams();
+            updateTreasureRoomCount();
             if (_root.samer > 1) {
                 _root.locker[88] = true;
             }
@@ -9850,7 +9866,7 @@ function bossfire(f10, f9?, f11?, f12?, f13?) {
 function newstart(f1, f22?) {
     if (f1) {
         _root.hp = 100;
-        newstats();
+        initializePlayerStats();
         _root.newstartt = true;
     } else {
         _root.getup = true;
@@ -9864,7 +9880,7 @@ function newstart(f1, f22?) {
     _root.levz = undefined;
     _root.door = -1;
     _root.playerx = _root.playery = 0;
-    moveon();
+    moveToNextArea();
     _root.gotoAndStop("reset");
 }
 
@@ -11270,7 +11286,7 @@ function actions2() {
                 _root.locker[6] = true;
                 setColorTransform(_root, 1, 1, 1, 0, 0, 0);
                 _root.levz = undefined;
-                moveon();
+                moveToNextArea();
                 _root.door = undefined;
                 _root.gotoAndStop(9);
             }
@@ -23005,7 +23021,7 @@ function spaceitem() {
                         ups[21] = ups[54] = true;
                         _root.world = true;
                         _root.darks = false;
-                        mapd();
+                        drawMap();
                         if (random(2) == 0) {
                             spawnEntity(trg.xp, trg.yp, 40, 5.3);
                         } else {
@@ -23020,7 +23036,7 @@ function spaceitem() {
                         dec = 0;
                         break;
                     case 106:
-                        eta();
+                        toggleHolyMantle();
                         break;
                     case 97:
                         for (e in projectileClips) {
@@ -23641,7 +23657,7 @@ function playc() {
                     _root.olda._x = 0;
                     _root.olda._y = 0;
                     _root.olda._visible = true;
-                    moveon();
+                    moveToNextArea();
                     _root.lev = trg.gol;
                     _root.gotoAndStop("reset");
                 }
@@ -23746,7 +23762,7 @@ function playc() {
                             ups[21] = _loc0_;
                             _root.world = true;
                             _root.darks = false;
-                            mapd();
+                            drawMap();
                             for (e in projectileClips) {
                                 trg2 = projectileClips[e];
                                 hurt(trg2, 100);
@@ -23791,7 +23807,7 @@ function playc() {
                             ups[21] = ups[54] = true;
                             _root.world = true;
                             _root.darks = false;
-                            mapd();
+                            drawMap();
                             break;
                         case 18:
                             f1 = 40;
@@ -24998,7 +25014,7 @@ let onEnterFrame = () => {
                 }
                 _root.hp = 1000;
                 _root.getup = true;
-                moveon();
+                moveToNextArea();
                 _root.gotoAndStop("reset");
             } else {
                 _root.map.fillRect(_root.map.rectangle, 0);
@@ -25053,7 +25069,7 @@ let onEnterFrame = () => {
         _root.olda._x = 0;
         _root.olda._y = 0;
         _root.olda._visible = true;
-        moveon();
+        moveToNextArea();
         if (tar && ((tar != 166 && tar != 169) || _root.chaps < 9)) {
             _root.lev = tar;
         } else {
@@ -25285,12 +25301,12 @@ let onEnterFrame = () => {
             trg._visible = true;
             if (trg.hide || trg.hide2) {
                 if (trg.hide2) {
-                    hider2();
+                    playSuperSecretRoomSound();
                 } else {
-                    hider();
+                    playSecretRoomSound();
                 }
                 trg.gotoAndStop(17);
-                mapd();
+                drawMap();
             } else if (!keyo) {
                 if (mom.length > 4 || _root.lev == _root.minb) {
                     levz[trg.blo] = 1;
@@ -25729,7 +25745,7 @@ let onEnterFrame = () => {
         }
         golev();
         _root.black.prevFrame();
-        mapd();
+        drawMap();
     } else {
         _root.fullhp = player.hp + _root.armor >= player.mhp;
         if (chama) {

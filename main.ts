@@ -3,20 +3,20 @@ import "@/foos";
 import "@/flash";
 import {createEmptyMovieClip, gotoAndStop} from "@/flash";
 import {
-    bosschoose,
-    ender,
-    eta,
-    hider,
-    hider2,
-    mapd,
-    moveon,
-    ncheck,
-    ncheck1,
-    newstats,
-    pffx,
-    sams,
+    selectBossForFloor,
+    getRandomEndRoom,
+    toggleHolyMantle,
+    playSecretRoomSound,
+    playSuperSecretRoomSound,
+    drawMap,
+    moveToNextArea,
+    countOccupiedAdjacentTiles,
+    checkAllAdjacentTiles,
+    initializePlayerStats,
+    addPathTile,
+    updateTreasureRoomCount,
     checkItemOwned,
-    upa,
+    updatePlayerAnimation,
     createProjectile,
 } from "@/foos";
 
@@ -156,7 +156,7 @@ if (_root.levz.length <= 1) {
     _root.darky(120);
     if (_root.newstartt || _root.it == undefined) {
         _root.newstartt = false;
-        newstats();
+        initializePlayerStats();
         _root.eta = false;
     }
     _root.big = false;
@@ -179,7 +179,7 @@ if (_root.levz.length <= 1) {
     ) {
         f1 = 15;
     }
-    sams();
+    updateTreasureRoomCount();
     _root.altm =
         random(f1) == 0 && _root.chaps != 1 && (_root.chaps != 2 || !_root.double);
     _root.big = false;
@@ -328,7 +328,7 @@ if (_root.levz.length <= 1) {
         }
         acts = [];
         acts2 = [];
-        pffx(35);
+        addPathTile(35);
         f3 = random(4);
         f5 = 0;
         if (_root.double) {
@@ -341,7 +341,7 @@ if (_root.levz.length <= 1) {
             acts = acts2.slice(0, -1);
             acts2 = [];
             if (f6 > 15) {
-                pffx(35);
+                addPathTile(35);
             }
             for (a in acts) {
                 v1 = acts[a];
@@ -358,16 +358,16 @@ if (_root.levz.length <= 1) {
                     f2 = 1;
                 }
                 if (random(f2) == 0 && v1 % 10 < 9) {
-                    pffx(v1 + 1);
+                    addPathTile(v1 + 1);
                 }
                 if (random(f2) == 0 && v1 % 10 > 1) {
-                    pffx(v1 - 1);
+                    addPathTile(v1 - 1);
                 }
                 if (random(f2) == 0 && v1 < 70) {
-                    pffx(v1 + 10);
+                    addPathTile(v1 + 10);
                 }
                 if (random(f2) == 0 && v1 > 10) {
-                    pffx(v1 - 10);
+                    addPathTile(v1 - 10);
                 }
                 if (f8 == 0 && v1 != 35) {
                     endrooms.push(v1);
@@ -388,16 +388,16 @@ if (_root.levz.length <= 1) {
         endrooms.splice(endrooms.length - 1, 1);
         if (_root.double) {
             f1 = -1;
-            if (ncheck(_root.bossl + 1) == 1 && _root.bossl % 10 < 9) {
+            if (countOccupiedAdjacentTiles(_root.bossl + 1) == 1 && _root.bossl % 10 < 9) {
                 f1 = _root.bossl + 1;
             }
-            if (ncheck(_root.bossl - 1) == 1 && _root.bossl % 10 > 1) {
+            if (countOccupiedAdjacentTiles(_root.bossl - 1) == 1 && _root.bossl % 10 > 1) {
                 f1 = _root.bossl - 1;
             }
-            if (ncheck(_root.bossl + 10) == 1 && _root.bosslv1 < 70) {
+            if (countOccupiedAdjacentTiles(_root.bossl + 10) == 1 && _root.bosslv1 < 70) {
                 f1 = _root.bossl + 10;
             }
-            if (ncheck(_root.bossl - 10) == 1 && _root.bossl > 10) {
+            if (countOccupiedAdjacentTiles(_root.bossl - 10) == 1 && _root.bossl > 10) {
                 f1 = _root.bossl - 10;
             }
             if (f1 > 0) {
@@ -412,7 +412,7 @@ if (_root.levz.length <= 1) {
         _root.hide = undefined;
         _root.hide2 = undefined;
         _root.beenlev = [];
-        _root.hide2 = ender();
+        _root.hide2 = getRandomEndRoom();
         if (_root.mapsize * 2 > f6 && _root.bossl != 34) {
             if (_root.double) {
                 endrooms.splice(0, Math.max(0, endrooms.length - 6));
@@ -422,10 +422,10 @@ if (_root.levz.length <= 1) {
                 f1 = random(_root.levz.length);
                 f2 = f1 % 10;
                 if (!_root.levz[f1] && f2 < 9 && f2 > 1) {
-                    f2 = ncheck(f1);
+                    f2 = countOccupiedAdjacentTiles(f1);
                     f4 = true;
                     if (f2 > 0) {
-                        f3 = ncheck1(f1);
+                        f3 = checkAllAdjacentTiles(f1);
                         if (!_root.double) {
                         }
                     } else {
@@ -482,38 +482,38 @@ if (_root.levz.length <= 1) {
             _root.bossl != _root.lev &&
             _root.bossl > 0
         ) {
-            _root.shopl = ender();
+            _root.shopl = getRandomEndRoom();
             if (_root.chaps != 11) {
                 if (_root.chala < 5 && (_root.chala != 2 || random(3) != 1)) {
-                    _root.boner = ender();
+                    _root.boner = getRandomEndRoom();
                 }
                 if (_root.double && _root.chala < 5) {
-                    _root.boner2 = ender();
+                    _root.boner2 = getRandomEndRoom();
                 }
                 if (
                     endrooms.length > 0 &&
                     (random(7) == 0 || (random(4) == 0 && _root.fullhp))
                 ) {
-                    _root.sac = ender();
+                    _root.sac = getRandomEndRoom();
                 }
                 if (
                     endrooms.length > 0 &&
                     (random(20) == 0 || (_root.bookster && random(4) == 0))
                 ) {
-                    _root.lib = ender();
+                    _root.lib = getRandomEndRoom();
                 }
                 if (
                     endrooms.length > 0 &&
                     (random(2) == 0 || (_root.lastdev && random(4) == 0))
                 ) {
-                    _root.cus = ender();
+                    _root.cus = getRandomEndRoom();
                 }
                 if (
                     endrooms.length > 0 &&
                     (random(4) == 0 || (_root.chaps == 1 && random(3) == 0)) &&
                     _root.minz.length > 0
                 ) {
-                    _root.minb = ender();
+                    _root.minb = getRandomEndRoom();
                 }
                 if (
                     endrooms.length > 0 &&
@@ -521,10 +521,10 @@ if (_root.levz.length <= 1) {
                     _root.chaps > 1 &&
                     (random(2) == 0 || _root.chaps > 2)
                 ) {
-                    _root.chamb = ender();
+                    _root.chamb = getRandomEndRoom();
                 }
                 if (endrooms.length > 0 && _root.coins >= 5 && _root.chaps % 2 == 0) {
-                    _root.gamb = ender();
+                    _root.gamb = getRandomEndRoom();
                 }
             }
         } else {
@@ -545,7 +545,7 @@ if (_root.levz.length <= 1) {
             _root.chaps--;
         }
         _root.cuts = true;
-        moveon();
+        moveToNextArea();
         _root.gotoAndStop("reset");
     }
     if (!_root.altchap) {
@@ -574,14 +574,14 @@ if (_root.levz.length <= 1) {
     if (_root.double) {
         _root.chaps--;
     }
-    bosschoose();
+    selectBossForFloor();
     if (_root.double) {
         _root.levz[_root.bossl2] = f1;
         _root.bosss2 = _root.bosss;
         _root.altboss2 = _root.altboss;
         _root.chaps = _root.chaps + 1;
         while (_root.bosss2 == _root.bosss) {
-            bosschoose();
+            selectBossForFloor();
         }
         _root.levz[_root.bossl] = f1;
         f1 = _root.bosss2;
@@ -669,7 +669,7 @@ if (_root.levz.length <= 1) {
         _root.eto = _root.eto + 1;
     }
     if (checkItemOwned(55)) {
-        eta();
+        toggleHolyMantle();
     }
 }
 _root.amusic = false;
@@ -698,10 +698,10 @@ if (firsttime != 2) {
     _root.beenlev[_root.lev] = true;
 }
 if (_root.lev == _root.hide) {
-    hider();
+    playSecretRoomSound();
 }
 if (_root.lev == _root.hide2) {
-    hider2();
+    playSuperSecretRoomSound();
 }
 if (_root.lev == _root.minb) {
     _root.minbb = true;
@@ -1458,11 +1458,11 @@ trg.attachBitmap(gut, 1);
 trg._yscale = trg._xscale = 100 / hdx;
 poi = new flash.geom.Point(0, 0);
 ref = [];
-mapd();
+drawMap();
 sk = _root.sk;
 webs = [];
-upa();
-mapd();
+updatePlayerAnimation();
+drawMap();
 if (levz.length <= 1) {
     levz = new Array(200);
     if (_root.whatstart) {
