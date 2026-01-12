@@ -1,6 +1,6 @@
 import "@/flash";
 import {attachMovie, ContextMenu, createEmptyMovieClip, stop} from "@/flash";
-import {callit, fullf, prelod, soz} from "@/foos";
+import {launchAchievementApp, toggleFullscreen, handlePreload, initializeSharedObject} from "@/foos";
 
 linx = false;
 st1 = [
@@ -567,13 +567,13 @@ while (e < 1000) {
     e++;
 }
 _root.colss = [];
-soz();
+initializeSharedObject();
 loslol = 0;
 intro = true;
 menubeen = 0;
 lop2 = 30;
 gof = 0;
-prelod();
+handlePreload();
 currUrl = _url.toLowerCase();
 pass = true;
 trg = _root.createEmptyMovieClip("olda", 299);
@@ -610,7 +610,7 @@ if (linx) {
             if (lasf + 100 < fra) {
                 if (so.data.full) {
                     so.data.full = false;
-                    fullf();
+                    toggleFullscreen();
                 }
             }
         }
@@ -629,7 +629,7 @@ refs = [
 overlay2._alpha = 0;
 ala = 0;
 attachMovie("hud", "hud", 300);
-fullf();
+toggleFullscreen();
 fra = 0;
 nosave = 0;
 f1 = "";
@@ -647,9 +647,9 @@ for (e of _root.locker) {
 }
 _root.tex = f1;
 if (f3) {
-    callit(f1);
+    launchAchievementApp(f1);
     if (!win) {
-        callit(f1);
+        launchAchievementApp(f1);
     }
 }
 var myMenu = new ContextMenu();

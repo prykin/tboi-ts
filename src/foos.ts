@@ -269,7 +269,8 @@ function omgz(f1) {
     }
 }
 
-function itemzz() {
+// Original: itemzz()
+function refreshItemPool(): void {
     _root.junxx = [
         30, 31, 32, 33, 34, 36, 37, 38, 39, 40, 41, 43, 44, 45, 46, 48, 51, 53,
     ];
@@ -816,7 +817,7 @@ export function initializePlayerStats(): void {
     _root.us = false;
     _root.whatstart = true;
     _root.whatstart2 = true;
-    itemzz();
+    refreshItemPool();
     if (_root.chaps > 1) {
         _root.bombs += _root.chaps;
         _root.keys += _root.chaps;
@@ -1389,7 +1390,7 @@ function distributeItem(): number {
                 _root.ittt.splice(_loc3_, 1);
             }
             if (_root.ittt.length <= 5) {
-                itemzz();
+                refreshItemPool();
             }
         } else if (_root.lev == _root.lib) {
             _loc3_ = random(_root.ittt9.length);
@@ -2145,7 +2146,7 @@ export function createProjectile(spawnX: number, spawnY: number, rotationRadians
             projectileClip.hp *= 1.1;
             projectileClip.mhp = projectileClip.hp;
             const charatersName: string[] = ["Isaac", "Magdalene", "Cain", "Judas", "???", "Eve", "Samson"];
-            st11(charatersName[_root.skiner] + " vs " + "Krampus");
+            showStatusText(charatersName[_root.skiner] + " vs " + "Krampus");
         } else {
             projectileClip.alter = 1;
         }
@@ -3020,7 +3021,7 @@ export function createProjectile(spawnX: number, spawnY: number, rotationRadians
                 if (projectileClip.d._currentframe == 30) {
                     projectileClip.d.gotoAndStop(7);
                     originalTypeValue = 0;
-                    projectileClip.col = getRandomTater();
+                    projectileClip.col = getRandomTarotCard();
                 }
                 if (projectileClip.d._currentframe == 35) {
                     projectileClip.d.gotoAndStop(7);
@@ -4510,7 +4511,8 @@ function curs() {
     player.it = 122;
 }
 
-function cloo() {
+// Original: cloo()
+function cloo(): void {
     clevc = levz.slice(0, -1);
     e = 0;
     while (e < levz.length) {
@@ -5521,8 +5523,9 @@ function linechecky(f1, f2, f3, f4) {
     return f5 > 0;
 }
 
-function st11(f1) {
-    _root.hud.st1.tex = f1;
+// Original: st11(f1)
+function showStatusText(text: string): void {
+    _root.hud.st1.tex = text;
     _root.hud.st1.gotoAndPlay(1);
     _root.hud.st1._visible = true;
 }
@@ -5569,7 +5572,7 @@ function powerlevel() {
         if (chama == 1 && _root.lev == _root.chamb) {
             chama = 2;
         }
-        st11(_root.st1[highs.it]);
+        showStatusText(_root.st1[highs.it]);
         st22(_root.st2x[highs.it]);
         if (highs.d._currentframe == 10) {
             var _loc2_ = highs.d.d;
@@ -6039,7 +6042,8 @@ function powerlevel() {
     }
 }
 
-function invp() {
+// Original: invp()
+function hidePlayerAndFamiliars(): void {
     player._visible = false;
     for (e in projectileClips) {
         trg2 = projectileClips[e];
@@ -6172,11 +6176,11 @@ function getRandomJunkItem(): number {
         _root.junxx.splice(f1, 1);
         return _loc2_;
     }
-    return getRandomTater();
+    return getRandomTarotCard();
 }
 
 // Original: tater()
-function getRandomTater(): number {
+function getRandomTarotCard(): number {
     if (random(5) != 0) {
         return random(22) + 7;
     }
@@ -6190,7 +6194,7 @@ function pillc(trg) {
     } else if (trg == 4) {
         f2 = random(6) + 1;
     } else if (trg == 3) {
-        f2 = getRandomTater();
+        f2 = getRandomTarotCard();
     } else {
         f2 = trg.col;
     }
@@ -6236,7 +6240,7 @@ function pillc(trg) {
                 "Game Squid",
             ];
             f1 = f1[Math.max(0, f2 - 29)];
-            st11(f1);
+            showStatusText(f1);
             _root.atrixer = _root.trixer;
             _root.trixer = f1;
             _root.soundy("shellgame" + random(2) + ".wav");
@@ -6255,7 +6259,7 @@ function pillc(trg) {
         }
     } else if (f2 < 7) {
         player.pilc = pic(f2);
-        st11("Pills here!");
+        showStatusText("Pills here!");
         _root.soundy("shellgame" + random(2) + ".wav");
         _root.colss[43] = true;
     } else {
@@ -7365,7 +7369,7 @@ function ballhit(e, a) {
                                     }
                                     enf = bewenf / enf;
                                     if (bewenf > 2.5) {
-                                        soundy("bh");
+                                        playSound("bh");
                                     }
                                     if (maxp) {
                                         enf += 0.5;
@@ -8916,9 +8920,10 @@ function pathcheck(trg, v2, v3) {
     return z;
 }
 
-function bloww(v2, f5?, f6?) {
-    _root.levblow[_root.lev].push(v2, f5, f6);
-    convertTileToWorldCoordinates(v2);
+// Original: bloww(v2, f5, f6)
+function createExplosionEffect(tileIndex: number, xpos?: number, ypos?: number): void {
+    _root.levblow[_root.lev].push(tileIndex, xpos, ypos);
+    convertTileToWorldCoordinates(tileIndex);
     dblock.fillRect(
         new flash.geom.Rectangle(
             (xenf - roxx2 - 2) * hdx,
@@ -8928,15 +8933,15 @@ function bloww(v2, f5?, f6?) {
         ),
         0
     );
-    if (levz[v2] == 0.99 && webs[v2]) {
-        tiles.gotoAndStop(161 + webs[v2]);
+    if (levz[tileIndex] == 0.99 && webs[tileIndex]) {
+        tiles.gotoAndStop(161 + webs[tileIndex]);
         maxx = new flash.geom.Matrix();
         maxx.translate(xenf, yenf);
         maxx.scale(hdx, hdx);
         dblock.draw(tiles, maxx);
-        webs[v2] = false;
-        levz[v2] = 0;
-    } else if (levz[v2] == 1) {
+        webs[tileIndex] = false;
+        levz[tileIndex] = 0;
+    } else if (levz[tileIndex] == 1) {
         gibs(xenf, yenf);
         _root.so.data.rocks = _root.so.data.rocks + 1;
         if (_root.so.data.rocks > 49) {
@@ -8953,22 +8958,22 @@ function bloww(v2, f5?, f6?) {
         maxx.translate(xenf, yenf);
         maxx.scale(hdx, hdx);
         dblock.draw(tiles, maxx);
-        if (Math.abs(f5) > Math.abs(f6)) {
-            f6 = 0;
-            if (f5 > 0) {
-                f5 = roxx;
+        if (Math.abs(xpos) > Math.abs(ypos)) {
+            ypos = 0;
+            if (xpos > 0) {
+                xpos = roxx;
             } else {
-                f5 = -roxx;
+                xpos = -roxx;
             }
         } else {
-            f5 = 0;
-            if (f6 > 0) {
-                f6 = roxx;
+            xpos = 0;
+            if (ypos > 0) {
+                ypos = roxx;
             } else {
-                f6 = -roxx;
+                ypos = -roxx;
             }
         }
-        f1 = convertWorldToTileCoordinates(xenf + f5, yenf + f6);
+        f1 = convertWorldToTileCoordinates(xenf + xpos, yenf + ypos);
         if (levz[f1] == 3) {
             _root.levblow[_root.lev].push(f1);
             levz[f1] = 0;
@@ -8979,9 +8984,9 @@ function bloww(v2, f5?, f6?) {
             maxx.scale(hdx, hdx);
             dblock.draw(tiles, maxx);
         }
-        if (_root.rarer[_root.lev] == v2) {
-            levz[v2] = 0;
-            convertTileToWorldCoordinates(v2);
+        if (_root.rarer[_root.lev] == tileIndex) {
+            levz[tileIndex] = 0;
+            convertTileToWorldCoordinates(tileIndex);
             chestox = xenf;
             chestoy = yenf;
             chestopen = 2;
@@ -8991,7 +8996,7 @@ function bloww(v2, f5?, f6?) {
             }
         }
     }
-    levz[v2] = 0;
+    levz[tileIndex] = 0;
     cloo();
 }
 
@@ -9057,7 +9062,7 @@ function gosplash() {
                 if (levz[v2] > 0.9) {
                     if (linecheckxx(trg.xp, trg.yp, xenf, yenf)) {
                         if (levz[v2] == 1 || levz[v2] == 1.85 || webs[v2]) {
-                            bloww(v2, f5, f6);
+                            createExplosionEffect(v2, f5, f6);
                         } else {
                             killshit(v2, 10);
                         }
@@ -9391,24 +9396,25 @@ function gibs(v1?, v2?) {
     }
 }
 
-function bombfail(f1, f2, f3?, f4?) {
-    var _loc1_ = createProjectile(f1, f2, 0, 0, 0, 0, 4);
-    _loc1_.pois = f4;
+// Original: bombfail(f1, f2, f3, f4)
+function handleBombFailure(x: number, y: number, bombType?: number, effectId?: number): void {
+    let _loc1_ = createProjectile(x, y, 0, 0, 0, 0, 4);
+    _loc1_.pois = effectId;
     _loc1_.dones = true;
-    if (f3 == 6) {
+    if (bombType == 6) {
         _loc1_.dmg = 60;
         _loc1_._xscale = _loc1_._yscale = 200;
         _loc1_.d.gotoAndStop(2);
         _loc1_.huge = true;
-    } else if (f3 == 5) {
+    } else if (bombType == 5) {
         trg.mager = true;
-    } else if (f3 == 4) {
+    } else if (bombType == 4) {
         _loc1_.dmg = 30;
         _loc1_._xscale = _loc1_._yscale = 113;
         _loc1_.d.gotoAndStop(2);
-    } else if (f3) {
+    } else if (bombType) {
         _loc1_.dfr = true;
-        if (f4 == 4) {
+        if (effectId == 4) {
             _loc1_.d.gotoAndStop(6);
         } else {
             _loc1_.d.gotoAndStop(5);
@@ -9571,7 +9577,8 @@ function getf() {
     }
 }
 
-function bosssp() {
+// Original: bosssp()
+function spawnBoss(): void {
     if (!trg.firsttx && !nobob) {
         nobob = true;
         trg.firsttx = true;
@@ -9592,9 +9599,9 @@ function bosssp() {
             }
             createProjectile(320, 360, 0, 0, 0, 0, 5.1);
             f1 = convertWorldToTileCoordinates(320, 200);
-            bloww(f1);
+            createExplosionEffect(f1);
             f1 = convertWorldToTileCoordinates(320, 360);
-            bloww(f1);
+            createExplosionEffect(f1);
         } else {
             if (_root.chaps == 9 || _root.chala < 9) {
                 f1 = _root.lox[_root.chala];
@@ -11509,7 +11516,7 @@ function deathscripts() {
             } else {
                 f1 += f2[f0];
             }
-            st11(f4[_root.skiner] + f1);
+            showStatusText(f4[_root.skiner] + f1);
         }
         if (trg.dones && helpss == 0 && !minsber && _root.lev != _root.chamb) {
             minsber = true;
@@ -11971,7 +11978,7 @@ function deathscripts2() {
         }
         trg.wtfst = true;
         if (trg.alter == 3) {
-            trg = bombfail(trg.xp, trg.yp);
+            trg = handleBombFailure(trg.xp, trg.yp);
             trg.mug = true;
         } else if (trg.alter == 2) {
             quadf(trg.xp, trg.yp, 8, 2);
@@ -12450,7 +12457,7 @@ function aicol() {
                             "Steven lives",
                             "Bring him the photo",
                         ];
-                        st11(f1[random(f1.length)]);
+                        showStatusText(f1[random(f1.length)]);
                     } else if (random(20) == 0) {
                         chestopen = trg;
                         trg.d.d.gotoAndStop(30);
@@ -12664,7 +12671,7 @@ function aicol() {
         }
         if ((trg.col == 3 || trg.col == 5) && trg.fail++ > 60) {
             trg.done = true;
-            trg2 = bombfail(trg.xp, trg.yp);
+            trg2 = handleBombFailure(trg.xp, trg.yp);
             trg2.col = trg.col;
         }
     }
@@ -15749,7 +15756,7 @@ function smarts5() {
                                     trg.mode = 0;
                                     trg.d.d.gotoAndStop(1);
                                     hurt(trg, 20);
-                                    bombfail(trg.xp, trg.yp, 5);
+                                    handleBombFailure(trg.xp, trg.yp, 5);
                                     trg.xpp = undefined;
                                     f2 = 0;
                                     _root.soundy("Monster_Roar_2.mp", 50);
@@ -16028,7 +16035,7 @@ function breakdance(f0) {
         );
         convertTileToWorldCoordinates(f3);
         if (levzz(f3) >= 1 && levzz(f3) < 2) {
-            bloww(f3, trg.xbew, trg.ybew);
+            createExplosionEffect(f3, trg.xbew, trg.ybew);
         } else {
             killshit(f3);
         }
@@ -22171,7 +22178,7 @@ function physix() {
                         i++;
                     }
                     if (_loc2_) {
-                        bloww(f1, trg.xbew, trg.ybew);
+                        createExplosionEffect(f1, trg.xbew, trg.ybew);
                     }
                 }
                 if (trg == player && fra > 20) {
@@ -22236,7 +22243,7 @@ function physix() {
                     }
                     f9 = f8 * 1.8 - 0.1;
                     if (f9 < -10) {
-                        soundy("mh");
+                        playSound("mh");
                     }
                     if (trg.s == 99) {
                         f9 *= 1.4;
@@ -22651,7 +22658,7 @@ function laps() {
         trg.s = 4;
         f10 = false;
         if (levz[f3] == 1 && (demon > 0 || _root.notch)) {
-            bloww(f3, trg.xbew, trg.ybew);
+            createExplosionEffect(f3, trg.xbew, trg.ybew);
             f10 = true;
         } else if (demon > 0 || unic > 0 || _root.notch) {
             if (killshit(f3, demon > 0 || _root.notch)) {
@@ -22779,7 +22786,7 @@ function tart(f1, f3?) {
     _loc1_[67] = "The Joker";
     _loc1_ = _loc1_[f1 - 7];
     if (!f3) {
-        st11(_loc1_);
+        showStatusText(_loc1_);
     }
     return _loc1_;
 }
@@ -23347,7 +23354,7 @@ function spaceitem() {
                         if (fra - lastbo >= 30) {
                             lasth = 0;
                             lastbo = fra;
-                            bombfail(trg.xp, trg.yp);
+                            handleBombFailure(trg.xp, trg.yp);
                         }
                         break;
                     case 5:
@@ -23651,7 +23658,7 @@ function playc() {
                         _root.playerx = 320;
                         _root.playery = 530 - trg._y * 0.9;
                     }
-                    invp();
+                    hidePlayerAndFamiliars();
                     _root.old.fillRect(_root.old.rectangle, 0);
                     _root.old.draw(this);
                     _root.olda._x = 0;
@@ -23940,10 +23947,10 @@ function playc() {
                         case 2:
                             if (random(2) == 0) {
                                 hat(54);
-                                st11("Puberty");
+                                showStatusText("Puberty");
                             } else {
                                 _root.hmode = 16;
-                                st11("I found Pills");
+                                showStatusText("I found Pills");
                                 st22("And ate them!");
                                 _root.soundy("derp.mp");
                             }
@@ -24923,7 +24930,7 @@ let onEnterFrame = () => {
         bluf = _root.bluf;
     }
     if (fra == 14 && curss) {
-        st11(curss);
+        showStatusText(curss);
     }
     if (ups[114]) {
         ups[69] = ups[118] = 0;
@@ -24961,7 +24968,7 @@ let onEnterFrame = () => {
                     _root.beenlev[_root.lev] = false;
                 } else if (_root.bossl == _root.lev || _root.bossl2 == _root.lev) {
                     if (!nobob) {
-                        bosssp();
+                        spawnBoss();
                         killa = true;
                         if (_root.lev == _root.bossl2 && _root.double) {
                             _root.bosss = _root.bosss2;
@@ -25002,7 +25009,7 @@ let onEnterFrame = () => {
                 }
                 _root.playerx = 320;
                 _root.playery = 400;
-                invp();
+                hidePlayerAndFamiliars();
                 _root.old.fillRect(_root.old.rectangle, 0);
                 _root.old.draw(this);
                 _root.olda._x = 0;
@@ -25063,7 +25070,7 @@ let onEnterFrame = () => {
         if (shutdoor != 0) {
             _root.beenlev[_root.lev] = false;
         }
-        invp();
+        hidePlayerAndFamiliars();
         _root.old.fillRect(_root.old.rectangle, 0);
         _root.old.draw(this);
         _root.olda._x = 0;
@@ -25095,7 +25102,7 @@ let onEnterFrame = () => {
     }
     if (fra % 3 == 0) {
         for (e in bomf) {
-            bombfail(bomf[e][0], bomf[e][1], bomf[e][2], bomf[e][3]);
+            handleBombFailure(bomf[e][0], bomf[e][1], bomf[e][2], bomf[e][3]);
         }
         bomf = [];
     }
@@ -26087,7 +26094,7 @@ let onEnterFrame = () => {
                         }
                     }
                     if (_root.bossl == _root.lev || _root.bossl2 == _root.lev) {
-                        bosssp();
+                        spawnBoss();
                         killa = true;
                         if (_root.lev == _root.bossl2 && _root.double) {
                             _root.bosss = _root.bosss2;
@@ -26951,7 +26958,8 @@ function sub(f3?) {
     return _loc1_;
 }
 
-function aloc() {
+// Original: aloc()
+function saveGameData(): void {
     checker1 = new Array(400);
     e = 0;
     while (e < 400) {
@@ -26995,7 +27003,8 @@ function aloc() {
     saverr = f1;
 }
 
-function aloc2() {
+// Original: aloc2()
+function loadGameData(): void {
     if (!linx) {
         var _loc3_ = mdm.Application.path;
         var _loc2_ = mdm.FileSystem.loadFile(_loc3_ + "serial.txt");
@@ -27045,38 +27054,39 @@ function aloc2() {
     }
 }
 
-function soundy(nam, vol?, xxasda?) {
-    lastn = nam;
-    if (_root.soundonce[nam] == undefined || xxasda) {
-        _root.soundonce[nam] = true;
-        if (!so.data.soff || xxasda) {
-            mpp = nam.indexOf(".mp3") <= 0;
-            if (nam.indexOf(".mp") > 0 && mpp) {
-                nam += "3";
+// Original: soundy(nam, vol, xxasda)
+function playSound(soundName: string, volume?: number, forcePlay?: boolean): SoundObject {
+    lastn = soundName;
+    if (_root.soundonce[soundName] == undefined || forcePlay) {
+        _root.soundonce[soundName] = true;
+        if (!so.data.soff || forcePlay) {
+            mpp = soundName.indexOf(".mp3") <= 0;
+            if (soundName.indexOf(".mp") > 0 && mpp) {
+                soundName += "3";
             }
             mpp = true;
-            if (vol == undefined) {
-                vol = 100;
+            if (volume == undefined) {
+                volume = 100;
             }
-            vol *= _root.soundvol;
+            volume *= _root.soundvol;
             v0 = _root.sz.length;
             f2 = f1 = false;
             if (_root.bossl == _root.lev || _root.bossl2 == _root.lev) {
-                if (nam == "bossintro.mp3" && _root.chaps == 6) {
+                if (soundName == "bossintro.mp3" && _root.chaps == 6) {
                     f1 = true;
-                    nam = "m10-0.mp3";
+                    soundName = "m10-0.mp3";
                     _root.bossmusic = true;
-                } else if (nam == "bossintro.mp3" && _root.chaps == 8) {
+                } else if (soundName == "bossintro.mp3" && _root.chaps == 8) {
                     f1 = true;
-                    nam = "m8-0.mp3";
+                    soundName = "m8-0.mp3";
                     _root.bossmusic = true;
                 } else if (
-                    nam == "bossintro.mp3" &&
+                    soundName == "bossintro.mp3" &&
                     _root.chaps == 9 &&
                     !_root.altchap
                 ) {
                     f1 = true;
-                    nam = "m20-0.mp3";
+                    soundName = "m20-0.mp3";
                     _root.bossmusic = true;
                 }
             }
@@ -27086,84 +27096,85 @@ function soundy(nam, vol?, xxasda?) {
                 "sz" + _root.szz,
                 _root.szz + 2000000000
             );
-            _root.sz[v0].nam = nam;
+            _root.sz[v0].nam = soundName;
             _root.sz[v0].s = new Sound(_root.sz[v0]);
             if (mpp) {
-                _root.sz[v0].s.attachSound(nam);
+                _root.sz[v0].s.attachSound(soundName);
             } else {
-                _root.sz[v0].s.loadSound(nam, false);
+                _root.sz[v0].s.loadSound(soundName, false);
             }
             z = 0;
             while (z < 40) {
-                if (nam == "m" + z + "-1.mp3") {
+                if (soundName == "m" + z + "-1.mp3") {
                     f1 = true;
                     f2 = true;
                     if (z == 19) {
-                        vol = 0;
+                        volume = 0;
                     }
                 }
-                if (nam == "m" + z + "-0.mp3") {
+                if (soundName == "m" + z + "-0.mp3") {
                     f1 = true;
                 }
                 z++;
             }
             if (
                 f1 ||
-                nam == "bossintro.mp3" ||
-                nam == "isaacbosswin.mp3" ||
-                nam == "ambushwin.mp3" ||
-                nam == "levelbumper.mp3" ||
-                nam == "m1-2.mp3" ||
-                nam == bosm ||
-                nam == "m-b0.mp3" ||
-                nam == "m-b1.mp3" ||
-                nam == "isaactitleloop.mp3" ||
-                nam == "credits1-0.mp3" ||
-                nam == "credits1-1.mp3"
+                soundName == "bossintro.mp3" ||
+                soundName == "isaacbosswin.mp3" ||
+                soundName == "ambushwin.mp3" ||
+                soundName == "levelbumper.mp3" ||
+                soundName == "m1-2.mp3" ||
+                soundName == bosm ||
+                soundName == "m-b0.mp3" ||
+                soundName == "m-b1.mp3" ||
+                soundName == "isaactitleloop.mp3" ||
+                soundName == "credits1-0.mp3" ||
+                soundName == "credits1-1.mp3"
             ) {
-                if (nam == "bossintro.mp3") {
+                if (soundName == "bossintro.mp3") {
                     _root.bossmusic = true;
                 }
                 if (_root.musc != undefined) {
                     _root.fade = true;
                 }
-                if (nam == "isaacbosswin.mp3" || nam == "ambushwin.mp3") {
+                if (soundName == "isaacbosswin.mp3" || soundName == "ambushwin.mp3") {
                     _root.sz[v0].wining = true;
                 }
                 if (_root.amusc == undefined) {
-                    if (f2 || nam == "m-b1.mp3" || nam == "isaactitleloop.mp3") {
+                    if (f2 || soundName == "m-b1.mp3" || soundName == "isaactitleloop.mp3") {
                         _root.sz[v0].looper = true;
                         _root.sz[v0].s.start(lop, 0);
                     } else {
                         _root.sz[v0].s.start(0, 0);
                     }
                     _root.amusc = _root.sz[v0];
-                    vol = mvol;
+                    volume = mvol;
                 }
             } else {
-                if (nam.indexOf("loop") > 0) {
+                if (soundName.indexOf("loop") > 0) {
                     _root.sz[v0].s.start(0, 999999);
                     _root.sz[v0].looper2 = true;
                 } else {
                     _root.sz[v0].s.start(0, 0);
                 }
-                if (nam.indexOf("Lightning_Zap") > 0) {
+                if (soundName.indexOf("Lightning_Zap") > 0) {
                     light.dones = true;
                     light = _root.sz[v0];
                 }
             }
-            _root.sz[v0].s.setVolume(vol);
+            _root.sz[v0].s.setVolume(volume);
             return _root.sz[v0];
         }
     }
 }
 
-export function soz() {
+// Original: soz()
+export function initializeSharedObject(): void {
     so = SharedObject.getLocal("so", "/");
     if (so.data.qqal == undefined) {
-        qua("MEDIUM");
+        setQuality("MEDIUM");
     } else {
-        qua(so.data.qqal);
+        setQuality(so.data.qqal);
     }
     _root.musicoff = so.data.moff;
     _root.hardmode = so.data.hard;
@@ -27240,8 +27251,8 @@ export function soz() {
     } else {
         _root.hdd = so.data.wind;
     }
-    aloc2();
-    aloc();
+    loadGameData();
+    saveGameData();
     if (so.data.cols == undefined) {
         so.data.cols = [];
     }
@@ -27268,7 +27279,8 @@ export function soz() {
     _root.lcomp = so.data.lcomp;
 }
 
-function unlos() {
+// Original: unlos()
+function updateUnlockables(): void {
     loslol--;
     if (loslol < 0) {
         _root.unl.gogo = false;
@@ -27293,7 +27305,7 @@ function unlos() {
             _root.soundy("Choir_unlock.wav", 100);
             loslol = 90;
             if (acnam[f1] != 0) {
-                callit(acnam[f1]);
+                launchAchievementApp(acnam[f1]);
             }
         }
     }
@@ -27339,7 +27351,8 @@ function unlos() {
     }
 }
 
-function soundfra() {
+// Original: soundfra()
+function updateAudioSystem(): void {
     _root.soundonce = [];
     if (Key.isDown(77)) {
         if (nomute) {
@@ -27420,119 +27433,119 @@ function soundfra() {
             menubeen--;
             if (f10) {
                 if (intro) {
-                    soundy("m30-0.mp3");
+                    playSound("m30-0.mp3");
                     intro = false;
                 } else {
-                    soundy("m30-1.mp3");
+                    playSound("m30-1.mp3");
                 }
             } else if (f9) {
                 if (intro) {
-                    soundy("m28-0.mp3");
+                    playSound("m28-0.mp3");
                     intro = false;
                 } else {
-                    soundy("m28-1.mp3");
+                    playSound("m28-1.mp3");
                 }
             } else if (f9) {
                 if (intro) {
-                    soundy("m25-0.mp3");
+                    playSound("m25-0.mp3");
                     intro = false;
                 } else {
-                    soundy("m25-1.mp3");
+                    playSound("m25-1.mp3");
                 }
             } else if (f8) {
                 if (intro) {
-                    soundy("m15-0.mp3");
+                    playSound("m15-0.mp3");
                     intro = false;
                 } else {
-                    soundy("m15-1.mp3");
+                    playSound("m15-1.mp3");
                 }
             } else if (f7) {
                 if (intro) {
-                    soundy("m14-0.mp3");
+                    playSound("m14-0.mp3");
                     intro = false;
                 } else {
-                    soundy("m14-1.mp3");
+                    playSound("m14-1.mp3");
                 }
             } else if (f6) {
                 if (intro) {
-                    soundy("m13-0.mp3");
+                    playSound("m13-0.mp3");
                     intro = false;
                 } else {
-                    soundy("m13-1.mp3");
+                    playSound("m13-1.mp3");
                 }
             } else if (f5) {
                 if (intro) {
-                    soundy("m12-0.mp3");
+                    playSound("m12-0.mp3");
                     intro = false;
                 } else {
-                    soundy("m12-1.mp3");
+                    playSound("m12-1.mp3");
                 }
             } else if (_root._currentframe == 20 || _root._currentframe == 21) {
                 if (so.data.wins > 9) {
                     if (intro) {
-                        soundy("m11-0.mp3");
+                        playSound("m11-0.mp3");
                         intro = false;
                     } else {
-                        soundy("m11-1.mp3");
+                        playSound("m11-1.mp3");
                     }
                 } else if (intro) {
-                    soundy("credits1-0.mp3");
+                    playSound("credits1-0.mp3");
                     intro = false;
                 } else {
-                    soundy("credits1-1.mp3");
+                    playSound("credits1-1.mp3");
                 }
             } else if (_root._currentframe == 5) {
-                soundy("isaactitleloop.mp3");
+                playSound("isaactitleloop.mp3");
             } else if (_root.bossmusic && !_root.dmusic) {
                 if (_root.a.ashut > 0.9 || _root._currentframe == 4) {
                     f1 = _root.lev == _root.bossl || _root.bossl2 == _root.lev;
                     if (_root.chaps == 11 || (_root.chaps == 9 && _root.altchap)) {
                         if (_root.intro) {
-                            soundy("m29-0.mp3");
+                            playSound("m29-0.mp3");
                             _root.intro = false;
                         } else {
-                            soundy("m29-1.mp3");
+                            playSound("m29-1.mp3");
                         }
                     } else if (_root.chaps == 6 && f1) {
-                        soundy("m10-1.mp3");
+                        playSound("m10-1.mp3");
                     } else if (_root.chaps == 8 && f1) {
-                        soundy("m8-1.mp3");
+                        playSound("m8-1.mp3");
                     } else if (_root.chaps == 9 && f1 && !_root.altchap) {
-                        soundy("m20-1.mp3");
+                        playSound("m20-1.mp3");
                     } else if (_root.altchap) {
                         if (_root.intro) {
-                            soundy("m26-0.mp3");
+                            playSound("m26-0.mp3");
                             _root.intro = false;
                         } else {
-                            soundy("m26-1.mp3");
+                            playSound("m26-1.mp3");
                         }
                     } else if (_root.intro) {
-                        soundy("m-b0.mp3");
+                        playSound("m-b0.mp3");
                         _root.intro = false;
                     } else {
-                        soundy("m-b1.mp3");
+                        playSound("m-b1.mp3");
                     }
                     bosm = lastn;
                 } else if (_currentframe == 24) {
                     if (_root.intro) {
-                        soundy("m30-0.mp3");
+                        playSound("m30-0.mp3");
                         intro = false;
                     } else {
-                        soundy("m30-1.mp3");
+                        playSound("m30-1.mp3");
                     }
                 } else if (_root.intro == 2) {
-                    soundy("m9-1.mp3");
+                    playSound("m9-1.mp3");
                 } else if (_root.intro) {
                     if (_root.a.fra > 50) {
                         if (_root.lev == _root.bossl || _root.bossl2 == _root.lev) {
-                            soundy("isaacbosswin.mp3", 35);
+                            playSound("isaacbosswin.mp3", 35);
                         } else {
-                            soundy("ambushwin.mp3", 85);
+                            playSound("ambushwin.mp3", 85);
                         }
                     }
                     _root.intro = 2;
                 } else {
-                    soundy("m9-1.mp3");
+                    playSound("m9-1.mp3");
                 }
             } else {
                 f1 = Math.min(Math.round(_root.chaps / 2), 4);
@@ -27567,17 +27580,17 @@ function soundfra() {
                 }
                 if (_root.chaps == 11) {
                     if (intro) {
-                        soundy("m-b0.mp3");
+                        playSound("m-b0.mp3");
                         intro = false;
                     } else {
-                        soundy("m-b1.mp3");
+                        playSound("m-b1.mp3");
                     }
                     _root.bossmusic = false;
                 } else if (intro) {
-                    soundy("m" + f1 + "-0.mp3");
+                    playSound("m" + f1 + "-0.mp3");
                     intro = false;
                 } else {
-                    soundy("m" + f1 + "-1.mp3");
+                    playSound("m" + f1 + "-1.mp3");
                 }
             }
         } else if (_root.mmus == undefined && _root.musc.s.getVolume() < mvol) {
@@ -27785,7 +27798,8 @@ function soundfra() {
     }
 }
 
-export let prelod = () => {
+// Original: prelod()
+export let handlePreload = () => {
     lod = _root.getBytesLoaded();
     tot = _root.getBytesTotal();
     v1 = Math.round((lod / tot) * 100);
@@ -27796,7 +27810,7 @@ export let prelod = () => {
     }
     cent += Math.min(v3, v2);
     if (_currentframe != 1) {
-        prelod = undefined;
+        handlePreload = undefined;
     }
     if (cent > 99.5) {
         v1 = passw.toLowerCase();
@@ -27804,7 +27818,8 @@ export let prelod = () => {
     }
 };
 
-export function fullf(f1?) {
+// Original: fullf(f1)
+export function toggleFullscreen(forceToggle?: boolean): void {
     if (linx) {
         hdd = true;
         _root._yscale = _root._xscale = 125;
@@ -27813,7 +27828,7 @@ export function fullf(f1?) {
         _root._y = ((1 - _root._yscale / 125) * 600) / 2;
     } else if (win || macVersion != undefined) {
         lasf = fra;
-        if (f1) {
+        if (forceToggle) {
             so.data.full = !so.data.full;
         }
         getUrl("FSCommand:allowscale", "false");
@@ -27880,9 +27895,9 @@ export function fullf(f1?) {
         _root._x = ((1 - _root._xscale / 125) * 800) / 2;
         _root._y = ((1 - _root._yscale / 125) * 600) / 2;
         if (!so.data.full) {
-            f1 = mdm.System.getResolution();
-            mdm.Forms.thisForm.x = (f1[0] - mdm.Forms.thisForm.width) / 2 - 2;
-            mdm.Forms.thisForm.y = (f1[1] - mdm.Forms.thisForm.height) / 2 - 20;
+            forceToggle = mdm.System.getResolution();
+            mdm.Forms.thisForm.x = (forceToggle[0] - mdm.Forms.thisForm.width) / 2 - 2;
+            mdm.Forms.thisForm.y = (forceToggle[1] - mdm.Forms.thisForm.height) / 2 - 20;
         }
     } else {
         _root._yscale = _root._xscale = 125;
@@ -27890,7 +27905,8 @@ export function fullf(f1?) {
     }
 }
 
-export function callit(f1) {
+// Original: callit(f1)
+export function launchAchievementApp(achievementId: string): void {
     if (!linx) {
         var _loc2_ = mdm.Application.path;
         if (win) {
@@ -27901,17 +27917,17 @@ export function callit(f1) {
                 500,
                 600,
                 "",
-                _loc2_ + "FlashAchievements.exe " + f1,
+                _loc2_ + "FlashAchievements.exe " + achievementId,
                 _loc2_,
                 2,
                 4
             );
         } else {
             if (fuk) {
-                mdm.Process.setParams(f1);
-                f1 = "";
+                mdm.Process.setParams(achievementId);
+                achievementId = "";
             } else {
-                f1 = " " + f1;
+                achievementId = " " + achievementId;
             }
             fuk = !fuk;
             _loc3_ = mdm.Process.create(
@@ -27921,7 +27937,7 @@ export function callit(f1) {
                 500,
                 600,
                 "",
-                _loc2_ + "FlashAchievements " + f1,
+                _loc2_ + "FlashAchievements " + achievementId,
                 _loc2_,
                 2,
                 4
@@ -27939,7 +27955,7 @@ function doit_foo(trg) {
             so.data.left = !so.data.left;
             break;
         case "b0":
-            fullf(true);
+            toggleFullscreen(true);
             break;
         case "b1":
             so.data.soff = !so.data.soff;
@@ -27956,7 +27972,7 @@ function doit_foo(trg) {
 function wiq(f1) {
     so.data.wind = _root.hdd = f1;
     showit_foo();
-    fullf();
+    toggleFullscreen();
 }
 
 function reser(f1) {
@@ -27965,7 +27981,7 @@ function reser(f1) {
         so.data.res = _root.res = f1;
         showit_foo();
         if (so.data.full) {
-            fullf();
+            toggleFullscreen();
         }
     }
 }
@@ -28016,7 +28032,7 @@ function showit_foo() {
     }
 }
 
-function qshow() {
+function updateQualityButtons(): void {
     f1 = ["HIGH", "MEDIUM", "LOW", "AUTO"];
     z = 0;
     while (z < 4) {
@@ -28030,10 +28046,11 @@ function qshow() {
     }
 }
 
-function qua(f1?) {
+// Original: qua(f1)
+function setQuality(newQuality?: string): void {
     qqua = so.data.qqal;
-    if (f1) {
-        qqua = f1;
+    if (newQuality) {
+        qqua = newQuality;
     } else if (qqua == "AUTO") {
         qqua = "HIGH";
     } else if (qqua == "MEDIUM") {
@@ -28050,7 +28067,7 @@ function qua(f1?) {
     }
     _root.a.st22(qqua);
     so.data.qqal = qqua;
-    qshow();
+    updateQualityButtons();
 }
 
 function goblack() {
@@ -28078,7 +28095,8 @@ function colorit_hmmm(trg, f1, f2, f3, f4, f5, f6) {
     _loc2_.colorTransform = _loc1_;
 }
 
-function uncolera() {
+// Original: uncolera()
+function updateItemCooldown(): void {
     trg2 = hud.it;
     if (itb >= 0) {
         if (itb % 5 == 0) {
@@ -28089,10 +28107,11 @@ function uncolera() {
     itb--;
 }
 
-function darky(f1?) {
-    if (f1 != 150) {
-        if (f1 > 0) {
-            dark = f1;
+// Original: darky(f1)
+function updateDarkness(intensity?: number): void {
+    if (intensity != 150) {
+        if (intensity > 0) {
+            dark = intensity;
         }
     } else {
         dark = 5;
@@ -28107,31 +28126,31 @@ function darky(f1?) {
         _root.chaps = 1;
     }
     if (dark > 0 || undark) {
-        f1 = 2.5;
-        f1 = getTimer() - dda;
-        f1 /= 15;
-        if (f1 > 15 || f1 <= 0) {
+        intensity = 2.5;
+        intensity = getTimer() - dda;
+        intensity /= 15;
+        if (intensity > 15 || intensity <= 0) {
             f5 = 15;
         }
         if (fader) {
-            dark += f1 * 2;
+            dark += intensity * 2;
             if (dark > 160) {
                 fader = false;
                 _root.gotoAndStop("game");
             }
         }
-        dark -= f1;
+        dark -= intensity;
         undark = dark > 0;
-        f1 = 1 - dark / 100;
+        intensity = 1 - dark / 100;
         if (_root.chaps == 9 && _root.altchap) {
-            f2 = 255 * (1 - f1);
+            f2 = 255 * (1 - intensity);
         } else {
             f2 = 0;
         }
         colo = new flash.geom.ColorTransform();
-        colo.redMultiplier = f1;
-        colo.greenMultiplier = f1;
-        colo.blueMultiplier = f1;
+        colo.redMultiplier = intensity;
+        colo.greenMultiplier = intensity;
+        colo.blueMultiplier = intensity;
         colo.redOffset = f2;
         colo.greenOffset = f2;
         colo.blueOffset = f2;
@@ -28149,10 +28168,10 @@ let onEnterFrame_init = () => {
     if (_currentframe == 2) {
         if (_root.paus != _root.hud.paus) {
             _root.paus = _root.hud.paus;
-            aloc();
+            saveGameData();
         }
     } else if (_root.paus != _root.pauss) {
-        aloc();
+        saveGameData();
         _root.paus = _root.pauss;
     }
     fra++;
@@ -28167,9 +28186,9 @@ let onEnterFrame_init = () => {
             mdm.FileSystem.saveFile(_loc2_ + "serial.txt", saverr);
         }
     }
-    darky();
-    soundfra();
-    uncolera();
+    updateDarkness();
+    updateAudioSystem();
+    updateItemCooldown();
     if (overlay2._alpha > 0) {
         overlay2._alpha -= 7;
     } else {
@@ -28214,11 +28233,11 @@ let onEnterFrame_init = () => {
     if (!Key.isDown(32)) {
         ffs1 = false;
     }
-    unlos();
-    prelod();
+    updateUnlockables();
+    handlePreload();
     if (Key.isDown(73)) {
         if (unqua) {
-            qua();
+            setQuality();
             unqua = false;
             _root.soundy("butt");
         }
@@ -28234,7 +28253,7 @@ let onEnterFrame_init = () => {
             } else {
                 hdd = 2;
             }
-            fullf();
+            toggleFullscreen();
             unff2 = false;
             so.data.wind = hdd;
         }
@@ -28244,7 +28263,7 @@ let onEnterFrame_init = () => {
     if (Key.isDown(70)) {
         if (unff) {
             if (!_root.a.unpause) {
-                fullf(true);
+                toggleFullscreen(true);
                 unff = false;
             }
         }

@@ -22,7 +22,7 @@ interface SharedObjectData {
     soff: boolean;
     moff: boolean;
     hard: boolean;
-    qqal: string | boolean;
+    qqal: string;
     full: boolean;
     wind: number;
     res: number;
