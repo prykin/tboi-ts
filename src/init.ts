@@ -603,7 +603,7 @@ if (linx) {
 } else {
     _root.tex = macVersion = mdm.System.macVerString;
     winVersion = mdm.System.winVerString;
-    win = (macVersion + " ").indexOf("type Function") > 0 || winVersion > 0;
+    win = (macVersion + " ").indexOf("type Function") > 0 || winVersion.length > 0;
     _root.tex = win + " " + winVersion;
     mdm.Application.onAppChangeFocus = function (myObject) {
         if (myObject.focus != "true") {
