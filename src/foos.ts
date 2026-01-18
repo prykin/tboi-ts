@@ -1231,7 +1231,7 @@ function convertWorldToTileCoordinates(worldX: number, worldY: number, clampToRo
 }
 
 // Original: gridp(f1, f2, f3, f4)
-function gridp(x: number, y: number, offsetX?: number, offsetY?: number): number[] {
+function getGridPosition(x: number, y: number, offsetX?: number, offsetY?: number): number[] {
     x -= gridx;
     y -= gridy;
     if (offsetX == undefined) {
@@ -1241,7 +1241,7 @@ function gridp(x: number, y: number, offsetX?: number, offsetY?: number): number
 }
 
 // Original: gridput(f5, f6)
-function gridput(position: number[], value: number): void {
+function placeOnGrid(position: number[], value: number): void {
     a = 0;
     while (grid.getPixel(position[0], position[1]) != 0 && a < gridmax) {
         position[0] = position[0] + 1;
@@ -1251,7 +1251,7 @@ function gridput(position: number[], value: number): void {
 }
 
 // Original: gridput2(f5, f6)
-function gridput2(position: number[], value: number): void {
+function placeOnGrid2(position: number[], value: number): void {
     a = 0;
     while (grid2.getPixel(position[0], position[1]) != 0 && a < gridmax) {
         position[0] = position[0] + 1;
@@ -1281,68 +1281,70 @@ function crand(f1?) {
     return Math.sin(f1) * cra2;
 }
 
-function itzz(f1) {
+// Original: itzz(f1)
+function notUpgrade(itemId: number): boolean {
     var _loc2_ =
-        f1 != 114 &&
-        f1 != 118 &&
-        f1 != 138 &&
-        f1 != 150 &&
-        f1 != 151 &&
-        f1 != 152 &&
-        f1 != 153 &&
-        f1 != 154 &&
-        f1 != 157 &&
-        f1 != 159 &&
-        f1 != 168 &&
-        f1 != 169 &&
-        f1 != 182 &&
-        f1 != 184 &&
-        f1 != 185 &&
-        f1 != 189 &&
-        f1 != 190 &&
-        f1 != 191 &&
-        f1 != 193 &&
-        f1 != 196 &&
-        f1 != 197;
+        itemId != 114 &&
+        itemId != 118 &&
+        itemId != 138 &&
+        itemId != 150 &&
+        itemId != 151 &&
+        itemId != 152 &&
+        itemId != 153 &&
+        itemId != 154 &&
+        itemId != 157 &&
+        itemId != 159 &&
+        itemId != 168 &&
+        itemId != 169 &&
+        itemId != 182 &&
+        itemId != 184 &&
+        itemId != 185 &&
+        itemId != 189 &&
+        itemId != 190 &&
+        itemId != 191 &&
+        itemId != 193 &&
+        itemId != 196 &&
+        itemId != 197;
     return (
-        (f1 > 7 &&
-            f1 != 12 &&
-            f1 != 16 &&
-            f1 != 48 &&
-            f1 != 50 &&
-            f1 != 51 &&
-            f1 != 52 &&
-            f1 != 68 &&
-            f1 != 70 &&
-            f1 != 79 &&
-            f1 != 80 &&
-            f1 != 88 &&
-            f1 != 89 &&
-            f1 != 90 &&
-            f1 != 99 &&
-            f1 != 101 &&
-            f1 != 103 &&
-            f1 != 108 &&
-            f1 != 109 &&
-            f1 != 110 &&
+        (itemId > 7 &&
+            itemId != 12 &&
+            itemId != 16 &&
+            itemId != 48 &&
+            itemId != 50 &&
+            itemId != 51 &&
+            itemId != 52 &&
+            itemId != 68 &&
+            itemId != 70 &&
+            itemId != 79 &&
+            itemId != 80 &&
+            itemId != 88 &&
+            itemId != 89 &&
+            itemId != 90 &&
+            itemId != 99 &&
+            itemId != 101 &&
+            itemId != 103 &&
+            itemId != 108 &&
+            itemId != 109 &&
+            itemId != 110 &&
             _loc2_) ||
-        f1 == 5
+        itemId == 5
     );
 }
 
-function itz(f1) {
+// Original: itz(f1)
+function keepItem(itemId: number): number {
     if (
-        (f1 == 79 ||
-            f1 == 80 ||
-            f1 == 82 ||
-            f1 == 83 ||
-            f1 == 81 ||
-            f1 == 113 ||
-            f1 == 122 ||
-            f1 == 118 ||
-            f1 == 157 ||
-            f1 == 159 ||
-            f1 == 145) &&
+        (itemId == 79 ||
+            itemId == 80 ||
+            itemId == 82 ||
+            itemId == 83 ||
+            itemId == 81 ||
+            itemId == 113 ||
+            itemId == 122 ||
+            itemId == 118 ||
+            itemId == 157 ||
+            itemId == 159 ||
+            itemId == 145) &&
         _this.satan &&
         !checkItemOwned(56)
     ) {
@@ -1353,17 +1355,17 @@ function itz(f1) {
     if (_root.skiner == 4 && _this.satan) {
         _root.trg.d.d.gotoAndStop(11);
     }
-    var _loc2_ = [8, 67, 95, 99, 100, 113, 163, 167, 174, 188];
+    const familiars: number[] = [8, 67, 95, 99, 100, 113, 163, 167, 174, 188];
     var _loc4_ = false;
-    for (o in _loc2_) {
-        if (_loc2_[o] == f1) {
+    for (o in familiars) {
+        if (familiars[o] == itemId) {
             _loc4_ = true;
         }
     }
     var _loc5_ = 0;
     if (_loc4_) {
-        for (o in _loc2_) {
-            _loc5_ += _root.ups[_loc2_[o]];
+        for (o in familiars) {
+            _loc5_ += _root.ups[familiars[o]];
         }
     }
     wtftex = _root.wiptz;
@@ -1375,14 +1377,14 @@ function itz(f1) {
     if (_loc4_ && _loc5_ > 2) {
         return 0;
     }
-    if (_root.ups[f1] || (_root.colss[f1] && random(5) == 0)) {
+    if (_root.ups[itemId] || (_root.colss[itemId] && random(5) == 0)) {
         return 0;
     }
-    if (itzz(f1)) {
-        return f1;
+    if (notUpgrade(itemId)) {
+        return itemId;
     }
     if (1 / Math.max(0.2, _loc6_) > Math.random()) {
-        return f1;
+        return itemId;
     }
     return 0;
 }
@@ -1395,7 +1397,7 @@ function distributeItem(): number {
         _loc4_ = _loc4_ + 1;
         if (_loc4_ > 100) {
             var _loc3_ = random(_root.ittt.length);
-            _loc2_ = itz(_root.ittt[_loc3_]);
+            _loc2_ = keepItem(_root.ittt[_loc3_]);
             if (_loc2_ > 0) {
                 _root.ittt.splice(_loc3_, 1);
             }
@@ -1404,7 +1406,7 @@ function distributeItem(): number {
             }
         } else if (_root.lev == _root.lib) {
             _loc3_ = random(_root.ittt9.length);
-            _loc2_ = itz(_root.ittt9[_loc3_]);
+            _loc2_ = keepItem(_root.ittt9[_loc3_]);
             if (_loc2_ > 0) {
                 if (lib == _loc3_) {
                     _loc2_ = -1;
@@ -1417,7 +1419,7 @@ function distributeItem(): number {
             !_root.altch
         ) {
             _loc3_ = random(_root.ittt8.length);
-            _loc2_ = itz(_root.ittt8[_loc3_]);
+            _loc2_ = keepItem(_root.ittt8[_loc3_]);
             if (_loc2_ > 0) {
                 _root.ittt8.splice(_loc3_, 1);
             }
@@ -1430,17 +1432,17 @@ function distributeItem(): number {
             _this.bummer = false;
             if (_root.altsat || _root.lev == _root.chamb) {
                 _loc3_ = random(_root.ittt10.length);
-                _loc2_ = itz(_root.ittt10[_loc3_]);
+                _loc2_ = keepItem(_root.ittt10[_loc3_]);
             } else {
                 _loc3_ = random(_root.ittt7.length);
-                _loc2_ = itz(_root.ittt7[_loc3_]);
+                _loc2_ = keepItem(_root.ittt7[_loc3_]);
                 if (_loc2_ > 0) {
                     _root.ittt7.splice(_loc3_, 1);
                 }
             }
         } else if (_root.ittt6.length > 0 && treas && _root.chaps != 11) {
             _loc3_ = random(_root.ittt6.length);
-            _loc2_ = itz(_root.ittt6[_loc3_]);
+            _loc2_ = keepItem(_root.ittt6[_loc3_]);
             if (_loc2_ > 0) {
                 _root.ittt6.splice(_loc3_, 1);
             }
@@ -1450,7 +1452,7 @@ function distributeItem(): number {
         ) {
             _this.bummer = false;
             _loc3_ = random(_root.ittt4.length);
-            _loc2_ = itz(_root.ittt4[_loc3_]);
+            _loc2_ = keepItem(_root.ittt4[_loc3_]);
             if (_loc2_ > 0) {
                 _root.ittt4.splice(_loc3_, 1);
             }
@@ -1460,19 +1462,19 @@ function distributeItem(): number {
             _root.ittt5.length > 1
         ) {
             _loc3_ = random(_root.ittt5.length);
-            _loc2_ = itz(_root.ittt5[_loc3_]);
+            _loc2_ = keepItem(_root.ittt5[_loc3_]);
             if (_loc2_ > 0) {
                 _root.ittt5.splice(_loc3_, 1);
             }
         } else if (_root.lev == _root.hide) {
             _loc3_ = random(_root.ittt3.length);
-            _loc2_ = itz(_root.ittt3[_loc3_]);
+            _loc2_ = keepItem(_root.ittt3[_loc3_]);
             if (_loc2_ > 0) {
                 _root.ittt3.splice(_loc3_, 1);
             }
         } else if (_root.lev == _root.chamb && _root.altch) {
             _loc3_ = random(_root.ittt2.length);
-            _loc2_ = itz(_root.ittt2[_loc3_]);
+            _loc2_ = keepItem(_root.ittt2[_loc3_]);
             if (_loc2_ > 0) {
                 _root.ittt2.splice(_loc3_, 1);
             }
@@ -1512,14 +1514,14 @@ function distributeItem(): number {
                 _loc2_ = 73;
             } else {
                 _loc3_ = random(_root.ittt2.length);
-                _loc2_ = itz(_root.ittt2[_loc3_]);
+                _loc2_ = keepItem(_root.ittt2[_loc3_]);
                 if (_loc2_ > 0) {
                     _root.ittt2.splice(_loc3_, 1);
                 }
             }
         } else {
             _loc3_ = random(_root.ittt.length);
-            _loc2_ = itz(_root.ittt[_loc3_]);
+            _loc2_ = keepItem(_root.ittt[_loc3_]);
             if (_loc2_ > 0) {
                 _root.ittt.splice(_loc3_, 1);
             }
@@ -1749,7 +1751,8 @@ function applySpecialEffect(entity: any, effectType?: boolean): void {
     }
 }
 
-function momlo() {
+// Original: momlo()
+function playMomVoiceLines(): void {
     if (trrisss + 45 + random(120) <= fra) {
         trrisss = fra;
         _root.soundy("Mom_Vox_Isaac_" + random(3) + ".mp");
@@ -3755,7 +3758,8 @@ function pff2(f1) {
     }
 }
 
-function momkill() {
+// Original: momkill()
+function defeatMom(): void {
     if (momdown != 100) {
         for (z of projectileClips) {
             momdown = 100;
@@ -3773,49 +3777,50 @@ function momkill() {
     mheart._visible = false;
 }
 
-function hurtcol(trg) {
-    var _loc2_ = trg.uncol;
-    if (trg.s == 78) {
+// Original: hurtcol(trg)
+function applyDamageColorEffect(entity: any): void {
+    let _loc2_: number = entity.uncol;
+    if (entity.s == 78) {
         _loc2_ = fra + 2;
     }
-    applySpecialEffect(trg, true);
-    if (trg.spid > 0) {
-        if (trg.spida == 2) {
-            setColorTransform(trg, 0.45, 0.5, 0.5, 300, -100, -100);
+    applySpecialEffect(entity, true);
+    if (entity.spid > 0) {
+        if (entity.spida == 2) {
+            setColorTransform(entity, 0.45, 0.5, 0.5, 300, -100, -100);
         } else {
             setColorTransform(
-                trg,
-                trg.colo.redMultiplier * 0.5,
-                trg.colo.greenMultiplier * 0.5,
-                trg.colo.blueMultiplier * 0.5,
-                250 + trg.colo.redOffset * 0.45,
-                50 + trg.colo.greenOffset * 0.45,
-                50 + trg.colo.blueOffset * 0.45
+                entity,
+                entity.colo.redMultiplier * 0.5,
+                entity.colo.greenMultiplier * 0.5,
+                entity.colo.blueMultiplier * 0.5,
+                250 + entity.colo.redOffset * 0.45,
+                50 + entity.colo.greenOffset * 0.45,
+                50 + entity.colo.blueOffset * 0.45
             );
         }
         _loc2_ = fra + 2;
-    } else if (trg.s == 36) {
+    } else if (entity.s == 36) {
         setColorTransform(
-            trg,
-            0.1 + trg.colo.redMultiplier * 0.6,
-            0.1 + trg.colo.greenMultiplier * 0.6,
-            0.1 + trg.colo.blueMultiplier * 0.6,
-            70 + trg.colo.redOffset * 0.7,
-            trg.colo.greenOffset * 0.7,
-            trg.colo.blueOffset * 0.7
+            entity,
+            0.1 + entity.colo.redMultiplier * 0.6,
+            0.1 + entity.colo.greenMultiplier * 0.6,
+            0.1 + entity.colo.blueMultiplier * 0.6,
+            70 + entity.colo.redOffset * 0.7,
+            entity.colo.greenOffset * 0.7,
+            entity.colo.blueOffset * 0.7
         );
     } else {
         setColorTransform(
-            trg,
-            trg.colo.redMultiplier * 0.4,
-            trg.colo.greenMultiplier * 0.5,
-            trg.colo.blueMultiplier * 0.5,
-            200 + trg.colo.redOffset * 0.45,
-            trg.colo.greenOffset * 0.45,
-            trg.colo.blueOffset * 0.45
+            entity,
+            entity.colo.redMultiplier * 0.4,
+            entity.colo.greenMultiplier * 0.5,
+            entity.colo.blueMultiplier * 0.5,
+            200 + entity.colo.redOffset * 0.45,
+            entity.colo.greenOffset * 0.45,
+            entity.colo.blueOffset * 0.45
         );
     }
-    trg.uncol = _loc2_;
+    entity.uncol = _loc2_;
 }
 
 // Original: hurt(trg, f1)
@@ -3981,10 +3986,10 @@ function damageEntity(entity: any, damage: number): void {
                         entity.spl = 30;
                     }
                     if (entity == mheart) {
-                        momkill();
+                        defeatMom();
                     }
                     if (entity.s == 84 && entity.pow > 3) {
-                        momkill();
+                        defeatMom();
                     }
                     if (ups[157]) {
                         rage = Math.min(3.3, rage + 0.28);
@@ -4023,7 +4028,7 @@ function damageEntity(entity: any, damage: number): void {
                             mom[z].dones = true;
                             mom[z]._visible = false;
                         }
-                        momkill();
+                        defeatMom();
                     } else if (entity.s == 28) {
                         _root.soundy("Monster_Roar_2.mp", 50);
                         entity.mags[1].dones = true;
@@ -4068,7 +4073,7 @@ function damageEntity(entity: any, damage: number): void {
                             entity.outway = true;
                         }
                         entity.hp = entity.mhp;
-                        splater(entity.xp, entity.yp, random(10) + 1, Math.random() + 0.6);
+                        createBloodSplatter(entity.xp, entity.yp, random(10) + 1, Math.random() + 0.6);
                     } else if (entity.s == 24 && entity.d._currentframe < 3) {
                         entity.gosplash = true;
                         if (entity.alter == 2) {
@@ -4086,7 +4091,7 @@ function damageEntity(entity: any, damage: number): void {
                         if (entity.special) {
                             entity.hp += 2;
                         }
-                        splater(entity.xp, entity.yp, random(10) + 1, Math.random() + 0.6);
+                        createBloodSplatter(entity.xp, entity.yp, random(10) + 1, Math.random() + 0.6);
                     } else if (entity.s == 84) {
                         entity.pow = entity.pow + 1;
                         if (entity.pow == 4) {
@@ -4099,7 +4104,7 @@ function damageEntity(entity: any, damage: number): void {
                     }
                 } else {
                     entity.uncol = Math.round(fra + Math.min(6, damage / 1.5));
-                    hurtcol(entity);
+                    applyDamageColorEffect(entity);
                     if (entity.hbar) {
                         _root.hud.bar.bar.gotoAndPlay(1);
                     }
@@ -4108,7 +4113,7 @@ function damageEntity(entity: any, damage: number): void {
                         for (z of worm) {
                             if (worm[z].bh && worm[z] != entity) {
                                 worm[z].uncol = entity.uncol;
-                                hurtcol(worm[z]);
+                                applyDamageColorEffect(worm[z]);
                             }
                         }
                     } else if (entity.s == 45) {
@@ -4116,7 +4121,7 @@ function damageEntity(entity: any, damage: number): void {
                         for (z of mom) {
                             if (mom[z].bh || mom[z].mom == 3) {
                                 if (entity != mom[z]) {
-                                    hurtcol(mom[z]);
+                                    applyDamageColorEffect(mom[z]);
                                     mom[z].uncol = entity.uncol;
                                 }
                             }
@@ -4125,15 +4130,15 @@ function damageEntity(entity: any, damage: number): void {
                     } else if (entity.s == 28) {
                         if (entity.mags[1] != entity) {
                             entity.mags[1].uncol = entity.uncol;
-                            hurtcol(entity.mags[1]);
+                            applyDamageColorEffect(entity.mags[1]);
                         }
                         if (entity.mags[2] != entity) {
                             entity.mags[2].uncol = entity.uncol;
-                            hurtcol(entity.mags[2]);
+                            applyDamageColorEffect(entity.mags[2]);
                         }
                         if (entity.mags[3] != entity) {
                             entity.mags[3].uncol = entity.uncol;
-                            hurtcol(entity.mags[3]);
+                            applyDamageColorEffect(entity.mags[3]);
                         }
                     }
                 }
@@ -4354,7 +4359,7 @@ function damagePlayer(damage: number, f2: number, damageArmor?: boolean): boolea
             lasth = fra + damage * 60;
             if (_root.ups[122] && !ups[122] && player.hp > 0 && player.hp < 1) {
                 ups[122] = 1.2;
-                curs();
+                triggerTowerCardEffect();
                 lasth = fra + 90;
             } else if (ups[117]) {
                 ups[117] = 0.55;
@@ -4406,10 +4411,11 @@ function damagePlayer(damage: number, f2: number, damageArmor?: boolean): boolea
     }
 }
 
-function splater(f1, f2, f3, f4) {
-    if (f3 >= 1) {
-        blood.gotoAndStop(f3);
-        v1 = f4;
+// Original: splater(f1, f2, f3, f4)
+function createBloodSplatter(x: number, y: number, bloodType: number, scale: number): void {
+    if (bloodType >= 1) {
+        blood.gotoAndStop(bloodType);
+        v1 = scale;
         if (random(2) == 0) {
             v2 = -v1;
         } else {
@@ -4417,18 +4423,19 @@ function splater(f1, f2, f3, f4) {
         }
         maxx = new flash.geom.Matrix();
         maxx.scale(v1, v2);
-        maxx.translate(f1 + crand(5), f2 + crand(5) - 5);
+        maxx.translate(x + crand(5), y + crand(5) - 5);
         maxx.scale(hdx, hdx);
         splat.draw(blood, maxx, bloc);
     }
 }
 
-function shadow(f1, f2) {
-    poi.x = f1;
-    poi.y = f2;
+// Original: shadow(f1, f2)
+function drawShadow(x: number, y: number): void {
+    poi.x = x;
+    poi.y = y;
     shad.copyPixels(org, org.rectangle, poi, undefined, undefined, true);
     maxx = new flash.geom.Matrix();
-    maxx.translate(f1, f2);
+    maxx.translate(x, y);
     shad.draw(shaz, maxx);
 }
 
@@ -4525,7 +4532,7 @@ export function updatePlayerAnimation(): void {
 }
 
 // Original: curs()
-function curs(): void {
+function triggerTowerCardEffect(): void {
     sk = 7;
     _root.mmus = _root.soundy("isaacsatanitemget.mp", 100);
     _root.over.gotoAndStop(13);
@@ -4569,7 +4576,8 @@ function fixWallConnections(): void {
     }
 }
 
-function golev() {
+// Original: golev()
+function golev(): void {
     if (_root.ups[122]) {
         if (player.hp < 1) {
             ups[122] = 1;
@@ -4583,7 +4591,7 @@ function golev() {
         f10 = [0, 45, 46, 34, 36, 117, 157];
         highs = player;
         player.it = f10[_root.skiner];
-        powerlevel();
+        updatePlayerPowerup();
         if (_root.skiner == 5) {
             _root.ups[122] = 1;
             _root.cols.push(122);
@@ -4611,7 +4619,7 @@ function golev() {
                 player.empty = false;
                 highs = player;
                 player.it = f2[e];
-                powerlevel();
+                updatePlayerPowerup();
             }
             gofind = undefined;
         }
@@ -4627,7 +4635,7 @@ function golev() {
         _root.wtfuuz = true;
         highs = player;
         player.it = 105;
-        powerlevel();
+        updatePlayerPowerup();
         _root.wiptz += 1;
     }
     player.d.gotoAndStop(1);
@@ -5145,7 +5153,8 @@ function golev() {
     _root.beenlev2[_root.lev] = true;
 }
 
-function spawnb(f1, f2) {
+// Original: spawnb(f1, f2)
+function spawnb(f1, f2): void {
     if (levz.length <= 1) {
         levz = new Array(200);
     }
@@ -5164,113 +5173,115 @@ function spawnb(f1, f2) {
     levz[_loc3_] = f2;
 }
 
-function sideflip(f1, trg2?) {
-    if (trg2 == undefined) {
+// Original: sideflip(f1, trg2)
+function flipSpriteDirection(direction: number, targetSprite?: any): void {
+    if (targetSprite == undefined) {
         if (trg.sf2 == undefined) {
-            trg2 = trg.d;
+            targetSprite = trg.d;
         } else {
-            trg2 = trg.sf2;
+            targetSprite = trg.sf2;
         }
     }
-    trg.sf2 = trg2;
+    trg.sf2 = targetSprite;
     trg.sf = true;
-    if (f1 * trg2._xscale < -100) {
-        trg2._xscale *= -1;
+    if (direction * targetSprite._xscale < -100) {
+        targetSprite._xscale *= -1;
     }
 }
 
-function pathfind(trg, f1, f2, f3) {
-    if (trg.speed == undefined) {
-        trg.speed = 1;
+// Original: pathfind(trg, f1, f2, f3)
+function findPath(entity: any, targetX: number, targetY: number, speedMultiplier: number): void {
+    if (entity.speed == undefined) {
+        entity.speed = 1;
     }
-    if (trg.s == 35) {
-        f3 *= 1.1;
+    if (entity.s == 35) {
+        speedMultiplier *= 1.1;
     }
-    if ((trg.xp != f1 || trg.yp != f2) && fra > 5) {
-        v1 = convertWorldToTileCoordinates(f1, f2);
+    if ((entity.xp != targetX || entity.yp != targetY) && fra > 5) {
+        v1 = convertWorldToTileCoordinates(targetX, targetY);
         convertTileToWorldCoordinates(v1);
         xpp = xenf;
         ypp = yenf;
-        v2 = convertWorldToTileCoordinates(trg.xp, trg.yp);
+        v2 = convertWorldToTileCoordinates(entity.xp, entity.yp);
         convertTileToWorldCoordinates(v2);
         xppp = xenf;
         yppp = yenf;
-        trg.tiler = v2;
-        trg.tiletimer = 2 / Math.max(0.2, f3);
+        entity.tiler = v2;
+        entity.tiletimer = 2 / Math.max(0.2, speedMultiplier);
         if (fra % 3 == 1) {
-            v2 = 40 / getDistance(trg.xbew, trg.ybew);
-            v2 = getRoomType(convertWorldToTileCoordinates(trg.xp + trg.xbew * v2, trg.yp + trg.ybew * v2));
+            v2 = 40 / getDistance(entity.xbew, entity.ybew);
+            v2 = getRoomType(convertWorldToTileCoordinates(entity.xp + entity.xbew * v2, entity.yp + entity.ybew * v2));
             if (v2 > 0 && v2 < 1) {
-                trg.speed = 0.7;
+                entity.speed = 0.7;
             } else {
-                trg.speed = 1;
+                entity.speed = 1;
             }
         }
-        v2 = trg.tiler;
-        if (getRoomType(trg.tiler) < 0.99 && trg.s != 16 && trg.s != 47) {
-            if (trg.s == 58) {
-                levz[trg.tiler] = 0.2;
+        v2 = entity.tiler;
+        if (getRoomType(entity.tiler) < 0.99 && entity.s != 16 && entity.s != 47) {
+            if (entity.s == 58) {
+                levz[entity.tiler] = 0.2;
             } else {
-                levz[trg.tiler] = 0.9;
+                levz[entity.tiler] = 0.9;
             }
         }
-        if (f3 == undefined) {
-            f3 = 1;
+        if (speedMultiplier == undefined) {
+            speedMultiplier = 1;
         }
-        f3 *= trg.speed;
+        speedMultiplier *= entity.speed;
         nogo = true;
-        if ((fra + trg.e) % 6 == 1) {
-            if (trg.see) {
-                trg.lastv = v5 = linecheckxx(xppp, yppp, xpp, ypp);
+        if ((fra + entity.e) % 6 == 1) {
+            if (entity.see) {
+                entity.lastv = v5 = linecheckxx(xppp, yppp, xpp, ypp);
             } else {
-                trg.lastv = v5 = linecheck(xppp, yppp, xpp, ypp);
+                entity.lastv = v5 = checkLineOfSight(xppp, yppp, xpp, ypp);
             }
-            if (trg.lastv && trg.firss + 40 <= fra && random(3) == 0 && gochar) {
-                trg.firss = fra;
+            if (entity.lastv && entity.firss + 40 <= fra && random(3) == 0 && gochar) {
+                entity.firss = fra;
                 _root.soundy("Zombie_Walker_Kid.mp", 100);
             }
         } else {
-            v5 = trg.lastv;
+            v5 = entity.lastv;
         }
-        trg.d.h.stop();
-        if (!trg.gonuts) {
-            f3 *= 0.83;
+        entity.d.h.stop();
+        if (!entity.gonuts) {
+            speedMultiplier *= 0.83;
         }
-        if (trg.d.h._currentframe > 2) {
-            f3 *= 1.2;
-            trg.d.h.nextFrame();
-        } else if (trg.gonuts) {
-            trg.d.h.gotoAndStop(2);
+        if (entity.d.h._currentframe > 2) {
+            speedMultiplier *= 1.2;
+            entity.d.h.nextFrame();
+        } else if (entity.gonuts) {
+            entity.d.h.gotoAndStop(2);
         }
         if (
-            (v5 && (enf = checkCollision(trg.xp, trg.yp, f1, f2, 750, true)) > 0) ||
+            (v5 && (enf = checkCollision(entity.xp, entity.yp, targetX, targetY, 750, true)) > 0) ||
             v1 == v2
         ) {
-            if (trg.gonuts) {
-                trg.d.h.nextFrame();
-                f3 *= 1.1;
+            if (entity.gonuts) {
+                entity.d.h.nextFrame();
+                speedMultiplier *= 1.1;
             }
-            trg.tiletimer -= 5;
-            trg.gridtime -= 10;
-            xenf = f1;
-            yenf = f2;
+            entity.tiletimer -= 5;
+            entity.gridtime -= 10;
+            xenf = targetX;
+            yenf = targetY;
             nogo = false;
         } else if (getRoomType(v1) != 1 || true) {
-            if ((trg.gridder == undefined || trg.gridtime < 0) && nogridyet) {
+            if ((entity.gridder == undefined || entity.gridtime < 0) && nogridyet) {
                 nogo = true;
                 nogridyet = false;
-                trg.gridder = levz.slice(0, -1);
-                trg.gridder[convertWorldToTileCoordinates(trg.xp, trg.yp)] = 0;
-                trg.gridder[v1] = 0;
+                entity.gridder = levz.slice(0, -1);
+                entity.gridder[convertWorldToTileCoordinates(entity.xp, entity.yp)] = 0;
+                entity.gridder[v1] = 0;
                 acts = [];
                 acts2 = [];
                 z = -1;
-                while (z > -100 && trg.gridder[v2] >= 0) {
+                while (z > -100 && entity.gridder[v2] >= 0) {
                     if (z == -1) {
                         pff(v1, -1);
                     } else {
                         for (e in acts) {
-                            v1 = trg.gridder[acts[e]];
+                            v1 = entity.gridder[acts[e]];
                             if (v1 < z) {
                                 acts2.push(acts[e]);
                             } else {
@@ -5288,13 +5299,13 @@ function pathfind(trg, f1, f2, f3) {
                     z--;
                 }
                 if (z < -99) {
-                    trg.gridder = 0;
+                    entity.gridder = 0;
                 }
-                trg.gridtime = Math.min(20, -z) + projectileClips.length * 2 + 7;
+                entity.gridtime = Math.min(20, -z) + projectileClips.length * 2 + 7;
             }
-            trg.gridtime * 0.9;
-            trg.gridtime -= f3 * 3;
-            if (trg.gridder != undefined && trg.gridder != 0) {
+            entity.gridtime * 0.9;
+            entity.gridtime -= speedMultiplier * 3;
+            if (entity.gridder != undefined && entity.gridder != 0) {
                 convertTileToWorldCoordinates(v2);
                 v3 = -100;
                 testarr = [
@@ -5309,14 +5320,14 @@ function pathfind(trg, f1, f2, f3) {
                 ];
                 for (e in testarr) {
                     if (testarr[e] > 0) {
-                        f1 = e + 1;
-                        if (f1 + 1 > testarr.length) {
-                            f1 = 0;
+                        targetX = e + 1;
+                        if (targetX + 1 > testarr.length) {
+                            targetX = 0;
                         }
                         if (e == 0 || e == 2 || e == 4 || e == 6) {
                             b1 = true;
                         } else {
-                            b1 = levz[testarr[e - 1]] == 0 || levz[testarr[f1]] == 0;
+                            b1 = levz[testarr[e - 1]] == 0 || levz[testarr[targetX]] == 0;
                         }
                         if (e == 0 || e == 2 || e == 4 || e == 6) {
                             pff1(testarr[e], 0);
@@ -5330,46 +5341,48 @@ function pathfind(trg, f1, f2, f3) {
             }
         }
         if (!nogo && (enf = getDistance(xenf, yenf)) > 0.1) {
-            var _loc6_ = xenf - trg.xp;
-            var _loc7_ = yenf - trg.yp;
+            var _loc6_ = xenf - entity.xp;
+            var _loc7_ = yenf - entity.yp;
             xenf = _loc6_;
             yenf = _loc7_;
             enf = getDistance(xenf, yenf);
             if (enf > 1) {
-                enf = (Math.min(enf * 0.1, 2) / enf) * f3;
-                trg.xbew *= 0.7;
-                trg.ybew *= 0.7;
-                trg.xbew += xenf * enf;
-                trg.ybew += yenf * enf;
+                enf = (Math.min(enf * 0.1, 2) / enf) * speedMultiplier;
+                entity.xbew *= 0.7;
+                entity.ybew *= 0.7;
+                entity.xbew += xenf * enf;
+                entity.ybew += yenf * enf;
             }
         } else {
             xenf = yenf = 0;
-            trg.xbew *= 0.5;
-            trg.ybew *= 0.5;
+            entity.xbew *= 0.5;
+            entity.ybew *= 0.5;
         }
     } else {
         xenf = yenf = 0;
-        trg.xbew *= 0.85;
-        trg.ybew *= 0.85;
+        entity.xbew *= 0.85;
+        entity.ybew *= 0.85;
     }
     gochar = false;
 }
 
-function mhity(f1, f2) {
-    if (f1 > 20 && f1 < 620 && f2 > 110 && f2 < 447) {
-        f33 = convertWorldToTileCoordinates(f1, f2);
-        f1 = getRoomType(f33);
-        if (f1 >= 1 && f1 != 3) {
+// Original: mhity(f1, f2)
+function checkHitY(x: number, y: number): boolean {
+    if (x > 20 && x < 620 && y > 110 && y < 447) {
+        f33 = convertWorldToTileCoordinates(x, y);
+        x = getRoomType(f33);
+        if (x >= 1 && x != 3) {
             return true;
         }
     }
     return true;
 }
 
-function mhitx(f1, f2) {
-    if (f1 > 20 && f1 < 620 && f2 > 110 && f2 < 447) {
-        f1 = getRoomType(convertWorldToTileCoordinates(f1, f2));
-        if (f1 > 1.8 && f1 != 3) {
+// Original: mhitx(f1, f2)
+function checkHitX(x: number, y: number): boolean {
+    if (x > 20 && x < 620 && y > 110 && y < 447) {
+        x = getRoomType(convertWorldToTileCoordinates(x, y));
+        if (x > 1.8 && x != 3) {
             return true;
         }
     }
@@ -5381,7 +5394,7 @@ function mhix() {
     for (i in hardx[v1]) {
         f3 = !f3;
         if (f3) {
-            if (mhity(f1 + hardx[v1][i], f2 + hardy[v1][i])) {
+            if (checkHitY(f1 + hardx[v1][i], f2 + hardy[v1][i])) {
                 f5 += hardx[v1][i];
                 f6 += hardy[v1][i];
             }
@@ -5392,7 +5405,7 @@ function mhix() {
         for (i in hardx[v1]) {
             f3 = !f3;
             if (f3) {
-                if (mhity(f1 + hardx[v1][i], f2 + hardy[v1][i])) {
+                if (checkHitY(f1 + hardx[v1][i], f2 + hardy[v1][i])) {
                     f5 += hardx[v1][i];
                     f6 += hardy[v1][i];
                 }
@@ -5401,8 +5414,9 @@ function mhix() {
     }
 }
 
-function shit(f1, f2) {
-    return blorz.hitTest(f1 + _X, f2 + _Y, true);
+// Original: shit(f1, f2)
+function checkCollisionWithLevelGeometry(x: number, y: number): boolean {
+    return blorz.hitTest(x + _X, y + _Y, true);
 }
 
 function mhit(f1, f2) {
@@ -5468,23 +5482,24 @@ function linecheckxx(f1, f2, f3, f4) {
     return _loc8_ > 0;
 }
 
-function linecheckx(f1, f2, f3, f4) {
-    var _loc5_ = f1 - f3;
-    var _loc6_ = f2 - f4;
-    var _loc4_ = getDistance(_loc5_, _loc6_);
+// Original: linecheckxx(f1, f2, f3, f4)
+function checkLineOfSightExtended(x1: number, y1: number, x2: number, y2: number): boolean {
+    let _loc5_: number = x1 - x2;
+    let _loc6_: number = y1 - y2;
+    let _loc4_: number = getDistance(_loc5_, _loc6_);
     f5 = 2.5;
     f6 = 5;
-    grox = convertWorldToTileCoordinates(f1, f2);
+    grox = convertWorldToTileCoordinates(x1, y1);
     if (_loc4_ > 0) {
         _loc5_ /= _loc4_;
         _loc6_ /= _loc4_;
         _loc5_ *= 10;
         _loc6_ *= 10;
-        var _loc1_ = 0;
+        let _loc1_: number = 0;
         while (_loc1_ < _loc4_) {
-            f1 -= _loc5_;
-            f2 -= _loc6_;
-            pff3(convertWorldToTileCoordinates(f1, f2));
+            x1 -= _loc5_;
+            y1 -= _loc6_;
+            pff3(convertWorldToTileCoordinates(x1, y1));
             _loc1_ += 10;
         }
     }
@@ -5492,11 +5507,12 @@ function linecheckx(f1, f2, f3, f4) {
     return f5 > 0;
 }
 
-function linecheck(f1, f2, f3, f4) {
-    grox = convertWorldToTileCoordinates(f1, f2);
-    var _loc5_ = f1 - f3;
-    var _loc6_ = f2 - f4;
-    var _loc4_ = getDistance(_loc5_, _loc6_);
+// Original: linecheck(f1, f2, f3, f4)
+function checkLineOfSight(x1: number, y1: number, x2: number, y2: number): boolean {
+    grox = convertWorldToTileCoordinates(x1, y1);
+    let _loc5_: number = x1 - x2;
+    let _loc6_: number = y1 - y2;
+    let _loc4_: number = getDistance(_loc5_, _loc6_);
     f5 = 2.5;
     f6 = 5;
     if (_loc4_ > 0) {
@@ -5504,14 +5520,14 @@ function linecheck(f1, f2, f3, f4) {
         _loc6_ /= _loc4_;
         _loc5_ *= 6;
         _loc6_ *= 6;
-        var _loc3_ = 0;
+        let _loc3_: number = 0;
         while (_loc3_ < _loc4_) {
-            f1 -= _loc5_;
-            f2 -= _loc6_;
-            pff3(convertWorldToTileCoordinates(f1 + f6, f2 + f6));
-            pff3(convertWorldToTileCoordinates(f1 - f6, f2 + f6));
-            pff3(convertWorldToTileCoordinates(f1 - f6, f2 - f6));
-            pff3(convertWorldToTileCoordinates(f1 + f6, f2 - f6));
+            x1 -= _loc5_;
+            y1 -= _loc6_;
+            pff3(convertWorldToTileCoordinates(x1 + f6, y1 + f6));
+            pff3(convertWorldToTileCoordinates(x1 - f6, y1 + f6));
+            pff3(convertWorldToTileCoordinates(x1 - f6, y1 - f6));
+            pff3(convertWorldToTileCoordinates(x1 + f6, y1 - f6));
             _loc3_ += 6;
         }
     }
@@ -5552,21 +5568,24 @@ function showStatusText(text: string): void {
     _root.hud.st1._visible = true;
 }
 
-function itn2(f1) {
-    if (f1 >= 18 || f1 == 16) {
+// Original: itn2(f1)
+function getEarlyItemRangeOffset(itemId: number): number {
+    if (itemId >= 18 || itemId == 16) {
         return 40;
     }
     return 32;
 }
 
-function itn(f1) {
-    if (f1 < 55) {
+// Original: itn(f1)
+function getLateItemRangeOffset(itemId: number): number {
+    if (itemId < 55) {
         return 32;
     }
     return 40;
 }
 
-function powerlevel() {
+// Original: powerlevel()
+function updatePlayerPowerup(): void {
     _root.beenlev[_root.lev] = 2;
     var _loc3_ = _root.fmode;
     if (!highs.empty) {
@@ -5944,16 +5963,16 @@ function powerlevel() {
                 highs.d.gotoAndStop(10);
                 _loc2_ = highs.d.d;
                 _loc2_.d.gotoAndPlay(1);
-                f11 = _root.it + itn2(_root.it);
+                f11 = _root.it + getEarlyItemRangeOffset(_root.it);
                 _loc2_.d.d.gotoAndStop(f1);
-                _root.it = highs.it - itn(highs.it);
+                _root.it = highs.it - getLateItemRangeOffset(highs.it);
                 highs.it = f11;
                 highs.empty = false;
                 highs.done = false;
                 highs.dones = false;
                 highs.d.d.d.d.gotoAndStop(highs.it);
             } else {
-                _root.it = highs.it - itn(highs.it);
+                _root.it = highs.it - getLateItemRangeOffset(highs.it);
             }
             if (_root.it != 11) {
                 _root.itc = _root.iter[_root.it];
@@ -5966,7 +5985,7 @@ function powerlevel() {
                 highs.d.gotoAndStop(11);
             }
             _root.cols.push(highs.it);
-            if (!itzz(highs.it) && !_this.satan) {
+            if (!notUpgrade(highs.it) && !_this.satan) {
                 _root.wiptz = _root.wiptz + 1;
             }
             if (
@@ -7027,7 +7046,7 @@ function balljunk(): void {
                             case 9:
                             case 10:
                             case 11:
-                                powerlevel();
+                                updatePlayerPowerup();
                         }
                         if (_this.satan && player.hp <= 0) {
                             player.d.gotoAndStop(plffff);
@@ -7037,7 +7056,7 @@ function balljunk(): void {
                     }
                     break;
                 case 10:
-                    powerlevel();
+                    updatePlayerPowerup();
                     if (_root.chamb == _root.lev && highs.empty) {
                         highs.dones = true;
                     }
@@ -7519,13 +7538,14 @@ function advanceAnimationFrame(targetSprite?: any, isLooped?: boolean): any {
     }
 }
 
-function walkframe(f1?) {
+// Original: walkframe(f1)
+function updateWalkingAnimation(speed?: number): void {
     trg.wf = true;
-    if (f1 <= 0) {
-        f1 = 1;
+    if (speed <= 0) {
+        speed = 1;
     }
     if (trg.d._currentframe < 3) {
-        if (getDistance(trg.xbew, trg.ybew) * f1 > 2) {
+        if (getDistance(trg.xbew, trg.ybew) * speed > 2) {
             trg.d.gotoAndStop(2);
         } else {
             trg.d.gotoAndStop(1);
@@ -7538,7 +7558,7 @@ function randrunc() {
         trg.d.gotoAndStop(1);
         if (trg.wait++ > 13) {
             if (
-                linecheck(player.xp, player.yp, trg.xp, trg.yp) &&
+                checkLineOfSight(player.xp, player.yp, trg.xp, trg.yp) &&
                 checkCollision(trg.xp, trg.yp, player.xp, player.yp, 100 + random(100))
             ) {
                 trg.xpp = player.xp + player.xbew * 5;
@@ -7559,7 +7579,7 @@ function randrunc() {
                 }
                 f3 = convertWorldToTileCoordinates(f1, f2);
                 if (getRoomType(f3) < 1) {
-                    f4 = linecheck(f1, f2, trg.xp, trg.yp);
+                    f4 = checkLineOfSight(f1, f2, trg.xp, trg.yp);
                     if (f4) {
                         trg.xpp = f1;
                         trg.ypp = f2;
@@ -7583,7 +7603,7 @@ function randrunc() {
         enf = 6 / enf;
         trg.xbew -= xenf * enf;
         trg.ybew -= yenf * enf;
-        sideflip(-xenf);
+        flipSpriteDirection(-xenf);
     }
     trg.xbew *= 0.6;
     trg.ybew *= 0.6;
@@ -7630,7 +7650,7 @@ function randrun() {
         trg.xbew -= xenf * enf;
         trg.ybew -= yenf * enf;
         if (trg.s != 68) {
-            sideflip(-xenf);
+            flipSpriteDirection(-xenf);
         }
     }
     trg.randd = fra;
@@ -7640,7 +7660,7 @@ function randruny() {
     if (trg.d.d._currentframe == 19) {
         _root.soundy("Meat_impacts_" + random(3) + ".wav");
         if (trg.eternal) {
-            quadf(trg.xp, trg.yp, 9);
+            fireQuadShot(trg.xp, trg.yp, 9);
             if (trg.alter == 2 && trg.s == 29) {
                 trg2 = createParticle("bloo", trg.xp, trg.yp);
                 trg2._yscale = trg2._xscale *= 3;
@@ -7772,26 +7792,28 @@ function randruny() {
         trg.xbew -= xenf * enf;
         trg.ybew -= yenf * enf;
         if (Math.abs(xenf) > 8) {
-            sideflip(-xenf);
+            flipSpriteDirection(-xenf);
         }
     }
 }
 
-function markhere(trg?) {
-    var _loc2_ = convertWorldToTileCoordinates(trg.xp, trg.yp);
-    if (trg != undefined) {
-        trg.til = _loc2_;
+// Original: markhere(trg)
+function markEntityPosition(entity?: any): void {
+    const tileIndex: number = convertWorldToTileCoordinates(entity.xp, entity.yp);
+    if (entity != undefined) {
+        entity.til = tileIndex;
     }
-    if (trg.mags.length < 2 || trg.s == 28) {
-        if (getRoomType(_loc2_) < 0.99) {
-            levz[_loc2_] = 0.9;
+    if (entity.mags.length < 2 || entity.s == 28) {
+        if (getRoomType(tileIndex) < 0.99) {
+            levz[tileIndex] = 0.9;
         }
     }
 }
 
-function borderliner(f0) {
-    if (f0 == undefined) {
-        f0 = 1;
+// Original: borderliner(f0)
+function navigateAlongWalls(strength: number): void {
+    if (strength == undefined) {
+        strength = 1;
     }
     f9 = [0, 1, 1, 0, 0, -1, -1, 0, 0, 1];
     if (trg.dir == undefined) {
@@ -7862,7 +7884,7 @@ function borderliner(f0) {
                 trg.xpp = undefined;
             }
         }
-        enf = f0 / enf;
+        enf = strength / enf;
         trg.xbew -= xenf * enf;
         trg.ybew -= yenf * enf;
         if (trg.xpp != undefined) {
@@ -7879,10 +7901,11 @@ function borderliner(f0) {
     }
 }
 
-function newxx() {
+// Original: newxx()
+function generateNewTarget(): void {
     f9 = [0, 1, 1, 0, 0, -1, -1, 0];
     f10 = 0;
-    var _loc1_ = trg.s == 41 || trg.s == 44 || trg.s == 93 || trg.s == 97;
+    const _loc1_: boolean = trg.s == 41 || trg.s == 44 || trg.s == 93 || trg.s == 97;
     while (trg.xpp == undefined && f10++ < 20) {
         trg.tiler = convertWorldToTileCoordinates(trg.xp, trg.yp);
         f8 = [];
@@ -7988,25 +8011,26 @@ function newxx() {
     }
 }
 
-function randrunx(f0) {
+// Original: randrunx(f0)
+function extendedRandomMovement(f0: number): void {
     if (
         trg.xpp == undefined ||
         random(4) == 0 ||
         (trg.xbew * trg.xbew + trg.ybew * trg.ybew < 1 && !trg.tried)
     ) {
-        newxx();
+        generateNewTarget();
     }
     if (trg.s == 19 || trg.s == 89) {
         trg.tried = false;
         if (trg.knownot) {
             trg.knownot = false;
             if (trg.xpp == undefined) {
-                newxx();
+                generateNewTarget();
             }
             if (!lofo) {
                 lofo = true;
                 if (trg.xpp == undefined) {
-                    newxx();
+                    generateNewTarget();
                 }
             }
         }
@@ -8051,64 +8075,68 @@ function randrunx(f0) {
             }
         }
         if (trg.xpp == undefined) {
-            newxx();
+            generateNewTarget();
         }
     }
 }
 
-function cirf(f1, f2, f3, f4, f5?) {
+// Original: cirf(f1, f2, f3, f4, f5)
+function spawnCircularProjectiles(f1: number, f2: number, f3: number, f4: number, f5?: number): void {
     if (f5 == undefined) {
         f5 = Math.random() * 3.141592653589793;
     }
+    let _loc5_: boolean = false;
     if (trg.eternal && trg.s == 102) {
         xxenf = f1 - player.xp;
         yyenf = f2 - player.yp;
-        var _loc5_ = true;
+        _loc5_ = true;
     }
-    var _loc4_ = (3.141592653589793 / f4) * 2;
-    var _loc1_ = 0;
+    const _loc4_: number = (3.141592653589793 / f4) * 2;
+    let _loc1_: number = 0;
     while (_loc1_ < f4) {
         f5 += _loc4_;
         f6 = Math.sin(f5) * f3;
         f7 = Math.cos(f5) * f3;
         if (f6 * xxenf + f7 * yyenf <= 1000 || !_loc5_) {
-            ffmo(f1, f2, 0, f6, f7, 0, 9, trg.s, true);
+            spawnEnemyProjectile(f1, f2, 0, f6, f7, 0, 9, trg.s, true);
         }
         _loc1_ = _loc1_ + 1;
     }
 }
 
-function quadf(f1, f2, f3, f4?) {
+// Original: quadf(f1, f2, f3, f4)
+function fireQuadShot(f1: number, f2: number, f3: number, f4?: boolean | number): void {
     gibb += 10;
     if (f4 != 2) {
-        ffmo(f1, f2, 0, f3, 0, 0, 9, trg.s, true);
-        ffmo(f1, f2, 0, -f3, 0, 0, 9, trg.s, true);
-        ffmo(f1, f2, 0, 0, f3, 0, 9, trg.s, true);
-        ffmo(f1, f2, 0, 0, -f3, 0, 9, trg.s, true);
+        spawnEnemyProjectile(f1, f2, 0, f3, 0, 0, 9, trg.s, true);
+        spawnEnemyProjectile(f1, f2, 0, -f3, 0, 0, 9, trg.s, true);
+        spawnEnemyProjectile(f1, f2, 0, 0, f3, 0, 9, trg.s, true);
+        spawnEnemyProjectile(f1, f2, 0, 0, -f3, 0, 9, trg.s, true);
     }
     f3 /= 1.4142135623730951;
     if (f4) {
-        ffmo(f1, f2, 0, f3, f3, 0, 9, trg.s, true);
-        ffmo(f1, f2, 0, -f3, f3, 0, 9, trg.s, true);
-        ffmo(f1, f2, 0, f3, -f3, 0, 9, trg.s, true);
-        ffmo(f1, f2, 0, -f3, -f3, 0, 9, trg.s, true);
+        spawnEnemyProjectile(f1, f2, 0, f3, f3, 0, 9, trg.s, true);
+        spawnEnemyProjectile(f1, f2, 0, -f3, f3, 0, 9, trg.s, true);
+        spawnEnemyProjectile(f1, f2, 0, f3, -f3, 0, 9, trg.s, true);
+        spawnEnemyProjectile(f1, f2, 0, -f3, -f3, 0, 9, trg.s, true);
     }
 }
 
-function ffmo(f1, f2, f3, f4, f5, f6, f7, f8?, huh?, huh2?) {
-    //no usage of huh? and huh2?
-    var _loc1_ = createProjectile(f1, f2, f3, f4, f5, f6, f7, trg.s);
+// Original: ffmo(f1, f2, f3, f4, f5, f6, f7, f8)
+function spawnEnemyProjectile(f1: number, f2: number, f3: number, f4: number, f5: number, f6: number, f7: number, f8?: any, huh1?: boolean, huh2?: boolean): any {
+    //no usage of huh1? and huh2?
+    const projectile: any = createProjectile(f1, f2, f3, f4, f5, f6, f7, trg.s);
     if (trg.spid > 0) {
-        _loc1_.xbew *= 0.5;
-        _loc1_.ybew *= 0.5;
+        projectile.xbew *= 0.5;
+        projectile.ybew *= 0.5;
     }
     if (trg.s == 68 && !altboss) {
-        setColorTransform(_loc1_, 0.6, 1.2, 0.2, 50, 60, 0);
+        setColorTransform(projectile, 0.6, 1.2, 0.2, 50, 60, 0);
     }
-    _loc1_.ggh = false;
+    projectile.ggh = false;
     if (!f8) {
-        _loc1_.dm = -3;
-        _loc1_.fd = 0.1;
+        projectile.dm = -3;
+        projectile.fd = 0.1;
     }
     if (
         (trg.s == 26 && trg.alter == 3) ||
@@ -8119,51 +8147,51 @@ function ffmo(f1, f2, f3, f4, f5, f6, f7, f8?, huh?, huh2?) {
         (((trg.s == 57 && trg.alter != 2) || trg.s == 32) && trg.specoz == 23) ||
         ((trg.s == 50 || trg.s == 90) && trg.eternal)
     ) {
-        _loc1_.hom = true;
-        setColorTransform(_loc1_, 0.8, 1, 2.5, 0, 0, 0);
-        _loc1_._xscale *= 1.5;
-        _loc1_._yscale *= 1.5;
+        projectile.hom = true;
+        setColorTransform(projectile, 0.8, 1, 2.5, 0, 0, 0);
+        projectile._xscale *= 1.5;
+        projectile._yscale *= 1.5;
         if (trg.s == 26 && trg.eternal) {
-            _loc1_.longshot = 2;
+            projectile.longshot = 2;
             trg.hp *= 0.99;
-            _loc1_.dm += 1;
+            projectile.dm += 1;
         }
         if (trg.s == 50 || trg.s == 90) {
-            _loc1_.longshot = true;
+            projectile.longshot = true;
             if (trg.s == 90) {
-                _loc1_.dm += 3;
+                projectile.dm += 3;
             }
         }
     } else if (trg.s == 102) {
-        var _loc2_ = new flash.geom.Transform(_loc1_);
+        var _loc2_ = new flash.geom.Transform(projectile);
         _loc2_.colorTransform = bull;
     }
     if (trg == mheart && trg.eternal) {
-        _loc1_._xscale *= 1.3;
-        _loc1_._yscale *= 1.3;
+        projectile._xscale *= 1.3;
+        projectile._yscale *= 1.3;
     }
     if (v3 && (trg.specoz != 23 || trg.s == 81)) {
-        _loc1_.dm -= 1;
-        _loc1_.xbew *= 1.2;
-        _loc1_.ybew *= 1.2;
-        _loc1_.xbew += trg.xbew * 0.4;
-        _loc1_.ybew += trg.ybew * 0.4;
+        projectile.dm -= 1;
+        projectile.xbew *= 1.2;
+        projectile.ybew *= 1.2;
+        projectile.xbew += trg.xbew * 0.4;
+        projectile.ybew += trg.ybew * 0.4;
     }
     if (trg.s == 79) {
-        _loc1_.dm += 3;
-        _loc1_.dy -= 15;
-        _loc1_.xbew *= 1.2;
-        _loc1_.ybew *= 1.2;
+        projectile.dm += 3;
+        projectile.dy -= 15;
+        projectile.xbew *= 1.2;
+        projectile.ybew *= 1.2;
     } else if (trg.s == 36) {
-        _loc1_.fd *= 0.4;
+        projectile.fd *= 0.4;
     } else if (trg.s == 42) {
-        _loc1_.dm -= 3;
-        _loc1_.dy = -10;
-        _loc1_.ggh = true;
-        _loc1_.nog = 15;
+        projectile.dm -= 3;
+        projectile.dy = -10;
+        projectile.ggh = true;
+        projectile.nog = 15;
     }
     if (trg.s == 59) {
-        _loc1_.dy += 15;
+        projectile.dy += 15;
     }
     if (
         trg.special ||
@@ -8175,93 +8203,93 @@ function ffmo(f1, f2, f3, f4, f5, f6, f7, f8?, huh?, huh2?) {
         trg.s == 76 ||
         trg.s == 84
     ) {
-        _loc1_.doub = true;
-        _loc1_.d._xscale = _loc1_.d._yscale = 140;
+        projectile.doub = true;
+        projectile.d._xscale = projectile.d._yscale = 140;
     }
     if (trg.s == 42 || trg.s == 38 || trg.s == 27) {
-        _loc1_.fd -= 0.05;
-        _loc1_.xbew *= 1.07;
-        _loc1_.ybew *= 1.07;
+        projectile.fd -= 0.05;
+        projectile.xbew *= 1.07;
+        projectile.ybew *= 1.07;
     }
     if (trg.s == 57) {
         if (trg.eternal) {
-            _loc1_.dm -= 2;
+            projectile.dm -= 2;
         } else {
-            _loc1_.dy += 15;
-            _loc1_.dm -= 0.2;
+            projectile.dy += 15;
+            projectile.dm -= 0.2;
         }
     }
     if (trg.s == 90) {
-        _loc1_.dy -= 20;
-        _loc1_.dm += 2;
+        projectile.dy -= 20;
+        projectile.dm += 2;
     }
     if (trg.s == 84) {
-        _loc1_.fd -= 0.07;
+        projectile.fd -= 0.07;
     }
     if (trg.s == 65) {
-        _loc1_.dy -= 45;
-        _loc1_.dm += 7;
+        projectile.dy -= 45;
+        projectile.dm += 7;
     }
     if (trg.s == 62) {
-        _loc1_.dy -= 50;
-        _loc1_.fd = 0.3;
-        _loc1_.xbew -= worm[1].xbew * 0.4;
-        _loc1_.ybew -= worm[1].ybew * 0.4;
+        projectile.dy -= 50;
+        projectile.fd = 0.3;
+        projectile.xbew -= worm[1].xbew * 0.4;
+        projectile.ybew -= worm[1].ybew * 0.4;
     }
     if ((trg.s == 100 && trg.specoz != 23) || (trg.s == 101 && altboss)) {
         if (trg.specoz == 18) {
-            setColorTransform(_loc1_, 0.2, 0.2, 0.2, 0, 0, 0);
+            setColorTransform(projectile, 0.2, 0.2, 0.2, 0, 0, 0);
         } else {
-            setColorTransform(_loc1_, 0.3, 0.8, 0.8, 140, 140, 140);
+            setColorTransform(projectile, 0.3, 0.8, 0.8, 140, 140, 140);
         }
     }
     if ((trg.s == 14 || trg.s == 26) && trg.eternal) {
-        _loc1_.dy -= 16;
+        projectile.dy -= 16;
     }
     if (trg.s == 14 && trg.alter == 3) {
-        _loc1_.dy += 16;
-        _loc1_.dm -= 3;
+        projectile.dy += 16;
+        projectile.dm -= 3;
     }
     if (trg.s == 26 && trg.alter == 3) {
         if (trg.eternal) {
-            _loc1_.dy += 6;
+            projectile.dy += 6;
         }
-        _loc1_.dy -= 10;
-        _loc1_.dm += 3;
+        projectile.dy -= 10;
+        projectile.dm += 3;
     }
     if (trg.s == 25) {
         if (trg.eternal) {
-            _loc1_.dy -= 7;
+            projectile.dy -= 7;
         }
     }
     if (trg.s == 31) {
-        _loc1_.dy = -14;
-        _loc1_.fd = 0;
+        projectile.dy = -14;
+        projectile.fd = 0;
     }
     if (trg.s == 55) {
         if (trg.eternal) {
-            _loc1_.dy -= 14;
+            projectile.dy -= 14;
         }
     }
     if (trg.s == 56) {
         if (trg.eternal) {
-            _loc1_.longshot = true;
-            _loc1_.xbew *= 1.2;
-            _loc1_.ybew *= 1.2;
+            projectile.longshot = true;
+            projectile.xbew *= 1.2;
+            projectile.ybew *= 1.2;
         }
     }
     if (trg.s == 59) {
         if (trg.eternal) {
-            _loc1_.longshot = true;
+            projectile.longshot = true;
         }
     }
     if ((trg.s == 86 || trg.s == 50 || trg.s == 90) && trg.eternal) {
-        _loc1_.etgreed = true;
+        projectile.etgreed = true;
     }
     if (trg.s == 77) {
-        _loc1_.breaker = true;
+        projectile.breaker = true;
     }
-    return _loc1_;
+    return projectile;
 }
 
 function shots(v1, v2, xenf, yenf, v3?) {
@@ -8289,7 +8317,7 @@ function shots(v1, v2, xenf, yenf, v3?) {
         while (z < _loc6_) {
             f6 = Math.sin(f5) * f3;
             f7 = Math.cos(f5) * f3;
-            trg2 = ffmo(v1, v2, 0, f6, f7, 0, 9);
+            trg2 = spawnEnemyProjectile(v1, v2, 0, f6, f7, 0, 9);
             f5 += 0.1;
             if (trg.s >= 49) {
                 trg2.dm -= 2;
@@ -8304,20 +8332,20 @@ function shots(v1, v2, xenf, yenf, v3?) {
             z++;
         }
     } else if (trg.s == 12 && trg.eternal) {
-        ffmo(v1, v2, 0, xenf, yenf, 0, 9);
-        ffmo(v1, v2, 0, yenf, -xenf, 0, 9);
-        ffmo(v1, v2, 0, -yenf, xenf, 0, 9);
-        ffmo(v1, v2, 0, (xenf + yenf) / 1.41, (yenf - xenf) / 1.41, 0, 9);
-        ffmo(v1, v2, 0, (xenf - yenf) / 1.41, (yenf + xenf) / 1.41, 0, 9);
+        spawnEnemyProjectile(v1, v2, 0, xenf, yenf, 0, 9);
+        spawnEnemyProjectile(v1, v2, 0, yenf, -xenf, 0, 9);
+        spawnEnemyProjectile(v1, v2, 0, -yenf, xenf, 0, 9);
+        spawnEnemyProjectile(v1, v2, 0, (xenf + yenf) / 1.41, (yenf - xenf) / 1.41, 0, 9);
+        spawnEnemyProjectile(v1, v2, 0, (xenf - yenf) / 1.41, (yenf + xenf) / 1.41, 0, 9);
     } else if (trg.s == 63 && trg.d.d._currentframe == 24) {
-        ffmo(v1, v2, 0, xenf * 0.8 - yenf * 0.25, yenf * 0.8 + xenf * 0.25, 0, 9);
-        ffmo(v1, v2, 0, xenf * 0.8 + yenf * 0.25, yenf * 0.8 - xenf * 0.25, 0, 9);
+        spawnEnemyProjectile(v1, v2, 0, xenf * 0.8 - yenf * 0.25, yenf * 0.8 + xenf * 0.25, 0, 9);
+        spawnEnemyProjectile(v1, v2, 0, xenf * 0.8 + yenf * 0.25, yenf * 0.8 - xenf * 0.25, 0, 9);
     } else if (
         (trg.s == 14 && trg.alter > 1) ||
         trg.s == 86 ||
         ((trg.s == 79 || trg.s == 31) && trg.eternal)
     ) {
-        trg3 = ffmo(
+        trg3 = spawnEnemyProjectile(
             v1,
             v2,
             0,
@@ -8326,7 +8354,7 @@ function shots(v1, v2, xenf, yenf, v3?) {
             0,
             9
         );
-        trg4 = ffmo(
+        trg4 = spawnEnemyProjectile(
             v1,
             v2,
             0,
@@ -8341,7 +8369,7 @@ function shots(v1, v2, xenf, yenf, v3?) {
             (trg.s == 86 && trg.eternal) ||
             trg.s == 79
         ) {
-            trg2 = ffmo(v1, v2, 0, xenf, yenf, 0, 9);
+            trg2 = spawnEnemyProjectile(v1, v2, 0, xenf, yenf, 0, 9);
             if (trg.s == 50) {
                 trg3.xbew -= yenf * 3;
                 trg3.ybew += xenf * 3;
@@ -8351,25 +8379,25 @@ function shots(v1, v2, xenf, yenf, v3?) {
         }
     } else if (v3 == 2) {
         if (trg.s == 50 && trg.eternal) {
-            ffmo(v1, v2, 0, xenf * 0.9 - yenf * 0.4, yenf * 0.9 + xenf * 0.4, 0, 9);
-            ffmo(v1, v2, 0, xenf * 0.9 + yenf * 0.4, yenf * 0.9 - xenf * 0.4, 0, 9);
-            ffmo(v1, v2, 0, xenf * 0.7 - yenf * 1, yenf * 0.7 + xenf * 1, 0, 9);
-            ffmo(v1, v2, 0, xenf * 0.7 + yenf * 1, yenf * 0.7 - xenf * 1, 0, 9);
+            spawnEnemyProjectile(v1, v2, 0, xenf * 0.9 - yenf * 0.4, yenf * 0.9 + xenf * 0.4, 0, 9);
+            spawnEnemyProjectile(v1, v2, 0, xenf * 0.9 + yenf * 0.4, yenf * 0.9 - xenf * 0.4, 0, 9);
+            spawnEnemyProjectile(v1, v2, 0, xenf * 0.7 - yenf * 1, yenf * 0.7 + xenf * 1, 0, 9);
+            spawnEnemyProjectile(v1, v2, 0, xenf * 0.7 + yenf * 1, yenf * 0.7 - xenf * 1, 0, 9);
         } else {
-            ffmo(v1, v2, 0, xenf * 0.9 - yenf * 0.1, yenf * 0.9 + xenf * 0.1, 0, 9);
-            ffmo(v1, v2, 0, xenf * 0.9 + yenf * 0.1, yenf * 0.9 - xenf * 0.1, 0, 9);
-            ffmo(v1, v2, 0, xenf * 0.7 - yenf * 0.3, yenf * 0.7 + xenf * 0.3, 0, 9);
-            ffmo(v1, v2, 0, xenf * 0.7 + yenf * 0.3, yenf * 0.7 - xenf * 0.3, 0, 9);
+            spawnEnemyProjectile(v1, v2, 0, xenf * 0.9 - yenf * 0.1, yenf * 0.9 + xenf * 0.1, 0, 9);
+            spawnEnemyProjectile(v1, v2, 0, xenf * 0.9 + yenf * 0.1, yenf * 0.9 - xenf * 0.1, 0, 9);
+            spawnEnemyProjectile(v1, v2, 0, xenf * 0.7 - yenf * 0.3, yenf * 0.7 + xenf * 0.3, 0, 9);
+            spawnEnemyProjectile(v1, v2, 0, xenf * 0.7 + yenf * 0.3, yenf * 0.7 - xenf * 0.3, 0, 9);
         }
     } else {
-        trg2 = ffmo(v1, v2, 0, xenf, yenf, 0, 9);
+        trg2 = spawnEnemyProjectile(v1, v2, 0, xenf, yenf, 0, 9);
         if (v3 || (trg.s == 38 && trg.alter == 2)) {
-            ffmo(v1, v2, 0, xenf * 0.8 - yenf * 0.2, yenf * 0.8 + xenf * 0.2, 0, 9);
-            ffmo(v1, v2, 0, xenf * 0.8 + yenf * 0.2, yenf * 0.8 - xenf * 0.2, 0, 9);
+            spawnEnemyProjectile(v1, v2, 0, xenf * 0.8 - yenf * 0.2, yenf * 0.8 + xenf * 0.2, 0, 9);
+            spawnEnemyProjectile(v1, v2, 0, xenf * 0.8 + yenf * 0.2, yenf * 0.8 - xenf * 0.2, 0, 9);
         }
         if (trg.s == 27 && trg.eternal) {
-            ffmo(v1, v2, 0, xenf * 0.9 - yenf * 0.1, yenf * 0.9 + xenf * 0.1, 0, 9);
-            ffmo(v1, v2, 0, xenf * 0.9 + yenf * 0.1, yenf * 0.9 - xenf * 0.1, 0, 9);
+            spawnEnemyProjectile(v1, v2, 0, xenf * 0.9 - yenf * 0.1, yenf * 0.9 + xenf * 0.1, 0, 9);
+            spawnEnemyProjectile(v1, v2, 0, xenf * 0.9 + yenf * 0.1, yenf * 0.9 - xenf * 0.1, 0, 9);
         }
         if (
             trg.s == 36 ||
@@ -8377,7 +8405,7 @@ function shots(v1, v2, xenf, yenf, v3?) {
             (trg.s == 27 && trg.alter == 2) ||
             trg.s == 84
         ) {
-            ffmo(
+            spawnEnemyProjectile(
                 v1,
                 v2,
                 0,
@@ -8386,7 +8414,7 @@ function shots(v1, v2, xenf, yenf, v3?) {
                 0,
                 9
             );
-            ffmo(
+            spawnEnemyProjectile(
                 v1,
                 v2,
                 0,
@@ -8430,9 +8458,9 @@ function firemode(siz, f1, f2?) {
                         trg.d.gotoAndStop(2);
                     } else {
                         if (trg.s == 86) {
-                            sideflip(-xenf);
+                            flipSpriteDirection(-xenf);
                         } else {
-                            sideflip(xenf);
+                            flipSpriteDirection(xenf);
                         }
                         if (trg.s != 32) {
                             if (trg.s == 79) {
@@ -8513,7 +8541,7 @@ function firemode(siz, f1, f2?) {
                 f2 = fra / 2;
                 xenf -= Math.sin(f2) * yenf * 0.1;
                 yenf += Math.cos(f2) * f1 * 0.1;
-                trg2 = ffmo(
+                trg2 = spawnEnemyProjectile(
                     trg.xp - xenf * 0.5,
                     trg.yp - yenf * 0.5 + 5,
                     0,
@@ -8549,9 +8577,9 @@ function firemode(siz, f1, f2?) {
             enf = checkCollision(trg.xp, trg.yp, player.xp, player.yp, 1000);
         }
         if (trg.s == 86) {
-            sideflip(-xenf);
+            flipSpriteDirection(-xenf);
         } else {
-            sideflip(xenf);
+            flipSpriteDirection(xenf);
         }
         trg.fir = undefined;
         enf = getDistance(xenf, yenf);
@@ -8599,7 +8627,7 @@ function firewalk() {
         if (trg.s == 19) {
             enf *= 1.5;
             if (
-                !linecheckx(
+                !checkLineOfSightExtended(
                     trg.xp - trg.xbew * 5,
                     trg.yp - trg.ybew * 5,
                     trg.xp + trg.xbew * 10,
@@ -8657,10 +8685,11 @@ function firewalk() {
     trg.fire--;
 }
 
-function angstfind(v1?, v2?) {
-    if (v1 == undefined) {
-        v1 = player.xp;
-        v2 = player.yp;
+// Original: angstfind(v1, v2)
+function findTarget(targetX?: number, targetY?: number): void {
+    if (targetX == undefined) {
+        targetX = player.xp;
+        targetY = player.yp;
     }
     if (trg.failfind <= 0) {
         trg.failfind = 0;
@@ -8668,7 +8697,7 @@ function angstfind(v1?, v2?) {
     trg.failfind = Math.min(trg.failfind, 20);
     startTimer(8);
     if ((trg.e + fra) % 14 == 1) {
-        f13 = linecheckx(trg.xp, trg.yp, v1, v2);
+        f13 = checkLineOfSightExtended(trg.xp, trg.yp, targetX, targetY);
         if (f13) {
             siz = 250;
             if (trris + 45 + random(100) <= fra && random(4) == 0 && trg.s < 90) {
@@ -8678,7 +8707,7 @@ function angstfind(v1?, v2?) {
         } else {
             siz = 170;
         }
-        if (checkCollision(trg.xp, trg.yp, v1, v2, siz)) {
+        if (checkCollision(trg.xp, trg.yp, targetX, targetY, siz)) {
             if (trg.needmove <= 0) {
                 trg.xpp = trg.ypp = undefined;
             }
@@ -8695,7 +8724,7 @@ function angstfind(v1?, v2?) {
             trg.rpx = undefined;
             trg.xpp = undefined;
         }
-        f0 = checkCollision(trg.xp, trg.yp, v1, v2, 500);
+        f0 = checkCollision(trg.xp, trg.yp, targetX, targetY, 500);
         if (trg.xpp == undefined || trg.failfind > 20) {
             if (f0 > 0) {
                 f1 = 1.5 / f0;
@@ -8727,15 +8756,15 @@ function angstfind(v1?, v2?) {
                     convertTileToWorldCoordinates(f1);
                     trg.checked[f1] = true;
                     if (!mhit(xenf, yenf)) {
-                        if (linecheckx(trg.xp, trg.yp, xenf, yenf)) {
-                            f13 = !linecheckx(v1, v2, xenf, yenf);
+                        if (checkLineOfSightExtended(trg.xp, trg.yp, xenf, yenf)) {
+                            f13 = !checkLineOfSightExtended(targetX, targetY, xenf, yenf);
                             if (f13 || trg.failfind >= 20) {
                                 f7 = xenf;
                                 f8 = yenf;
                                 if (
                                     checkCollision(
-                                        v1,
-                                        v2,
+                                        targetX,
+                                        targetY,
                                         trg.xpp,
                                         trg.ypp,
                                         100 + f0 + f10 / 3 + trg.failfind - trg.noco * 10
@@ -8761,9 +8790,9 @@ function angstfind(v1?, v2?) {
         }
         if (trg.xpp != undefined) {
             if ((trg.e + fra) % 10 == 1) {
-                f13 = checkCollision(v1, v2, trg.xpp, trg.ypp, 200);
+                f13 = checkCollision(targetX, targetY, trg.xpp, trg.ypp, 200);
                 if (
-                    (linecheckx(v1, v2, trg.xpp, trg.ypp) && trg.failfind < 20) ||
+                    (checkLineOfSightExtended(targetX, targetY, trg.xpp, trg.ypp) && trg.failfind < 20) ||
                     f13 ||
                     Math.abs(xenf) < 20 ||
                     Math.abs(yenf) < 20
@@ -8771,7 +8800,7 @@ function angstfind(v1?, v2?) {
                     trg.xpp = trg.ypp = undefined;
                 }
             }
-            pathfind(trg, trg.xpp, trg.ypp, 1.3);
+            findPath(trg, trg.xpp, trg.ypp, 1.3);
         }
     } else {
         trg.failfind *= 0.9;
@@ -8855,7 +8884,7 @@ function firecheck(trg) {
             trg == player &&
             (!trg.flyby || _root.lev == _root.sac || _root.lev == _root.cus)
         ) {
-            if (shit(trg.xp, trg.yp)) {
+            if (checkCollisionWithLevelGeometry(trg.xp, trg.yp)) {
                 if (blackout == 2 || spidboss) {
                     if (trg == player) {
                         playslow = 10;
@@ -9035,10 +9064,11 @@ function createExplosionEffect(tileIndex: number, xpos?: number, ypos?: number):
     fixWallConnections();
 }
 
-function gosplash() {
+// Original: gosplash()
+function playSplashEffect(): void {
     if (trg.s == 24) {
         if (trg.eternal) {
-            quadf(trg.xp, trg.yp, 8, 1);
+            fireQuadShot(trg.xp, trg.yp, 8, 1);
         }
     }
     if (
@@ -9053,7 +9083,7 @@ function gosplash() {
             trg2 = createParticle("bloo", trg.xp, trg.yp);
             trg2._xscale *= 3;
             trg2._yscale = trg2._xscale;
-            splater(trg.xp, trg.yp, trg.spl + 1 + random(10), Math.random() + 0.8);
+            createBloodSplatter(trg.xp, trg.yp, trg.spl + 1 + random(10), Math.random() + 0.8);
             if (trg.pois != 4) {
                 if (blackout != 2) {
                     setColorTransform(trg2, 0, 2, 0, 0, 40, 0);
@@ -9239,7 +9269,7 @@ function gosplash() {
             if (blackout == 2) {
                 z = 0;
                 while (z < 5) {
-                    splater(
+                    createBloodSplatter(
                         trg.xp + crand(),
                         trg.yp + crand(random(10)),
                         1 + random(10),
@@ -9265,7 +9295,7 @@ function gosplash() {
                     z = 0;
                     while (z < 20) {
                         f1 = z * 3;
-                        splater(
+                        createBloodSplatter(
                             trg.xp + crand(f1),
                             trg.yp + crand(f1),
                             31 + random(10),
@@ -10211,7 +10241,7 @@ function updatePlayerFire(): void {
                     _loc2_.xp = player.xp;
                     _loc2_.yp = player.yp;
                     if (Math.abs(xenf) > Math.abs(yenf)) {
-                        sideflip(xenf, _loc2_.d);
+                        flipSpriteDirection(xenf, _loc2_.d);
                         _loc2_.d.gotoAndStop(35);
                     } else if (yenf < 0) {
                         _loc2_.d.gotoAndStop(36);
@@ -10365,7 +10395,7 @@ function chaa(f9?) {
         if (f9 == 2) {
             f3 = true;
         } else if (!f9) {
-            f3 = linecheck(f3, f4, f1, f2);
+            f3 = checkLineOfSight(f3, f4, f1, f2);
         } else {
             f3 = linecheckxx(f3, f4, f1, f2);
         }
@@ -10453,7 +10483,7 @@ function friends() {
             }
         } else if (trg.eye) {
             if (random(4) == 0) {
-                splater(
+                createBloodSplatter(
                     trg.xp,
                     trg.yp,
                     trg.spl + 1 + random(10),
@@ -10477,7 +10507,7 @@ function friends() {
                 trg.trg2 = player;
             }
             if (random(4) == 0 && !trg.bird && !trg.bluf && !trg.bum && !trg.dad) {
-                splater(
+                createBloodSplatter(
                     trg.xp,
                     trg.yp,
                     trg.spl + 1 + random(10),
@@ -10639,14 +10669,14 @@ function friends() {
                         trg.xbew += xenf;
                         trg.ybew += yenf;
                     } else {
-                        pathfind(trg, trg2.xp, trg2.yp, trg.sp);
+                        findPath(trg, trg2.xp, trg2.yp, trg.sp);
                     }
                 }
             }
             if (!trg.bluf && !trg.dad && trg.d._currentframe != 135) {
                 if (getDistance(trg.xbew, trg.ybew) > 2) {
                     trg.d.d.gotoAndStop(2);
-                    sideflip(trg.xbew, trg);
+                    flipSpriteDirection(trg.xbew, trg);
                     trg.d.d.he.gotoAndStop(5);
                 } else {
                     trg.d.d.he.gotoAndStop(1);
@@ -10770,7 +10800,7 @@ function friends() {
                 trg.ybew *= 0.8;
             }
         } else if (trg.maga && trg.charge) {
-            if (mhity(trg.xp + trg.xbew, trg.yp + trg.ybew) || trg.charge > 1) {
+            if (checkHitY(trg.xp + trg.xbew, trg.yp + trg.ybew) || trg.charge > 1) {
                 damageTile(convertWorldToTileCoordinates(trg.xp, trg.yp));
                 if (trg.charge > 1) {
                     trg.charge = trg.charge + 1;
@@ -10942,7 +10972,7 @@ function friends() {
                 if (trg.d._currentframe != 135) {
                     trg.d.gotoAndStop(134);
                 }
-                sideflip(trg2.xp - trg.xp);
+                flipSpriteDirection(trg2.xp - trg.xp);
             } else if (trg.hol) {
                 trg.d.gotoAndStop(126);
             } else if (trg.maga) {
@@ -11001,7 +11031,7 @@ function friends() {
                                 trg2 = projectileClips[z];
                                 if (trg2.s > 9 && !trg2.dones) {
                                     if (checkCollision(trg2.xp, trg2.yp, trg.xp, trg.yp, 150)) {
-                                        if (linecheckx(trg.xp, trg.yp, trg2.xp, trg2.yp)) {
+                                        if (checkLineOfSightExtended(trg.xp, trg.yp, trg2.xp, trg2.yp)) {
                                             if (trg2.bh) {
                                                 f2 = trg2;
                                             }
@@ -11018,7 +11048,7 @@ function friends() {
                                 trg2 = trg.trg2 = undefined;
                             }
                             if (!f2) {
-                                if (!linecheckx(trg.xp, trg.yp, trg2.xp, trg2.yp)) {
+                                if (!checkLineOfSightExtended(trg.xp, trg.yp, trg2.xp, trg2.yp)) {
                                     trg2 = trg.trg2 = undefined;
                                 }
                             }
@@ -11146,7 +11176,8 @@ function handleSlotMachineResult(result: number): void {
     }
 }
 
-function actions2() {
+// Original: actions2()
+function processAllEntityActions(): void {
     f2 = 0;
     f3 = fra % 3;
     if (f3 == 0) {
@@ -11412,7 +11443,7 @@ function actions2() {
 }
 
 // Original: deathscripts()
-function deathscripts(): void {
+function handleEntityDeath(): void {
     if (
         (((hps[trg.s] / mux > 199 &&
                     !trg.goner &&
@@ -11480,7 +11511,7 @@ function deathscripts(): void {
         flyshut++;
     }
     if (trg.gosplash) {
-        gosplash();
+        playSplashEffect();
         trg.gosplash = false;
     }
     if (
@@ -11500,7 +11531,7 @@ function deathscripts(): void {
                 green(false, true);
             }
         } else {
-            quadf(
+            fireQuadShot(
                 trg.xp,
                 trg.yp,
                 8,
@@ -11725,7 +11756,7 @@ function deathscripts(): void {
             applySpecialEffect(trg2[z]);
         }
         if (trg.eternal) {
-            quadf(trg.xp, trg.yp, 10, trg.alter == 2);
+            fireQuadShot(trg.xp, trg.yp, 10, trg.alter == 2);
         }
     }
     if (trg.s == 76 && trg.dones && !trg.wtfst) {
@@ -11778,7 +11809,7 @@ function deathscripts(): void {
                     boil(false, 2);
                     boil(false, 2);
                 } else {
-                    quadf(trg.xp, trg.yp, 8.5, 1);
+                    fireQuadShot(trg.xp, trg.yp, 8.5, 1);
                 }
             }
         }
@@ -11889,7 +11920,7 @@ function deathscripts(): void {
     }
     if (trg.s == 79 && altboss && !trg.wtfst && trg.dones) {
         trg.wtfst = true;
-        quadf(trg.xp, trg.yp, 10, true);
+        fireQuadShot(trg.xp, trg.yp, 10, true);
     }
     if ((trg.s == 80 || trg.s == 94) && !trg.wtfst && trg.dones && trg.hp > -20) {
         trg.wtfst = true;
@@ -11949,7 +11980,7 @@ function deathscripts(): void {
 }
 
 // Original: deathscripts2()
-function deathscripts2(): void {
+function handleBossDeath(): void {
     if (trg.s == 2 && trg.dones && !trg.wtfst) {
         trg.wtfst = true;
         if (ups[104] && !trg.ba) {
@@ -11960,7 +11991,7 @@ function deathscripts2(): void {
                 enf = getDistance(xenf, yenf);
                 f1 = trg.xp;
                 f2 = trg.yp;
-                if (mhity(f1, f2)) {
+                if (checkHitY(f1, f2)) {
                     trg.xp = f1 = trg.xpp;
                     trg.yp = f2 = trg.ypp;
                 }
@@ -12012,11 +12043,11 @@ function deathscripts2(): void {
         } else {
             f1 = 6;
         }
-        cirf(trg.xp, trg.yp, 8, f1);
+        spawnCircularProjectiles(trg.xp, trg.yp, 8, f1);
     }
     if (trg.s == 55 && trg.eternal && trg.dones && !trg.dobol) {
         trg.dobol = true;
-        quadf(trg.xp, trg.yp, 8, true);
+        fireQuadShot(trg.xp, trg.yp, 8, true);
     }
     if ((trg.s == 16 || trg.s == 22 || trg.s == 67) && trg.dones && !trg.wtfst) {
         if (trg.s == 22 && trg.specoz == 23) {
@@ -12027,7 +12058,7 @@ function deathscripts2(): void {
             trg = handleBombFailure(trg.xp, trg.yp);
             trg.mug = true;
         } else if (trg.alter == 2) {
-            quadf(trg.xp, trg.yp, 8, 2);
+            fireQuadShot(trg.xp, trg.yp, 8, 2);
             trg2 = spawnEntity(trg.xp, trg.yp, 0, 5.04);
             trg2.col = 3;
         } else if (trg.hp > -20) {
@@ -12108,7 +12139,8 @@ function deathscripts2(): void {
     }
 }
 
-function alive() {
+// Original: alive()
+function processActiveEntities(): void {
     if (fra - trg.fra < 10 && !trg.dones && trg.s != 84 && trg.s != 101) {
         trg.d.gotoAndStop(4);
     }
@@ -12219,7 +12251,7 @@ function alive() {
                             } else {
                                 f1 = 0;
                             }
-                            quadf(trg.xp, trg.yp, 8, f1);
+                            fireQuadShot(trg.xp, trg.yp, 8, f1);
                         }
                     }
                     trg.outway = fra2;
@@ -12339,7 +12371,7 @@ function alive() {
                     }
             }
         } else {
-            smarts();
+            updateAllEntityBehaviors();
         }
     }
     if (trg.s == 30) {
@@ -12485,7 +12517,7 @@ function aicol() {
                 if (trg.col == 41 && f1 > 2 && f1 < 24) {
                     f1 = 0.65 - ups[46];
                     if (Math.random() < f1) {
-                        f1 = [
+                        const fortunes: string[] = [
                             "Look to la Luna",
                             "Don't Leave The House Today",
                             "We will all die one day",
@@ -12503,7 +12535,7 @@ function aicol() {
                             "Steven lives",
                             "Bring him the photo",
                         ];
-                        showStatusText(f1[random(f1.length)]);
+                        showStatusText(fortunes[random(fortunes.length)]);
                     } else if (random(20) == 0) {
                         chestopen = trg;
                         trg.d.d.gotoAndStop(30);
@@ -12652,7 +12684,7 @@ function aicol() {
                                     f15 = 0;
                                 }
                                 if (
-                                    linecheckx(
+                                    checkLineOfSightExtended(
                                         trg.xp + f14,
                                         trg.yp + f15,
                                         trg.xp + xenf * 7,
@@ -12795,11 +12827,12 @@ function aicol() {
     }
 }
 
-function aistuff() {
+// Original: aistuff()
+function processAI(): void {
     for (e in projectileClips) {
         trg = projectileClips[e];
-        deathscripts();
-        deathscripts2();
+        handleEntityDeath();
+        handleBossDeath();
         if (trg.uncol < fra) {
             applySpecialEffect(trg);
         }
@@ -12874,7 +12907,7 @@ function aistuff() {
                                     }
                                     if (trg.trg2 != undefined) {
                                         trg2 = trg.trg2;
-                                        if (linecheckx(trg.xp, trg.yp, trg2.xp, trg2.yp)) {
+                                        if (checkLineOfSightExtended(trg.xp, trg.yp, trg2.xp, trg2.yp)) {
                                             trg.gonuts = true;
                                         } else {
                                             trg.trg2 = undefined;
@@ -12884,7 +12917,7 @@ function aistuff() {
                             } else if (trg.trg2 != undefined) {
                                 trg2 = trg.trg2;
                                 if ((fra + trg.e) % 5 == 0) {
-                                    if (linecheckx(trg.xp, trg.yp, trg2.xp, trg2.yp)) {
+                                    if (checkLineOfSightExtended(trg.xp, trg.yp, trg2.xp, trg2.yp)) {
                                         trg.gonuts = true;
                                     }
                                 }
@@ -12951,7 +12984,7 @@ function aistuff() {
                             }
                         }
                         if (random(16) == 0 || trg.spll) {
-                            splater(
+                            createBloodSplatter(
                                 trg.xp,
                                 trg.yp,
                                 trg.spl + 1 + random(10),
@@ -13003,7 +13036,7 @@ function aistuff() {
                     case 8:
                         if (trg.s == 8) {
                             if (random(3) == 0) {
-                                splater(
+                                createBloodSplatter(
                                     trg.xp,
                                     trg.yp,
                                     trg.spl + 1 + random(10),
@@ -13160,7 +13193,7 @@ function aistuff() {
                                         }
                                         if (trg.trg2 != undefined) {
                                             trg2 = trg.trg2;
-                                            if (linecheckx(trg.xp, trg.yp, trg2.xp, trg2.yp)) {
+                                            if (checkLineOfSightExtended(trg.xp, trg.yp, trg2.xp, trg2.yp)) {
                                                 trg.gonuts = true;
                                             }
                                         }
@@ -13168,7 +13201,7 @@ function aistuff() {
                                 } else if (trg.trg2 != undefined) {
                                     trg2 = trg.trg2;
                                     if ((fra + trg.e) % 5 == 0) {
-                                        if (linecheckx(trg.xp, trg.yp, trg2.xp, trg2.yp)) {
+                                        if (checkLineOfSightExtended(trg.xp, trg.yp, trg2.xp, trg2.yp)) {
                                             trg.gonuts = true;
                                         }
                                     }
@@ -13210,14 +13243,15 @@ function aistuff() {
                 }
             }
         } else {
-            alive();
+            processActiveEntities();
         }
     }
 }
 
-function actions1() {
-    actions2();
-    aistuff();
+// Original: actions1()
+function updateGameEntities(): void {
+    processAllEntityActions();
+    processAI();
     while (refl.length > 0) {
         trg2 = createProjectile(refl.pop(), refl.pop(), 0, refl.pop(), refl.pop(), 0, 9, 27);
         trg2.dy = -20;
@@ -13253,6 +13287,7 @@ function actions1() {
     }
 }
 
+// Original: green(f11, f12)
 function green(f11?, f12?) {
     trg2 = bossfire(1, !f12, 10);
     trg2.bomb = true;
@@ -13311,8 +13346,9 @@ function green(f11?, f12?) {
     return trg2;
 }
 
-function boiler(f1, f2?) {
-    if (f1) {
+// Original: boiler(f1, f2)
+function updateBoilerBehavior(setAppearance: boolean, slowAttack?: boolean): void {
+    if (setAppearance) {
         if ((!trg.boss && trg.s != 88) || random(50) == 0) {
             if (
                 (checkCollision(trg.xp, trg.yp, player.xp, player.yp, 230) ||
@@ -13327,7 +13363,7 @@ function boiler(f1, f2?) {
             trg.d.d.gotoAndStop(1);
         }
         trg.fire = 0;
-    } else if (f2) {
+    } else if (slowAttack) {
         if (trg.fire++ == 10) {
             if (
                 checkCollision(
@@ -13353,7 +13389,7 @@ function boiler(f1, f2?) {
     }
 }
 
-function boil(f1?, f2?) {
+function boil(f1?, f2?): void {
     if (
         ((trg.alter == 3 ||
                 trg.c2 ||
@@ -13429,7 +13465,8 @@ function boil(f1?, f2?) {
     }
 }
 
-function braz() {
+// Original: braz()
+function handleAreaDamage(): void {
     for (z of projectileClips) {
         trg2 = projectileClips[z];
         if (trg2.s > 10 && trg2 != trg) {
@@ -13440,7 +13477,7 @@ function braz() {
     }
 }
 
-function spih() {
+function spih(): void {
     var _loc1_ = spawnEntity(player.xp, player.yp, 50, 29.3);
     _loc1_.fra = 0;
     _loc1_.xpp = _loc1_.xp;
@@ -13453,7 +13490,8 @@ function spih() {
     _loc1_.f1 = 100;
 }
 
-function bawssmart2() {
+// Original: bawssmart2()
+function updateStandardEnemyBehaviors(): void {
     switch (trg.s) {
         case 94:
         case 85:
@@ -13553,7 +13591,7 @@ function bawssmart2() {
             if (trg.d._currentframe == 13 && trg.d.d._currentframe == 17) {
                 if (trg.eternal && Math.abs(trg._xscale) > 120) {
                     _root.soundy("ForestBoss_Stomps" + random(3) + ".wav", 80);
-                    cirf(
+                    spawnCircularProjectiles(
                         trg.xp,
                         trg.yp + 20,
                         8,
@@ -13602,7 +13640,7 @@ function bawssmart2() {
                     break;
                 case 11:
                     if (trg.d.d._currentframe == 21) {
-                        quadf(trg.xp, trg.yp, 8);
+                        fireQuadShot(trg.xp, trg.yp, 8);
                         _root.soundy("heartout.wav");
                     }
                     break;
@@ -13638,7 +13676,7 @@ function bawssmart2() {
                         trg.ybew *= 0.9;
                     }
                     if (trg.d.d._currentframe == 23 && trg.d._currentframe == 8) {
-                        quadf(trg.xp, trg.yp, 10, random(2) * 2);
+                        fireQuadShot(trg.xp, trg.yp, 10, random(2) * 2);
                     }
                     break;
                 case 1:
@@ -13668,13 +13706,13 @@ function bawssmart2() {
                             (trg.d.d._currentframe == 26 || trg.d.d._currentframe == 29) &&
                             fra > 60
                         ) {
-                            quadf(trg.xp, trg.yp + 25, 10, true);
+                            fireQuadShot(trg.xp, trg.yp + 25, 10, true);
                         }
                     }
                 case 3:
                     if (trg.d.d._currentframe == 23 && fra > 60) {
                         if (trg.d._currentframe == 5) {
-                            quadf(trg.xp, trg.yp + 25, 10, true);
+                            fireQuadShot(trg.xp, trg.yp + 25, 10, true);
                         } else {
                             bossfire(8, false);
                             if (trg.eternal) {
@@ -13842,10 +13880,10 @@ function bawssmart2() {
                         }
                     }
                     if (trg.d.d._currentframe == 30) {
-                        quadf(trg.xp, trg.yp, 10, true);
+                        fireQuadShot(trg.xp, trg.yp, 10, true);
                     }
             }
-            sideflip(100);
+            flipSpriteDirection(100);
     }
 }
 
@@ -13866,7 +13904,7 @@ function splush() {
         xenf = yenf;
         yenf = -_loc2_;
         if (xenf * xxenf + yenf * yyenf <= 1000) {
-            trg2 = ffmo(
+            trg2 = spawnEnemyProjectile(
                 trg.xp + xenf * 2,
                 trg.yp + yenf * 2,
                 0,
@@ -13884,7 +13922,8 @@ function splush() {
     noho = false;
 }
 
-function bawssmart() {
+// Original: bawssmart()
+function updateSimpleEnemyBehaviors(): void {
     switch (trg.s) {
         case 32:
             constrainToScreenBounds();
@@ -13892,11 +13931,11 @@ function bawssmart() {
                 firemode(300, 5);
             }
             if (fra % 3 == 0) {
-                splater(trg.xp, trg.yp + 8, 1 + random(10), Math.random() * 0.5 + 0.2);
+                createBloodSplatter(trg.xp, trg.yp + 8, 1 + random(10), Math.random() * 0.5 + 0.2);
             }
-            markhere(trg);
+            markEntityPosition(trg);
             if (!trg.gogo) {
-                randrunx(0.75);
+                extendedRandomMovement(0.75);
                 trg.xbew *= 0.85;
                 trg.ybew *= 0.8;
                 if ((fra + trg.e) % 7 == 0) {
@@ -13946,12 +13985,12 @@ function bawssmart() {
             trg.ybew *= 0.75;
             if (trg.d._currentframe < 3) {
                 randrun();
-                walkframe(2);
-                sideflip(trg.xbew);
-                boiler(true);
+                updateWalkingAnimation(2);
+                flipSpriteDirection(trg.xbew);
+                updateBoilerBehavior(true);
             } else {
                 advanceAnimationFrame();
-                boiler(false, true);
+                updateBoilerBehavior(false, true);
             }
             break;
         case 30:
@@ -13960,7 +13999,7 @@ function bawssmart() {
             f1 = trg.hp / hps[trg.s];
             if (f1 >= 1) {
                 advanceAnimationFrame();
-                boiler(trg.d._currentframe == 1, trg.d._currentframe == 5);
+                updateBoilerBehavior(trg.d._currentframe == 1, trg.d._currentframe == 5);
                 if (f1 < 1.2) {
                     trg.hp += 0.06 / (1 + fra * 0.001);
                 }
@@ -13999,7 +14038,7 @@ function bawssmart() {
                     trg.hpp = trg.hpp + 1;
                     trg.d.b.sh._yscale = trg.d.b.d._yscale + 30;
                     trg.d.b.sh._xscale = trg.d.b.d._yscale * 2.5 + 50;
-                    sideflip(player.xp - trg.xp);
+                    flipSpriteDirection(player.xp - trg.xp);
                     trg.d.d.play();
                     if (trg.d.d._currentframe == 1) {
                         _root.soundy("Wheezy_Cough_" + random(3) + ".mp", 100);
@@ -14011,7 +14050,7 @@ function bawssmart() {
                 trg.d.b.d._xscale = _loc0_ = 100 - v1 * 4;
                 trg.d.b.d._yscale = _loc0_;
             } else if (trg.d.d._currentframe == 1 && trg.d._currentframe == 1) {
-                sideflip(trg.xbew * 5);
+                flipSpriteDirection(trg.xbew * 5);
             } else if (trg.d.d._currentframe == 9 && trg.d._currentframe == 1) {
                 while (trg.hpp > trg.hppp) {
                     trg.hppp += 1 + Math.random();
@@ -14044,7 +14083,7 @@ function bawssmart() {
             if (trg.alt) {
                 trg.nobomb = true;
                 trg.d.gotoAndStop(9);
-                splater(trg.xp, trg.yp, 1 + random(10), Math.random() * 0.3 + 0.3);
+                createBloodSplatter(trg.xp, trg.yp, 1 + random(10), Math.random() * 0.3 + 0.3);
                 if (trg.alt != 2) {
                     if (helpss <= 0 || slug == undefined) {
                         trg.dones = true;
@@ -14206,7 +14245,7 @@ function bawssmart() {
                     }
                     if (trg.d.d._currentframe == 3) {
                         if (!trg.eternal || !altboss) {
-                            cirf(trg.xp, trg.yp + 20, 10, 12);
+                            spawnCircularProjectiles(trg.xp, trg.yp + 20, 10, 12);
                         }
                         _root.soundy("thumbs down.wav", 50);
                     }
@@ -14219,7 +14258,7 @@ function bawssmart() {
                     }
                     if (trg.d.d._currentframe == 6) {
                         if (!trg.eternal || !altboss) {
-                            cirf(trg.xp, trg.yp, 10, trg.d._currentframe * 0.666);
+                            spawnCircularProjectiles(trg.xp, trg.yp, 10, trg.d._currentframe * 0.666);
                         }
                         _root.soundy("thumbsup.wav");
                     }
@@ -14235,7 +14274,7 @@ function bawssmart() {
                     }
                     if (trg.d.d._currentframe == 19) {
                         if (!trg.eternal || !altboss) {
-                            cirf(trg.xp, trg.yp, 10, trg.d._currentframe * 0.666);
+                            spawnCircularProjectiles(trg.xp, trg.yp, 10, trg.d._currentframe * 0.666);
                         }
                     }
             }
@@ -14283,7 +14322,7 @@ function bawssmart() {
                 (trg.d._currentframe == 7 && trg.d.d._currentframe == 15)
             ) {
                 trg.dmg = 300;
-                gosplash();
+                playSplashEffect();
                 if (trg.d._currentframe == 5) {
                     _root.soundy("Hellboss_Groundpound_" + random(2) + ".wav", 70);
                 } else {
@@ -14295,7 +14334,7 @@ function bawssmart() {
                     } else {
                         f0 = 10;
                     }
-                    quadf(trg.xp, trg.yp, f0, true);
+                    fireQuadShot(trg.xp, trg.yp, f0, true);
                 }
                 if (altboss) {
                     trg2 = createParticle("bloo", trg.xp, trg.yp);
@@ -14445,14 +14484,14 @@ function bawssmart() {
                     }
                     if (trg.d.d._currentframe == 23) {
                         _root.soundy("ForestBoss_Stomps" + random(3) + ".wav", 100);
-                        braz();
+                        handleAreaDamage();
                         if (trg.specoz == 23) {
                             if (altboss) {
                                 f1 = true;
                             } else {
                                 f1 = 2;
                             }
-                            quadf(trg.xp + trg.xbew * 2, trg.yp + trg.ybew * 2, 10, f1);
+                            fireQuadShot(trg.xp + trg.xbew * 2, trg.yp + trg.ybew * 2, 10, f1);
                             checkCollision(trg.xp, trg.yp, player.xp, player.yp, 1000);
                             if (enf > 110 && trg.fire-- > 0) {
                                 enf = 3 / enf;
@@ -14564,7 +14603,7 @@ function bawssmart() {
                             trg3.die = true;
                             trg3.pbh = true;
                         } else if (trg.specoz < 20) {
-                            cirf(trg.xp, trg.yp - 15, 8, 6);
+                            spawnCircularProjectiles(trg.xp, trg.yp - 15, 8, 6);
                         } else {
                             boil();
                             if (trg.specoz == 23) {
@@ -14591,7 +14630,7 @@ function bawssmart() {
                     }
                     if (altboss) {
                         if (trg.d.d._currentframe == 18) {
-                            quadf(trg.xp, trg.yp, 10, true);
+                            fireQuadShot(trg.xp, trg.yp, 10, true);
                         }
                     } else {
                         if (boils < 2) {
@@ -14629,7 +14668,7 @@ function bawssmart() {
             if ((fra + trg.e) % 5 == 0 && fra > 10) {
                 f1 = Math.random() * 2;
                 f2 = 20 - f1 * 10;
-                splater(
+                createBloodSplatter(
                     trg.xp + crand(f2),
                     trg.yp + crand(f1),
                     1 + random(10),
@@ -14737,9 +14776,9 @@ function bawssmart() {
                     }
                     if (trg.d.d._currentframe == 18) {
                         if (trg.eternal) {
-                            cirf(trg.xp, trg.yp - trg._yscale * 0.2, 11, 12);
+                            spawnCircularProjectiles(trg.xp, trg.yp - trg._yscale * 0.2, 11, 12);
                         } else {
-                            quadf(trg.xp, trg.yp, 10, true);
+                            fireQuadShot(trg.xp, trg.yp, 10, true);
                         }
                         _root.soundy("ForestBoss_Stomps" + random(3) + ".wav", 100);
                     }
@@ -14747,7 +14786,8 @@ function bawssmart() {
     }
 }
 
-function smarts3() {
+// Original: smarts3()
+function updateAdvancedBasicEnemyBehaviors(): void {
     switch (trg.s) {
         case 43:
         case 20:
@@ -14819,7 +14859,7 @@ function smarts3() {
                         if (trg.d.d._currentframe == 32) {
                             _root.soundy("ForestBoss_Stomps" + random(3) + ".wav", 80);
                             if (trg.specoz == 23 && !altboss && trg.s == 43) {
-                                quadf(trg.xp, trg.yp, 10, random(1) * 2);
+                                fireQuadShot(trg.xp, trg.yp, 10, random(1) * 2);
                             }
                             for (z of projectileClips) {
                                 trg2 = projectileClips[z];
@@ -14837,7 +14877,7 @@ function smarts3() {
                 trg.ggh = !trg.bh;
                 trg.flyby = !trg.bh;
                 if ((fra + trg.e) % 5 == 0 && fra > 10) {
-                    splater(
+                    createBloodSplatter(
                         trg.xp,
                         trg.yp,
                         1 + random(10),
@@ -14864,7 +14904,7 @@ function smarts3() {
                         } else {
                             if (altboss && trg.s == 43) {
                                 trg.d.gotoAndStop(8);
-                                sideflip(trg.xp - player.xp);
+                                flipSpriteDirection(trg.xp - player.xp);
                             } else {
                                 trg.d.gotoAndStop(4);
                             }
@@ -14951,7 +14991,7 @@ function smarts3() {
                             _root.soundy("ForestBoss_Stomps" + random(3) + ".wav", 50);
                             if (trg.s == 43) {
                                 if (trg.specoz == 23 && !altboss) {
-                                    quadf(trg.xp, trg.yp, 10, false);
+                                    fireQuadShot(trg.xp, trg.yp, 10, false);
                                 }
                                 f1 = trg.xp;
                                 f2 = trg.yp;
@@ -14984,7 +15024,7 @@ function smarts3() {
                             trg.ybew -= yenf * enf;
                             trg.xbew *= 0.9;
                             trg.ybew *= 0.9;
-                            sideflip(xenf);
+                            flipSpriteDirection(xenf);
                         } else {
                             trg.xbew *= 0.8;
                             trg.ybew *= 0.8;
@@ -15091,7 +15131,7 @@ function smarts3() {
                                         } else {
                                             _root.soundy("summonsound.wav", 100);
                                         }
-                                        quadf(trg.xp, trg.yp, 10, true);
+                                        fireQuadShot(trg.xp, trg.yp, 10, true);
                                         noet = false;
                                     }
                                 } else if (altboss) {
@@ -15103,7 +15143,7 @@ function smarts3() {
                                     }
                                     setColorTransform(trg2, 0, 0, 0, 0, 0, 0);
                                 } else {
-                                    quadf(trg.xp, trg.yp, 10, true);
+                                    fireQuadShot(trg.xp, trg.yp, 10, true);
                                 }
                             } else {
                                 bossfire(18);
@@ -15156,7 +15196,7 @@ function smarts3() {
                                 _root.soundy("Boss_Lite_Roar.mp", 50);
                             }
                             if (trg.mode == 1) {
-                                sideflip(trg.xp - player.xp);
+                                flipSpriteDirection(trg.xp - player.xp);
                                 trg.xpp = trg.xp - player.xp;
                             }
                         }
@@ -15165,13 +15205,14 @@ function smarts3() {
     }
 }
 
-function smarts4() {
+// Original: smarts4()
+function updateComplexBasicEnemyBehaviors(): void {
     switch (trg.s) {
         case 98:
         case 92:
             if (trg.d._currentframe < 3) {
-                angstfind();
-                walkframe(2);
+                findTarget();
+                updateWalkingAnimation(2);
                 trg.xbew *= 0.8;
                 trg.ybew *= 0.8;
                 if (fra % 3 == 0) {
@@ -15196,9 +15237,9 @@ function smarts4() {
                             if (trg.specoz == 18) {
                                 f1 = false;
                             }
-                            quadf(trg.xp, trg.yp, 8, f1);
-                            splater(trg.xp, trg.yp + 12, 1 + random(10), Math.random() + 0.6);
-                            splater(
+                            fireQuadShot(trg.xp, trg.yp, 8, f1);
+                            createBloodSplatter(trg.xp, trg.yp + 12, 1 + random(10), Math.random() + 0.6);
+                            createBloodSplatter(
                                 trg.xp + crand(10),
                                 trg.yp + 12 + crand(10),
                                 1 + random(10),
@@ -15221,7 +15262,7 @@ function smarts4() {
                         }
                     }
                     if (trg.d.d._currentframe == 13) {
-                        quadf(trg.xp, trg.yp, 8, trg.eternal);
+                        fireQuadShot(trg.xp, trg.yp, 8, trg.eternal);
                     }
                 }
             }
@@ -15320,7 +15361,7 @@ function smarts4() {
                 }
             }
             trg.ggh = fra2;
-            markhere(trg);
+            markEntityPosition(trg);
             if (Math.abs(trg.xbeww) > Math.abs(trg.ybeww)) {
                 if (trg.xbeww > 0) {
                     f1 = 7;
@@ -15354,9 +15395,9 @@ function smarts4() {
             }
             if (!trg.gogo) {
                 if (altboss && trg.s == 97) {
-                    randrunx(1.5);
+                    extendedRandomMovement(1.5);
                 } else {
-                    randrunx(0.85);
+                    extendedRandomMovement(0.85);
                 }
                 trg.xbew *= 0.85;
                 trg.ybew *= 0.78;
@@ -15406,7 +15447,7 @@ function smarts4() {
                     f3 = 7 / f3;
                     f1 *= f3;
                     f2 *= f3;
-                    ffmo(
+                    spawnEnemyProjectile(
                         trg.xp,
                         trg.yp,
                         0,
@@ -15418,7 +15459,7 @@ function smarts4() {
                         true,
                         false
                     );
-                    ffmo(
+                    spawnEnemyProjectile(
                         trg.xp,
                         trg.yp,
                         0,
@@ -15500,7 +15541,7 @@ function smarts4() {
             } else {
                 trg.ggh = fra2;
                 trg.gonuts = trg.s == 23 || trg.s == 55;
-                markhere(trg);
+                markEntityPosition(trg);
                 if (trg.fire-- > 0) {
                     trg.xbew *= 0.85;
                     trg.ybew *= 0.85;
@@ -15542,23 +15583,23 @@ function smarts4() {
                     }
                 } else if (!trg.gogo) {
                     if (trg.s == 21) {
-                        randrunx(0.75);
+                        extendedRandomMovement(0.75);
                     } else if (trg.s == 55) {
-                        randrunx(0.85);
+                        extendedRandomMovement(0.85);
                     } else if (trg.s == 31) {
                         if (trg.specoz == 23) {
-                            randrunx(1);
+                            extendedRandomMovement(1);
                         } else {
-                            randrunx(0.72);
+                            extendedRandomMovement(0.72);
                         }
                     } else {
-                        randrunx(0.6);
+                        extendedRandomMovement(0.6);
                     }
                     trg.xbew *= 0.85;
                     trg.ybew *= 0.7;
                     if (Math.abs(trg.xbew) > Math.abs(trg.ybew)) {
                         f1 = 1;
-                        sideflip(-trg.xbew);
+                        flipSpriteDirection(-trg.xbew);
                     } else if (trg.ybew > 0) {
                         f1 = 2;
                     } else {
@@ -15589,7 +15630,7 @@ function smarts4() {
                             trg.d.gotoAndStop(trg.d._currentframe + 5);
                             trg.xpp = trg.xbew;
                             trg.ypp = trg.ybew;
-                            sideflip(-trg.xbew * 10);
+                            flipSpriteDirection(-trg.xbew * 10);
                             trg.fire = 50;
                         }
                     }
@@ -15610,7 +15651,7 @@ function smarts4() {
                     convertTileToWorldCoordinates(trg.til);
                     if (Math.abs(trg.xbew) > Math.abs(trg.ybew)) {
                         f1 = 7;
-                        sideflip(-trg.xbew);
+                        flipSpriteDirection(-trg.xbew);
                         trg.yp *= 0.9;
                         trg.yp += yenf * 0.1;
                     } else {
@@ -15638,11 +15679,12 @@ function smarts4() {
     }
 }
 
-function smarts5() {
+// Original: smarts5()
+function updateSpecializedBasicEnemyBehaviors(): void {
     switch (trg.s) {
         case 34:
             if (random(7) == 0) {
-                splater(trg.xp, trg.yp, trg.spl + 1 + random(10), Math.random() * 0.12);
+                createBloodSplatter(trg.xp, trg.yp, trg.spl + 1 + random(10), Math.random() * 0.12);
             }
         case 54:
         case 29:
@@ -15678,9 +15720,9 @@ function smarts5() {
                         if (trg.d.d._currentframe == 19) {
                             _root.soundy("Meat_impacts_" + random(3) + ".wav", 200);
                             if (trg.s == 34 && trg.eternal) {
-                                quadf(trg.xp, trg.yp, 9, 1);
+                                fireQuadShot(trg.xp, trg.yp, 9, 1);
                             } else {
-                                quadf(trg.xp, trg.yp, 9);
+                                fireQuadShot(trg.xp, trg.yp, 9);
                             }
                         }
                         if (trg.d._currentframe == 1) {
@@ -15746,7 +15788,7 @@ function smarts5() {
                 if (trg.d._currentframe < 10) {
                     trg.d.gotoAndStop(trg.mag);
                     if (Math.abs(trg.xbew) > 0.2 || Math.abs(trg.ybew) > 0.2) {
-                        markhere(trg);
+                        markEntityPosition(trg);
                     }
                     if (trg.mag != 1) {
                         trg2 = trg.mags[trg.mag - 1];
@@ -15846,7 +15888,7 @@ function smarts5() {
                                     trg.xbew += xenf * 2;
                                     trg.ybew += yenf * 2;
                                 } else {
-                                    randrunx(1.5);
+                                    extendedRandomMovement(1.5);
                                     if (trg.charf + 50 <= fra) {
                                         if (chaa()) {
                                             trg.charf = fra;
@@ -15879,7 +15921,7 @@ function smarts5() {
                                 f2 = 0;
                         }
                         if (Math.abs(trg.xbew) > Math.abs(trg.ybew)) {
-                            sideflip(-trg.xbew);
+                            flipSpriteDirection(-trg.xbew);
                             f1 = 2;
                         } else if (trg.ybew > 0) {
                             f1 = 1;
@@ -15998,7 +16040,7 @@ function smarts5() {
                             );
                             if (trg.specoz == 23) {
                                 if (altboss) {
-                                    quadf(trg.xp, trg.yp, 8, true);
+                                    fireQuadShot(trg.xp, trg.yp, 8, true);
                                 } else if (
                                     random(3) == 0 &&
                                     etols < 3 + Math.min(4, fra * 0.001)
@@ -16038,7 +16080,7 @@ function smarts5() {
                             f1 = 0;
                             if (getDistance(trg.xbew, trg.ybew) > 2) {
                                 if (Math.abs(xenf) > Math.abs(yenf)) {
-                                    sideflip(xenf);
+                                    flipSpriteDirection(xenf);
                                     f1 = 2;
                                 } else if (yenf > 0) {
                                     f1 = 3;
@@ -16054,12 +16096,13 @@ function smarts5() {
     }
 }
 
-function smartsx() {
-    bawssmart();
-    bawssmart2();
-    smarts3();
-    smarts4();
-    smarts5();
+// Original: smartsx()
+function updateBasicEnemyBehaviors(): void {
+    updateSimpleEnemyBehaviors();
+    updateStandardEnemyBehaviors();
+    updateAdvancedBasicEnemyBehaviors();
+    updateComplexBasicEnemyBehaviors();
+    updateSpecializedBasicEnemyBehaviors();
 }
 
 // Original: breakdance(f0)
@@ -16090,14 +16133,15 @@ function breakdance(f0): void {
     }
 }
 
-function ssmarts() {
+// Original: ssmarts()
+function updateSpecialEnemyBehaviors(): void {
     switch (trg.s) {
         case 45:
             if (trg.d._currentframe == 5) {
                 if (trg.d.d._currentframe == 5) {
                     _root.soundy("ForestBoss_Stomps" + random(3) + ".wav", 150);
                     if (_root.hardmode) {
-                        quadf(trg.xp * 0.8 + 80, trg.yp * 0.8 + 64, 10, true);
+                        fireQuadShot(trg.xp * 0.8 + 80, trg.yp * 0.8 + 64, 10, true);
                     }
                 }
             }
@@ -16136,7 +16180,7 @@ function ssmarts() {
             ) {
                 trg.whu = 0;
                 trg.dmg = 300;
-                gosplash();
+                playSplashEffect();
                 _root.soundy("Hellboss_Groundpound_" + random(2) + ".wav");
             }
             if (trg.weap) {
@@ -16171,7 +16215,7 @@ function ssmarts() {
                         trg.d.gotoAndStop(1);
                     }
                     if (mome == undefined && trg.mom == 5) {
-                        momlo();
+                        playMomVoiceLines();
                     }
                     oldm = 3;
                 }
@@ -16252,7 +16296,7 @@ function ssmarts() {
                                     }
                                     break;
                                 case 2:
-                                    momlo();
+                                    playMomVoiceLines();
                             }
                             oldm = f1;
                         }
@@ -16367,7 +16411,7 @@ function ssmarts() {
                     }
                 }
             }
-            sideflip(trg.xbew, trg.d.d);
+            flipSpriteDirection(trg.xbew, trg.d.d);
             if (Math.abs(trg.xbew) > Math.abs(trg.ybew)) {
                 if (trg.xbew > 0) {
                     f1 = 2;
@@ -16388,12 +16432,12 @@ function ssmarts() {
             if (trg.s == 44 && ashut == 0 && fra > 80 && trg.alter != 2) {
                 trg.dones = true;
             }
-            markhere(trg);
+            markEntityPosition(trg);
             if (!trg.gogo) {
                 f2 = true;
                 if (trg.s == 44) {
                     if (trg.alter == 1) {
-                        randrunx(1);
+                        extendedRandomMovement(1);
                     } else {
                         enf = checkCollision(trg.xp, trg.yp, trg.xppp, trg.yppp, 1000);
                         f1 = Math.min(enf / 10, 1.8);
@@ -16403,7 +16447,7 @@ function ssmarts() {
                         trg.ybew -= yenf * f1;
                     }
                 } else {
-                    randrunx(0.75 + trg.alter * 0.25);
+                    extendedRandomMovement(0.75 + trg.alter * 0.25);
                 }
                 trg.xbew *= 0.8;
                 trg.ybew *= 0.8;
@@ -16456,20 +16500,20 @@ function ssmarts() {
             break;
         case 40:
             if (trg.eternal) {
-                borderliner(5);
+                navigateAlongWalls(5);
             } else {
-                borderliner(3);
+                navigateAlongWalls(3);
             }
             trg.d.d._rotation += getDistance(trg.xbew, trg.ybew) * 4;
             trg.d.sh.d._rotation = trg.d.d._rotation;
             if ((fra + trg.e) % 5 == 0) {
-                splater(trg.xp, trg.yp + 5, 1 + random(10), Math.random() * 0.7);
+                createBloodSplatter(trg.xp, trg.yp + 5, 1 + random(10), Math.random() * 0.7);
             }
             if (trg.eternal) {
                 trg.fire += Math.random();
                 if (trg.fire > 40) {
                     trg.fire = 0;
-                    quadf(trg.xp + trg.xbew * 3, trg.yp + trg.ybew * 3, 10, true);
+                    fireQuadShot(trg.xp + trg.xbew * 3, trg.yp + trg.ybew * 3, 10, true);
                 }
             }
             break;
@@ -16505,9 +16549,9 @@ function ssmarts() {
                 trg.xbew *= 0.95;
                 trg.ybew *= 0.95;
             }
-            sideflip(trg.xbew);
+            flipSpriteDirection(trg.xbew);
             if (trg.d._currentframe < 3 || !trg.bomber) {
-                walkframe();
+                updateWalkingAnimation();
             } else {
                 advanceAnimationFrame();
             }
@@ -16528,7 +16572,7 @@ function ssmarts() {
                             attachSpriteToEntity(trg, 11);
                             trg.fast = true;
                             trg.outway = true;
-                            splater(trg.xp, trg.yp, random(10) + 1, Math.random() + 0.6);
+                            createBloodSplatter(trg.xp, trg.yp, random(10) + 1, Math.random() + 0.6);
                             trg2 = createProjectile(trg.xp, trg.yp, 0, 0, -5, 0, 26);
                             trg2.alter = undefined;
                             trg2.specoz = 23;
@@ -16579,12 +16623,12 @@ function ssmarts() {
                     10000
                 )
             ) {
-                if (linecheck(trg.xp, trg.yp, player.xp, player.yp)) {
+                if (checkLineOfSight(trg.xp, trg.yp, player.xp, player.yp)) {
                     enf = 0.65 / enf;
                     trg.xbew -= xenf * enf;
                     trg.ybew -= yenf * enf;
                 } else {
-                    pathfind(trg, playx, playy, 1.2);
+                    findPath(trg, playx, playy, 1.2);
                 }
             }
             trg.tiletimer -= 30;
@@ -16593,11 +16637,11 @@ function ssmarts() {
         case 46:
             trg.xbew *= 0.75;
             trg.ybew *= 0.75;
-            walkframe();
+            updateWalkingAnimation();
             advanceAnimationFrame();
             if (trg.d._currentframe < 3) {
-                sideflip(trg.xbew);
-                randrunx(1);
+                flipSpriteDirection(trg.xbew);
+                extendedRandomMovement(1);
                 if (random(50) == 0) {
                     if (
                         (random(2) == 0 && ashut < 4) ||
@@ -16620,7 +16664,7 @@ function ssmarts() {
                 }
             } else {
                 if (trg.d.d._currentframe < 5) {
-                    sideflip(player.xp - trg.xp);
+                    flipSpriteDirection(player.xp - trg.xp);
                 }
                 if (trg.alter == 3) {
                     if (
@@ -16639,7 +16683,7 @@ function ssmarts() {
                     if (trg.repss-- > 0) {
                         trg.d.d.gotoAndStop(3);
                         if (trg.d.d._currentframe < 3) {
-                            sideflip(player.xp - trg.xp);
+                            flipSpriteDirection(player.xp - trg.xp);
                         }
                     }
                 }
@@ -16657,7 +16701,7 @@ function ssmarts() {
                                 xenf = trg.xp - player.xp;
                                 yenf = trg.yp - player.yp;
                                 enf = getDistance(xenf, yenf);
-                                sideflip(-xenf);
+                                flipSpriteDirection(-xenf);
                                 enf = -25 / enf;
                                 xenf *= enf;
                                 yenf *= enf;
@@ -16704,7 +16748,7 @@ function ssmarts() {
                                 xenf = trg.xp - player.xp;
                                 yenf = trg.yp - player.yp;
                                 enf = getDistance(xenf, yenf);
-                                sideflip(-xenf);
+                                flipSpriteDirection(-xenf);
                                 enf = -10 / enf;
                                 xenf *= enf;
                                 yenf *= enf;
@@ -16787,7 +16831,7 @@ function ssmarts() {
             }
             trg.d.hx.h.gotoAndStop(f1);
             if (trg.d.hx.bo != undefined) {
-                sideflip(trg.xbew, trg.d.hx.bo);
+                flipSpriteDirection(trg.xbew, trg.d.hx.bo);
             }
             advanceAnimationFrame();
             trg.xpp = trg.xp;
@@ -16825,7 +16869,7 @@ function ssmarts() {
                     f1 = 7;
                     xenf = Math.sin(trg.fire) * f1;
                     yenf = Math.cos(trg.fire) * f1;
-                    trg2 = ffmo(
+                    trg2 = spawnEnemyProjectile(
                         trg.xp,
                         trg.yp,
                         0,
@@ -16841,10 +16885,10 @@ function ssmarts() {
                     } else {
                         trg2.dm -= 1;
                     }
-                    sideflip(xenf);
+                    flipSpriteDirection(xenf);
                 }
             } else {
-                sideflip(trg.xbew);
+                flipSpriteDirection(trg.xbew);
             }
             break;
         case 52:
@@ -16857,10 +16901,10 @@ function ssmarts() {
             } else {
                 trg.d.bo.gotoAndStop(3);
             }
-            sideflip(-trg.xbew);
+            flipSpriteDirection(-trg.xbew);
             advanceAnimationFrame();
             if (trg.d._currentframe < 3) {
-                randrunx(1);
+                extendedRandomMovement(1);
                 if (random(50) == 0) {
                     if (random(2) == 0) {
                         trg.d.gotoAndStop(6);
@@ -16886,7 +16930,7 @@ function ssmarts() {
                             }
                             xenf = Math.sin(trg.fire) * f1;
                             yenf = Math.cos(trg.fire) * f1;
-                            trg2 = ffmo(
+                            trg2 = spawnEnemyProjectile(
                                 trg.xp,
                                 trg.yp,
                                 0,
@@ -16897,7 +16941,7 @@ function ssmarts() {
                                 trg.s,
                                 true
                             );
-                            trg3 = ffmo(
+                            trg3 = spawnEnemyProjectile(
                                 trg.xp,
                                 trg.yp,
                                 0,
@@ -16917,7 +16961,7 @@ function ssmarts() {
                             }
                         }
                     } else if (trg.alter == 2 && trg.d.d._currentframe == 20) {
-                        cirf(trg.xp, trg.yp - trg._yscale * 0.2, 8, 6);
+                        spawnCircularProjectiles(trg.xp, trg.yp - trg._yscale * 0.2, 8, 6);
                     }
                 }
                 if (trg.d.d._currentframe == 5) {
@@ -16935,16 +16979,16 @@ function ssmarts() {
             trg.f3 = 1;
             trg.xbew *= 0.75;
             trg.ybew *= 0.75;
-            walkframe();
+            updateWalkingAnimation();
             if (Math.abs(trg.xbew) < Math.abs(trg.ybew)) {
                 trg.d.bo.gotoAndStop(1);
             } else {
                 trg.d.bo.gotoAndStop(2);
             }
-            sideflip(-trg.xbew);
+            flipSpriteDirection(-trg.xbew);
             advanceAnimationFrame();
             if (trg.d._currentframe < 3) {
-                randrunx(1);
+                extendedRandomMovement(1);
                 if (random(50) == 0) {
                     if (random(3) == 0 && ashut < 3) {
                         trg.d.gotoAndStop(6);
@@ -16954,7 +16998,7 @@ function ssmarts() {
                 }
             } else {
                 if (trg.d._currentframe == 5) {
-                    sideflip(100);
+                    flipSpriteDirection(100);
                     f1 = 10;
                     xenf = trg.xp - player.xp;
                     yenf = trg.yp - player.yp;
@@ -17015,13 +17059,13 @@ function ssmarts() {
             }
             trg.xbew *= 0.85;
             trg.ybew *= 0.85;
-            walkframe();
+            updateWalkingAnimation();
             if (Math.abs(trg.xbew) < Math.abs(trg.ybew)) {
                 trg.d.bo.gotoAndStop(1);
             } else {
                 trg.d.bo.gotoAndStop(2);
             }
-            sideflip(trg.xbew);
+            flipSpriteDirection(trg.xbew);
             advanceAnimationFrame();
             if (trg.d._currentframe < 3) {
                 if (trg.gogo) {
@@ -17054,7 +17098,7 @@ function ssmarts() {
                         enf = (Math.min(1, siz - enf) / enf) * 0;
                         trg.xbew += xenf * enf;
                         trg.ybew += yenf * enf;
-                        randrunx(1);
+                        extendedRandomMovement(1);
                         trg2 = trg.trg2;
                         f1 = (trg.xp - trg.xpp) * (trg.xp - trg2.xp);
                         f2 = (trg.yp - trg.ypp) * (trg.yp - trg2.yp);
@@ -17065,7 +17109,7 @@ function ssmarts() {
                         }
                     }
                 } else {
-                    randrunx(1);
+                    extendedRandomMovement(1);
                     if (
                         random(
                             Math.max(
@@ -17174,23 +17218,23 @@ function smux() {
     switch (trg.s) {
         case 39:
             if ((fra + trg.e) % 5 == 0) {
-                splater(trg.xp, trg.yp + 5, 1 + random(10), Math.random() * 0.7);
+                createBloodSplatter(trg.xp, trg.yp + 5, 1 + random(10), Math.random() * 0.7);
             }
         case 49:
-            markhere(trg);
+            markEntityPosition(trg);
             if (trg.d._currentframe < 3) {
                 if (trg.pathy) {
-                    pathfind(trg, playx, playy, 1.3);
+                    findPath(trg, playx, playy, 1.3);
                     if (fra5) {
                         if (checkCollision(trg.xp, trg.yp, player.xp, player.yp, 60) > 0) {
                             trg.pathy = false;
                         }
                     }
                 } else {
-                    randrunx(0.7);
+                    extendedRandomMovement(0.7);
                 }
-                walkframe();
-                sideflip(trg.xbew);
+                updateWalkingAnimation();
+                flipSpriteDirection(trg.xbew);
                 if ((fra + trg.e) % 3 == 0) {
                     f1 = true;
                     if (trg.s == 49) {
@@ -17202,7 +17246,7 @@ function smux() {
                             ) {
                                 f1 = false;
                                 trg.d.gotoAndStop(11);
-                                sideflip(-xenf);
+                                flipSpriteDirection(-xenf);
                             }
                         }
                     }
@@ -17210,7 +17254,7 @@ function smux() {
                         if (!trg.eternal || trg.s != 49 || random(3) == 0) {
                             if (checkExtendedCollision(trg.xp, trg.yp, player.xp, player.yp, 400)) {
                                 if (Math.abs(xenf) > Math.abs(yenf)) {
-                                    sideflip(-xenf);
+                                    flipSpriteDirection(-xenf);
                                     f1 = 5;
                                 } else if (yenf > 0) {
                                     f1 = 7;
@@ -17261,7 +17305,7 @@ function smux() {
                             yenf *= enf;
                             shots(trg.xp, trg.yp, xenf, yenf, 23);
                         } else {
-                            quadf(trg.xp, trg.yp, 8, true);
+                            fireQuadShot(trg.xp, trg.yp, 8, true);
                         }
                         if (trg.alter == 2) {
                             bossfire(5, true);
@@ -17548,7 +17592,8 @@ function telpx(f3?: any): void {
     }
 }
 
-function smartd(): void {
+// Original: smartd()
+function updateMidTierEnemyAI(): void {
     var _loc0_ = null;
     if ((_loc0_ = trg.s) === 79) {
         trg.xbew *= 0.8;
@@ -17623,13 +17668,13 @@ function smartd(): void {
                     }
                     trg.d.gotoAndStop(7);
                     trg.onown = true;
-                    sideflip(-trg.xbew);
-                    markhere(trg);
+                    flipSpriteDirection(-trg.xbew);
+                    markEntityPosition(trg);
                     if (random(10) == 0 && trg.fire < 0) {
                         chaa(2);
                         if (trg.xpp != 0 && trg.ypp == 0) {
                             trg.d.gotoAndStop(12);
-                            sideflip(-trg.xpp * 10);
+                            flipSpriteDirection(-trg.xpp * 10);
                         }
                     }
                 }
@@ -17667,7 +17712,7 @@ function smartd(): void {
                 }
                 trg.xbew -= xenf * enf;
                 trg.ybew -= yenf * enf;
-                sideflip(-trg.xbew);
+                flipSpriteDirection(-trg.xbew);
             } else {
                 checkCollision(trg.xp, trg.yp, player.xp, player.yp, 1000);
                 enf = 0.25 / enf;
@@ -17692,7 +17737,7 @@ function smartd(): void {
                         10000
                     );
                     if (_loc0_) {
-                        if (linecheck(trg.xp, trg.yp, player.xp, player.yp)) {
+                        if (checkLineOfSight(trg.xp, trg.yp, player.xp, player.yp)) {
                             enf = trg.sp / enf;
                             trg.xbew *= 0.94;
                             trg.ybew *= 0.94;
@@ -17770,7 +17815,7 @@ function smartd(): void {
                 }
             }
             if (!b1) {
-                pathfind(trg, playx, playy, trg.sp);
+                findPath(trg, playx, playy, trg.sp);
             }
             if (altboss == 2) {
                 trg.sp -= 0.2;
@@ -17787,7 +17832,7 @@ function smartd(): void {
                 } else {
                     trg.d.bo.gotoAndStop(2 + f1);
                 }
-                sideflip(trg.xbew);
+                flipSpriteDirection(trg.xbew);
             } else {
                 trg.d.bo.gotoAndStop(1 + f1);
             }
@@ -17901,7 +17946,7 @@ function smux2() {
             }
             f3 = Math.min(3, 4 - Math.round((trg.hp / trg.mhp) * 3 + 0.45));
             if (momstate == 3) {
-                splater(
+                createBloodSplatter(
                     trg.xp + crand() * 2,
                     trg.yp + crand(Math.random() * Math.random() * 200) + 8,
                     1 + random(10),
@@ -18094,7 +18139,7 @@ function smux2() {
                     break;
                 case 9:
                     if (trg.d.d._currentframe == 26) {
-                        quadf(trg.xp, trg.yp, 10, true);
+                        fireQuadShot(trg.xp, trg.yp, 10, true);
                     }
                     if (trg.specoz == 23) {
                         if (trg.d.d._currentframe == 3) {
@@ -18114,13 +18159,13 @@ function smux2() {
                     break;
                 case 7:
                     if (trg.d.d._currentframe == 28) {
-                        quadf(trg.xp, trg.yp, 10);
+                        fireQuadShot(trg.xp, trg.yp, 10);
                     }
                     if (trg.d.d._currentframe == 51) {
-                        quadf(trg.xp, trg.yp, 10, 2);
+                        fireQuadShot(trg.xp, trg.yp, 10, 2);
                     }
                     if (trg.d.d._currentframe == 77) {
-                        quadf(trg.xp, trg.yp, 10);
+                        fireQuadShot(trg.xp, trg.yp, 10);
                     }
                     if (trg.specoz == 23) {
                         if (trg.d.d._currentframe == 3) {
@@ -18141,7 +18186,7 @@ function smux2() {
                     }
             }
             if (altboss) {
-                sideflip((0.5 - (trg.e % 2)) * 10);
+                flipSpriteDirection((0.5 - (trg.e % 2)) * 10);
             }
             break;
         case 68:
@@ -18222,10 +18267,10 @@ function smux2() {
                                 green(false, true);
                                 trg.ploo = trg.ploo + 1;
                             } else {
-                                quadf(trg.xp, trg.yp, 10, 1);
+                                fireQuadShot(trg.xp, trg.yp, 10, 1);
                             }
                         } else {
-                            cirf(trg.xp, trg.yp, 10, 12);
+                            spawnCircularProjectiles(trg.xp, trg.yp, 10, 12);
                         }
                         _root.soundy("ForestBoss_Stomps" + random(3) + ".wav", 100);
                     }
@@ -18238,10 +18283,10 @@ function smux2() {
                                 green(false, true);
                                 trg.ploo = trg.ploo + 1;
                             } else {
-                                quadf(trg.xp, trg.yp, 10, 1);
+                                fireQuadShot(trg.xp, trg.yp, 10, 1);
                             }
                         } else {
-                            cirf(trg.xp, trg.yp, 10, 8);
+                            spawnCircularProjectiles(trg.xp, trg.yp, 10, 8);
                         }
                         _root.soundy("ForestBoss_Stomps" + random(3) + ".wav", 80);
                     }
@@ -18311,7 +18356,7 @@ function smux2() {
             } else {
                 f1 = 21 + random(10);
             }
-            splater(
+            createBloodSplatter(
                 trg.xp + crand() * 2,
                 trg.yp + crand(random(20)) + 8,
                 f1,
@@ -18477,10 +18522,10 @@ function smux2() {
                 case 7:
                     if ((trg.send = trg.d.d._currentframe == 17)) {
                         if (trg.specoz == 5) {
-                            cirf(trg.xp, trg.yp, 7, 8);
+                            spawnCircularProjectiles(trg.xp, trg.yp, 7, 8);
                             trg.send = false;
                         } else if (altboss) {
-                            cirf(trg.xp, trg.yp, 8, 8);
+                            spawnCircularProjectiles(trg.xp, trg.yp, 8, 8);
                         }
                         _root.soundy("Monster_Grunt_4_" + abr() + ".mp", 100);
                     }
@@ -18489,7 +18534,8 @@ function smux2() {
     }
 }
 
-function devl() {
+// Original: devl()
+function handleDevilLogic(): void {
     trg._visible = trg.d._currentframe != 1;
     if (trg.d._currentframe < 8) {
         trg.d.gotoAndStop(9);
@@ -18530,7 +18576,7 @@ function devl() {
             if (trg.trg3.hp < 0) {
                 trg.trg3.done = true;
                 trg.done = true;
-                momkill();
+                defeatMom();
             }
         }
     }
@@ -18540,12 +18586,13 @@ function devl() {
         trg.d.d._currentframe < 62;
     if (trg.d._currentframe == 9 && trg.d.d._currentframe == 26) {
         trg.dmg = 300;
-        gosplash();
+        playSplashEffect();
         _root.soundy("Hellboss_Groundpound_" + random(2) + ".wav");
     }
 }
 
-function smarties(): void {
+// Original: smarties()
+function updateMajorBossAI(): void {
     switch (trg.s) {
         case 84:
             if (!trg.eternal) {
@@ -18565,7 +18612,7 @@ function smarties(): void {
             advanceAnimationFrame();
             trg.alter = 2;
             if (trg.pow == 5) {
-                devl();
+                handleDevilLogic();
             } else {
                 if (trg.pow == undefined) {
                     trg.pow = 1;
@@ -18730,7 +18777,7 @@ function smarties(): void {
                             trg.app = 2;
                             _root.soundy("satan hurt.mp");
                         }
-                        devl();
+                        handleDevilLogic();
                         if (
                             trg.trg2 == undefined &&
                             trg.d.d._currentframe == 50 &&
@@ -18774,7 +18821,7 @@ function smarties(): void {
                 case 2:
                     trg.xp = Math.min(580, Math.max(60, trg.xp));
                     randrun();
-                    sideflip(trg.xbew);
+                    flipSpriteDirection(trg.xbew);
                     f1 = checkCollision(trg.xp, trg.yp, player.xp, player.yp, 1000);
                     if (
                         (random(30) == 0 && f1 < 200) ||
@@ -18790,7 +18837,7 @@ function smarties(): void {
                         (Math.abs(yenf) < 20 && random(80) == 0)
                     ) {
                         _root.soundy("Monster_Yell_A_" + random(3) + ".mp", 100);
-                        sideflip(player.xp - trg.xp);
+                        flipSpriteDirection(player.xp - trg.xp);
                         trg.d.gotoAndStop(5);
                         trg.xpp = trg.xp;
                         trg.ypp = trg.yp;
@@ -18824,7 +18871,7 @@ function smarties(): void {
                             }
                             trg.xo = xenf;
                             trg.yo = yenf;
-                            ffmo(
+                            spawnEnemyProjectile(
                                 trg.xp,
                                 trg.yp + 5,
                                 0,
@@ -18887,9 +18934,9 @@ function smarties(): void {
             switch (trg.d._currentframe) {
                 case 1:
                 case 2:
-                    randrunx(1);
-                    sideflip(trg.xbew);
-                    walkframe(3);
+                    extendedRandomMovement(1);
+                    flipSpriteDirection(trg.xbew);
+                    updateWalkingAnimation(3);
                     if (random(40) == 0) {
                         trg.d.gotoAndStop(5);
                     }
@@ -18912,7 +18959,7 @@ function smarties(): void {
                 trg.hp += 50 / (100 + fra);
             }
             if (fra % 3 == 0 && trg.specoz != 17) {
-                splater(
+                createBloodSplatter(
                     trg.xp + crand(),
                     trg.yp + crand(random(20)),
                     trg.spl + 1 + random(10),
@@ -18961,21 +19008,21 @@ function smarties(): void {
                         trg.d.gotoAndStop(9);
                     } else if (random(20) == 0) {
                         if (checkCollision(trg.xp, trg.yp, player.xp, player.yp, 230)) {
-                            sideflip(player.xp - trg.xp);
+                            flipSpriteDirection(player.xp - trg.xp);
                             trg.d.gotoAndStop(8);
                         }
                     }
                     break;
                 case 1:
                 case 2:
-                    randrunx(1);
-                    sideflip(trg.xbew);
-                    walkframe(3);
+                    extendedRandomMovement(1);
+                    flipSpriteDirection(trg.xbew);
+                    updateWalkingAnimation(3);
                     if (random(40) == 0 && ashut < 4) {
                         trg.d.gotoAndStop(6);
                     } else if (random(20) == 0) {
                         if (checkCollision(trg.xp, trg.yp, player.xp, player.yp, 230)) {
-                            sideflip(player.xp - trg.xp);
+                            flipSpriteDirection(player.xp - trg.xp);
                             trg.d.gotoAndStop(5);
                         }
                     }
@@ -19079,7 +19126,7 @@ function smarties(): void {
             if (trg.f10) {
                 if (trg.specoz == 17) {
                     trg.s = 11;
-                    cirf(trg.xp, trg.yp - 50, 8, 6);
+                    spawnCircularProjectiles(trg.xp, trg.yp - 50, 8, 6);
                     trg.s = 64;
                 } else {
                     green();
@@ -19103,7 +19150,7 @@ function smarties(): void {
                 case 8:
                 case 9:
                     firemode(300, 8);
-                    splater(
+                    createBloodSplatter(
                         trg.xp,
                         trg.yp,
                         trg.spl + 1 + random(10),
@@ -19135,7 +19182,7 @@ function smarties(): void {
                         trg.speczo != 23
                     ) {
                         _root.soundy("Monster_Yell_A_" + random(3) + ".mp", 100);
-                        sideflip(player.xp - trg.xp);
+                        flipSpriteDirection(player.xp - trg.xp);
                         trg.d.gotoAndStop(6);
                         if (trg.specoz == 23) {
                             trg.xpp = player.xp;
@@ -19170,7 +19217,7 @@ function smarties(): void {
                             _root.soundy("Monster_Grunt_5.mp", 100);
                             if (trg.fire != 0) {
                                 trg.s = 11;
-                                cirf(
+                                spawnCircularProjectiles(
                                     trg.xp,
                                     trg.yp - 33,
                                     8,
@@ -19247,7 +19294,7 @@ function smarties(): void {
                         _root.soundy("Monster_Grunt_5.mp", 100);
                         if (trg.specoz == 7) {
                             trg.s = 11;
-                            cirf(trg.xp, trg.yp - 33, 8, 6);
+                            spawnCircularProjectiles(trg.xp, trg.yp - 33, 8, 6);
                             trg.s = 63;
                         } else {
                             xenf = crand(50);
@@ -19342,7 +19389,7 @@ function smarties(): void {
                                 !altboss)
                         ) {
                             if (trg.specoz == 16) {
-                                cirf(trg.xp, trg.yp - 20, 8, 6);
+                                spawnCircularProjectiles(trg.xp, trg.yp - 20, 8, 6);
                             } else if (trg.specoz == 23) {
                                 if (trg.d.d._currentframe == 25 || altboss) {
                                     if (trg.fire == undefined) {
@@ -19562,7 +19609,7 @@ function smarties(): void {
                                     f3 = 7 / Math.sqrt(f1 * f1 + f2 * f2);
                                     f1 *= f3;
                                     f2 *= f3;
-                                    ffmo(
+                                    spawnEnemyProjectile(
                                         trg.xp,
                                         trg.yp,
                                         0,
@@ -19574,7 +19621,7 @@ function smarties(): void {
                                         true,
                                         false
                                     );
-                                    ffmo(
+                                    spawnEnemyProjectile(
                                         trg.xp,
                                         trg.yp,
                                         0,
@@ -19590,7 +19637,7 @@ function smarties(): void {
                             } else if (wormet == 6) {
                                 if (random(2) == 0 && trg.dy < -30 && wormfo <= fra) {
                                     wormfo = fra + 30;
-                                    quadf(trg.xp, trg.yp, 5, 2);
+                                    fireQuadShot(trg.xp, trg.yp, 5, 2);
                                 }
                             }
                         }
@@ -19612,9 +19659,10 @@ function smarties(): void {
     }
 }
 
-function smartb(): void {
-    smartd();
-    smarties();
+// Original: smartb()
+function updateAllEnemyAI(): void {
+    updateMidTierEnemyAI();
+    updateMajorBossAI();
     switch (trg.s) {
         case 66:
             blackout = trg.specoz != 23;
@@ -19625,7 +19673,7 @@ function smartb(): void {
             advanceAnimationFrame();
             if (trg.sic) {
                 if (!trg.whut) {
-                    sideflip(player.xp - trg.xp);
+                    flipSpriteDirection(player.xp - trg.xp);
                     trg.whut = true;
                     if (trg.specoz == 23) {
                         trg.d.gotoAndStop(12);
@@ -19651,7 +19699,7 @@ function smartb(): void {
                 trg.xp = Math.min(580, Math.max(60, trg.xp));
                 death = trg;
                 if (!trg.whut) {
-                    sideflip(player.xp - trg.xp);
+                    flipSpriteDirection(player.xp - trg.xp);
                     trg.whut = true;
                     trg.d.gotoAndStop(7);
                     if (trg.specoz == 23) {
@@ -19946,14 +19994,14 @@ function smartb(): void {
                     f1 = 1 + trg.sp * 0.1;
                     trg.xbew *= f1;
                     trg.ybew *= f1;
-                    pathfind(trg, playx, playy, trg.sp * 0.55 + 0.5);
+                    findPath(trg, playx, playy, trg.sp * 0.55 + 0.5);
                     trg.xp = Math.min(580, Math.max(60, trg.xp));
                     trg.yp = Math.min(410, Math.max(180, trg.yp));
                     if (mhit(trg.xp, trg.yp)) {
                         trg.xp += crand(5);
                         trg.yp += crand(5);
                     }
-                    sideflip(trg.xbew);
+                    flipSpriteDirection(trg.xbew);
                     if (trg.ffra + 10 > fra) {
                         trg.hpp = trg.hp;
                     }
@@ -19970,7 +20018,7 @@ function smartb(): void {
                     break;
                 case 10:
                     if (trg.d.d._currentframe == 3 && trg.specoz == 16) {
-                        cirf(trg.xp, trg.yp - 50, 8, 6);
+                        spawnCircularProjectiles(trg.xp, trg.yp - 50, 8, 6);
                     }
                     trg.ffra = fra;
                     trg.hpp = trg.hp;
@@ -19987,7 +20035,7 @@ function smartb(): void {
                         (Math.abs(yenf) < 20 && random(30) == 0)
                     ) {
                         _root.soundy("Monster_Yell_A_" + random(3) + ".mp", 100);
-                        sideflip(player.xp - trg.xp);
+                        flipSpriteDirection(player.xp - trg.xp);
                         trg.d.gotoAndStop(7);
                         trg.xpp = trg.xp;
                         trg.ypp = trg.yp;
@@ -20004,7 +20052,7 @@ function smartb(): void {
                     break;
                 case 5:
                     if (trg.d.d._currentframe == 5) {
-                        quadf(trg.xp, trg.yp, 10, !altboss);
+                        fireQuadShot(trg.xp, trg.yp, 10, !altboss);
                     }
                     break;
                 case 6:
@@ -20026,9 +20074,9 @@ function smartb(): void {
                         trg.ypp = trg.yp;
                         if (player.xp > 320) {
                             trg.xp = 10;
-                            sideflip(100);
+                            flipSpriteDirection(100);
                         } else {
-                            sideflip(-100);
+                            flipSpriteDirection(-100);
                             trg.xp = 630;
                         }
                         trg._visible = true;
@@ -20140,9 +20188,9 @@ function smartb(): void {
             switch (trg.d._currentframe) {
                 case 1:
                 case 2:
-                    randrunx(1);
-                    sideflip(trg.xbew);
-                    walkframe(3);
+                    extendedRandomMovement(1);
+                    flipSpriteDirection(trg.xbew);
+                    updateWalkingAnimation(3);
                     if (random(3) == 0 || trg._xscale > 90) {
                         if (
                             random(140 - trg.alter * 60) == 0 &&
@@ -20157,7 +20205,7 @@ function smartb(): void {
                             _root.soundy("Monster_Yell_B_0.mp3", 100);
                         } else if (random(20) == 0) {
                             if (checkCollision(trg.xp, trg.yp, player.xp, player.yp, 230)) {
-                                sideflip(player.xp - trg.xp);
+                                flipSpriteDirection(player.xp - trg.xp);
                                 trg.d.gotoAndStop(5);
                             }
                         }
@@ -20222,7 +20270,7 @@ function smartb(): void {
                             if (trg.fire-- > 0) {
                                 if (Math.abs(trg._xscale) > 80) {
                                     trg.d.d.gotoAndStop(16);
-                                    sideflip(player.xp - trg.xp);
+                                    flipSpriteDirection(player.xp - trg.xp);
                                 }
                             }
                         }
@@ -20253,7 +20301,7 @@ function smartb(): void {
                             if (random(2) == 0) {
                                 trg.d.gotoAndStop(6);
                             } else {
-                                sideflip(player.xp - trg.xp);
+                                flipSpriteDirection(player.xp - trg.xp);
                                 trg.d.gotoAndStop(5);
                             }
                         }
@@ -20263,7 +20311,7 @@ function smartb(): void {
                     yenf *= enf;
                     trg.xbew -= xenf;
                     trg.ybew -= yenf;
-                    sideflip(player.xp - trg.xp);
+                    flipSpriteDirection(player.xp - trg.xp);
                     if (trg.whup > trg.hp + trg.mhp / 8) {
                         trg.d.gotoAndStop(6);
                     }
@@ -20312,10 +20360,11 @@ function applyRotationEffect(): void {
     trg.dx = trg._rotation * 0.3;
 }
 
-function smarts() {
-    smartsx();
-    ssmarts();
-    smartb();
+// Original: smarts()
+function updateAllEntityBehaviors(): void {
+    updateBasicEnemyBehaviors();
+    updateSpecialEnemyBehaviors();
+    updateAllEnemyAI();
     switch (trg.s) {
         case 89:
         case 19:
@@ -20331,7 +20380,7 @@ function smarts() {
             }
             trg.outway = true;
             trg.ggh = true;
-            markhere();
+            markEntityPosition();
             if (getRoomType(trg.til) > 1.8) {
             }
             if (!altboss) {
@@ -20577,7 +20626,7 @@ function smarts() {
                                 if (
                                     (enf = checkCollision(trg.xp, trg.yp, player.xp, player.yp, 300))
                                 ) {
-                                    if (linecheck(trg.xp, trg.yp, player.xp, player.yp)) {
+                                    if (checkLineOfSight(trg.xp, trg.yp, player.xp, player.yp)) {
                                         trg.xbew *= 0.92;
                                         trg.ybew *= 0.92;
                                         if (enf > 0) {
@@ -20637,9 +20686,9 @@ function smarts() {
                             }
                         } else {
                             if (trg.s == 89 && trg.eternal) {
-                                pathfind(trg, playx, playy, 1.7);
+                                findPath(trg, playx, playy, 1.7);
                             } else {
-                                randrunx(2);
+                                extendedRandomMovement(2);
                             }
                             trg.ggh = false;
                         }
@@ -20707,7 +20756,7 @@ function smarts() {
             trg.xbew *= 0.8;
             trg.ybew *= 0.8;
             if (random(16) == 0 && trg.s == 19) {
-                splater(
+                createBloodSplatter(
                     trg.xp,
                     trg.yp,
                     trg.spl + 1 + random(10),
@@ -20760,9 +20809,9 @@ function smarts() {
         case 22:
             trg.pbh = fra2;
             if (trg.d._currentframe < 3) {
-                angstfind();
-                sideflip(trg.xbew);
-                walkframe(2);
+                findTarget();
+                flipSpriteDirection(trg.xbew);
+                updateWalkingAnimation(2);
                 trg.xbew *= 0.8;
                 trg.ybew *= 0.8;
             } else {
@@ -20774,7 +20823,7 @@ function smarts() {
                         _root.soundy("Wheezy_Cough_" + random(3) + ".mp", 100);
                         trg.fire = 75;
                         trg.d.gotoAndStop(5);
-                        sideflip(-xenf);
+                        flipSpriteDirection(-xenf);
                         f1 = trg.xp;
                         f2 = trg.yp;
                         enf = -7 / enf;
@@ -20811,7 +20860,7 @@ function smarts() {
             trg.pbh = fra2;
             if (trg.d._currentframe < 3) {
                 if (trg.alter == 3) {
-                    pathfind(trg, playx, playy, 1.2);
+                    findPath(trg, playx, playy, 1.2);
                     if (fra5 && !trg.eternal) {
                         if (checkCollision(trg.xp, trg.yp, player.xp, player.yp, 40)) {
                             trg.dones = true;
@@ -20820,12 +20869,12 @@ function smarts() {
                     trg.xbew *= 0.9;
                     trg.ybew *= 0.9;
                 } else {
-                    angstfind();
+                    findTarget();
                     trg.xbew *= 0.8;
                     trg.ybew *= 0.8;
                 }
-                sideflip(trg.xbew);
-                walkframe(2);
+                flipSpriteDirection(trg.xbew);
+                updateWalkingAnimation(2);
                 if (trg.needmove > 0) {
                     trg.d.hx.gotoAndStop(2);
                     trg.d.d.hx.gotoAndStop(2);
@@ -20866,7 +20915,7 @@ function smarts() {
                 if (trg.d.d._currentframe > 20 && trg.d._currentframe == 5) {
                     trg.dones = true;
                     if (trg.alter != 3) {
-                        quadf(trg.xp, trg.yp, 7);
+                        fireQuadShot(trg.xp, trg.yp, 7);
                     }
                 }
                 if (trg.d._currentframe == 6) {
@@ -20880,7 +20929,7 @@ function smarts() {
                                 boil(false, 2);
                             }
                         } else {
-                            quadf(trg.xp, trg.yp, 13.5);
+                            fireQuadShot(trg.xp, trg.yp, 13.5);
                         }
                     }
                 }
@@ -20889,7 +20938,7 @@ function smarts() {
         case 17:
             randrun();
             if ((fra + trg.e) % 3 == 0) {
-                splater(trg.xp, trg.yp, 1 + random(10), Math.random() * 0.9 + 0.5);
+                createBloodSplatter(trg.xp, trg.yp, 1 + random(10), Math.random() * 0.9 + 0.5);
             }
             trg.xbew *= 0.6;
             trg.ybew *= 0.6;
@@ -20901,7 +20950,7 @@ function smarts() {
                 blackout = 2;
             }
             if ((fra + trg.e) % 5 == 0) {
-                splater(trg.xp, trg.yp, 1 + random(10), Math.random() * 0.7 + 0.5);
+                createBloodSplatter(trg.xp, trg.yp, 1 + random(10), Math.random() * 0.7 + 0.5);
             }
             trg.xbew *= 0.9;
             trg.ybew *= 0.9;
@@ -20927,11 +20976,11 @@ function smarts() {
                                     trg.d.d._currentframe == 27))
                         ) {
                             if (trg.alter == 3) {
-                                quadf(trg.xp, trg.yp, 7, true);
+                                fireQuadShot(trg.xp, trg.yp, 7, true);
                             } else if (trg.alter == 2) {
-                                quadf(trg.xp, trg.yp, 7, 2);
+                                fireQuadShot(trg.xp, trg.yp, 7, 2);
                             } else {
-                                quadf(trg.xp, trg.yp, 7);
+                                fireQuadShot(trg.xp, trg.yp, 7);
                             }
                             if (trg.eternal) {
                                 boil();
@@ -20950,9 +20999,9 @@ function smarts() {
                     }
                     trg.mof = fra;
                     if (trg.eternal) {
-                        pathfind(trg, playx, playy, 0.7);
+                        findPath(trg, playx, playy, 0.7);
                         trg.d.gotoAndStop(2);
-                        sideflip(trg.xbew * 3);
+                        flipSpriteDirection(trg.xbew * 3);
                         if (random(40) == 0) {
                             trg.modedone = false;
                             trg.mode = 1;
@@ -20972,7 +21021,7 @@ function smarts() {
             break;
         case 38:
             constrainToScreenBounds();
-            markhere(trg);
+            markEntityPosition(trg);
             trg.xbew *= 0.7;
             trg.ybew *= 0.7;
             if (
@@ -20980,7 +21029,7 @@ function smarts() {
                 (trg.d._currentframe == 5 && trg.d.d._currentframe > 17 && trg.eternal)
             ) {
                 if (random(10) == 0) {
-                    splater(trg.xp, trg.yp, random(10), Math.random() * 0.3 + 0.2);
+                    createBloodSplatter(trg.xp, trg.yp, random(10), Math.random() * 0.3 + 0.2);
                 }
                 advanceAnimationFrame();
                 firemode(200, 5);
@@ -21017,7 +21066,7 @@ function smarts() {
                 advanceAnimationFrame();
                 if (trg.eternal) {
                     if (trg.d._currentframe == 6 && trg.d.d._currentframe == 5) {
-                        quadf(trg.xp, trg.yp + 10, 7, trg.alter - 1);
+                        fireQuadShot(trg.xp, trg.yp + 10, 7, trg.alter - 1);
                         _root.soundy("bloodshoot" + random(3) + ".wav");
                     }
                 }
@@ -21050,7 +21099,7 @@ function smarts() {
             }
             break;
         case 59:
-            markhere(trg);
+            markEntityPosition(trg);
             trg.xbew *= 0.65;
             trg.ybew *= 0.65;
             f1 = false;
@@ -21095,7 +21144,7 @@ function smarts() {
                             if (trg.eternal) {
                                 f1 = true;
                             }
-                            quadf(trg.xp, trg.yp + 10, 7, f1);
+                            fireQuadShot(trg.xp, trg.yp + 10, 7, f1);
                             _root.soundy("meatheadshoot" + (fra % 3) + ".wav");
                         }
                         telpx(true);
@@ -21162,7 +21211,7 @@ function smarts() {
                             f1 = 8;
                             xenf = Math.sin(f2) * f1;
                             yenf = Math.cos(f2) * f1;
-                            trg2 = ffmo(
+                            trg2 = spawnEnemyProjectile(
                                 trg.xp + xenf * 3,
                                 trg.yp + yenf * 3,
                                 0,
@@ -21246,7 +21295,7 @@ function smarts() {
             }
             trg.outway = false;
             if (random(10) == 0) {
-                splater(trg.xp, trg.yp, random(10), Math.random() * 0.5 + 0.4);
+                createBloodSplatter(trg.xp, trg.yp, random(10), Math.random() * 0.5 + 0.4);
             }
             if (trg.fire <= 0 || (trg.s == 90 && trg.d._currentframe < 3)) {
                 enf = checkCollision(trg.xp, trg.yp, player.xp, player.yp, 1000);
@@ -21280,7 +21329,7 @@ function smarts() {
                         trg.d.d.gotoAndStop(52);
                     }
                     if (trg.d._currentframe == 6 && trg.d.d._currentframe == 55) {
-                        quadf(trg.xp, trg.yp, 8, 1);
+                        fireQuadShot(trg.xp, trg.yp, 8, 1);
                     }
                     if (trg.d._currentframe == 5 && trg.d.d._currentframe == 11) {
                         trg.reps = 2;
@@ -21336,7 +21385,7 @@ function smarts() {
                 }
             }
             if (trg.s == 56) {
-                markhere(trg);
+                markEntityPosition(trg);
                 if (trg.whuz) {
                     if (trg.d._currentframe < 3) {
                         trg.d.gotoAndStop(2);
@@ -21392,7 +21441,7 @@ function smarts() {
             trg._visible = true;
             trg.bh = true;
             if (random(10) == 0 && trg._visible) {
-                splater(trg.xp, trg.yp, random(10), Math.random() * 0.5 + 0.2);
+                createBloodSplatter(trg.xp, trg.yp, random(10), Math.random() * 0.5 + 0.2);
             }
             break;
         case 11:
@@ -21402,7 +21451,7 @@ function smarts() {
                 } else {
                     f1 = 0.6;
                 }
-                pathfind(trg, playx, playy, f1);
+                findPath(trg, playx, playy, f1);
                 firewalk();
                 trg.fire--;
             } else {
@@ -21416,10 +21465,10 @@ function smarts() {
                 randrun();
             }
             if (random(10) == 0) {
-                splater(trg.xp, trg.yp, random(10), Math.random() * 0.5 + 0.4);
+                createBloodSplatter(trg.xp, trg.yp, random(10), Math.random() * 0.5 + 0.4);
             }
-            walkframe(2);
-            sideflip(trg.xbew);
+            updateWalkingAnimation(2);
+            flipSpriteDirection(trg.xbew);
             break;
         case 35:
             trg.phb = true;
@@ -21445,7 +21494,7 @@ function smarts() {
                     trg.see = false;
                     trg.outway = true;
                     trg.hp = hps[trg.s];
-                    splater(trg.xp, trg.yp, random(10) + 1, Math.random() + 0.6);
+                    createBloodSplatter(trg.xp, trg.yp, random(10) + 1, Math.random() + 0.6);
                     if (trg.eternal) {
                         trg.hp += 15;
                     }
@@ -21482,7 +21531,7 @@ function smarts() {
                                     trg.fire = 30;
                                     _root.soundy("meatheadshoot" + random(3) + ".wav");
                                     if (trg.eternal) {
-                                        quadf(trg.xp, trg.yp, 9, 1);
+                                        fireQuadShot(trg.xp, trg.yp, 9, 1);
                                     }
                                 }
                             } else {
@@ -21536,7 +21585,7 @@ function smarts() {
                     trg2._xscale *= 1.2;
                     trg2._yscale = trg2._xscale;
                     if (random(3) == 0) {
-                        splater(
+                        createBloodSplatter(
                             trg.xp + crand(4),
                             trg.yp + crand(4),
                             31 + random(10),
@@ -21562,7 +21611,7 @@ function smarts() {
                         }
                         trg.outway = true;
                         trg.hp = Math.max(20, trg.hp + 5);
-                        splater(trg.xp, trg.yp, random(10) + 1, Math.random() + 0.6);
+                        createBloodSplatter(trg.xp, trg.yp, random(10) + 1, Math.random() + 0.6);
                     }
                 }
             }
@@ -21600,15 +21649,15 @@ function smarts() {
             if (trg.d._currentframe < 3) {
                 if (random(10) == 0 && trg.s != 10) {
                     if (trg.s == 87) {
-                        splater(trg.xp, trg.yp, random(10) + 31, Math.random() * 0.5 + 0.2);
+                        createBloodSplatter(trg.xp, trg.yp, random(10) + 31, Math.random() * 0.5 + 0.2);
                     } else {
-                        splater(trg.xp, trg.yp, random(10), Math.random() * 0.5 + 0.2);
+                        createBloodSplatter(trg.xp, trg.yp, random(10), Math.random() * 0.5 + 0.2);
                     }
                 }
-                walkframe();
+                updateWalkingAnimation();
                 if (trg.s == 58) {
                     if (!trg.eternal) {
-                        pathfind(trg, playx, playy, 0.8);
+                        findPath(trg, playx, playy, 0.8);
                     } else {
                         trg.xbew *= 0.7;
                         trg.ybew *= 0.7;
@@ -21634,7 +21683,7 @@ function smarts() {
                                 trg2._xscale = _loc0_;
                                 applySpecialEffect(trg2);
                                 _root.soundy("summonsound.wav", 80);
-                                sideflip(xenf);
+                                flipSpriteDirection(xenf);
                                 allets = b1;
                             }
                             if (trg.spoo > 50) {
@@ -21643,27 +21692,27 @@ function smarts() {
                         } else if (trg.spoo == 0) {
                             trg.spoo = undefined;
                         } else {
-                            if (linecheck(player.xp, player.yp, trg.xp, trg.yp)) {
+                            if (checkLineOfSight(player.xp, player.yp, trg.xp, trg.yp)) {
                                 if (checkCollision(trg.xp, trg.yp, player.xp, player.yp, 130)) {
                                     if (ashut < 5) {
                                         trg.spoo = 1;
                                     }
                                 }
                             }
-                            sideflip(-trg.xp + player.xp);
+                            flipSpriteDirection(-trg.xp + player.xp);
                         }
                     }
                 } else if (trg.s == 24) {
-                    pathfind(trg, playx, playy, 0.4 + trg.alter * 0.35);
+                    findPath(trg, playx, playy, 0.4 + trg.alter * 0.35);
                 } else {
-                    pathfind(trg, playx, playy, 0.6);
+                    findPath(trg, playx, playy, 0.6);
                 }
-                sideflip(trg.xbew);
+                flipSpriteDirection(trg.xbew);
                 if (trg.s == 87) {
                     if (random(60) == 0) {
                         if (checkCollision(trg.xp, trg.yp, player.xp, player.yp, 130)) {
                             trg.d.gotoAndStop(5);
-                            sideflip(-xenf);
+                            flipSpriteDirection(-xenf);
                         }
                     }
                 }
@@ -21706,7 +21755,8 @@ function smarts() {
     }
 }
 
-function physix() {
+// Original: physix()
+function updatePhysics(): void {
     for (e in projectileClips) {
         trg = projectileClips[e];
         f1 = 1;
@@ -21781,7 +21831,7 @@ function physix() {
                     trg2 = trg.d.d;
                     if (trg2._currentframe < 66 && fra % 10 == 0) {
                         trg.lasts = trg2._currentframe < 55;
-                        gosplash();
+                        playSplashEffect();
                     }
                     break;
                 case 5:
@@ -21811,7 +21861,7 @@ function physix() {
                 case 8:
                     if (trg.s != 4) {
                         if ((random(30) == 0 || trg.spll) && (!trg.firstt || !trg.tooth)) {
-                            splater(
+                            createBloodSplatter(
                                 trg.xp,
                                 trg.yp,
                                 trg.spl + 1 + random(10),
@@ -21879,13 +21929,13 @@ function physix() {
                             trg2._currentframe == 75
                         ) {
                             trg.lasts = trg2._currentframe < 70;
-                            splater(
+                            createBloodSplatter(
                                 trg.xp,
                                 trg.yp,
                                 random(10) + 1 + trg.spl,
                                 1 + Math.random() * 2
                             );
-                            gosplash();
+                            playSplashEffect();
                         }
                     } else if (trg.s == 99) {
                         if (
@@ -21899,13 +21949,13 @@ function physix() {
                             trg2._currentframe == 35
                         ) {
                             trg.lasts = trg2._currentframe < 60;
-                            splater(
+                            createBloodSplatter(
                                 trg.xp,
                                 trg.yp,
                                 random(10) + 1 + trg.spl,
                                 1 + Math.random() * 2
                             );
-                            gosplash();
+                            playSplashEffect();
                         }
                     } else if (trg.s == 28) {
                         if (
@@ -21913,34 +21963,34 @@ function physix() {
                             trg2._currentframe < 84 - trg.mag * 21 &&
                             fra5
                         ) {
-                            splater(
+                            createBloodSplatter(
                                 trg.xp,
                                 trg.yp,
                                 random(10) + 1 + trg.spl,
                                 1 + Math.random() * 2
                             );
-                            gosplash();
+                            playSplashEffect();
                         }
                     } else if (trg.s == 36) {
                         if (trg2._currentframe < 80 && fra % 7 == 0) {
-                            splater(
+                            createBloodSplatter(
                                 trg.xp,
                                 trg.yp,
                                 random(10) + 1 + trg.spl,
                                 1 + Math.random() * 3.5
                             );
-                            gosplash();
+                            playSplashEffect();
                         }
                     } else if (!trg.firsttx) {
                         trg.firsttx = true;
-                        gosplash();
+                        playSplashEffect();
                     }
                     f1 = Math.random() * 0.7 + 0.4;
                     if (trg.s == 14) {
                         f1 *= 0.7;
                     }
                     if (trg2._currentframe <= 3) {
-                        splater(trg.xp, trg.yp, random(10) + 1 + trg.spl, f1);
+                        createBloodSplatter(trg.xp, trg.yp, random(10) + 1 + trg.spl, f1);
                     }
             }
             if (trg2._currentframe == trg2._totalframes && trg2._alpha) {
@@ -21990,19 +22040,19 @@ function physix() {
         e++;
         if (trg.s > 3 && !trg.noneed) {
             if ((trg.pbh || trg.outway) && trg.bh && !trg.dones) {
-                f1 = gridp(trg.xp, trg.yp, -0.5, -0.5);
-                gridput2([int(f1[0] + gridmax), int(f1[1])], e);
-                gridput2([int(f1[0] + gridmax), int(f1[1] + 1)], e);
-                gridput2([int(f1[0]), int(f1[1])], e);
-                gridput2([int(f1[0]), int(f1[1] + 1)], e);
+                f1 = getGridPosition(trg.xp, trg.yp, -0.5, -0.5);
+                placeOnGrid2([int(f1[0] + gridmax), int(f1[1])], e);
+                placeOnGrid2([int(f1[0] + gridmax), int(f1[1] + 1)], e);
+                placeOnGrid2([int(f1[0]), int(f1[1])], e);
+                placeOnGrid2([int(f1[0]), int(f1[1] + 1)], e);
             } else if (trg.ph && trg.bh && !trg.dones) {
                 bollocks.push(e - 1);
             } else if (trg.bh && !trg.dones) {
-                f1 = gridp(trg.xp, trg.yp, -0.5, -0.5);
-                gridput([int(f1[0] + gridmax), int(f1[1])], e);
-                gridput([int(f1[0] + gridmax), int(f1[1] + 1)], e);
-                gridput([int(f1[0]), int(f1[1])], e);
-                gridput([int(f1[0]), int(f1[1] + 1)], e);
+                f1 = getGridPosition(trg.xp, trg.yp, -0.5, -0.5);
+                placeOnGrid([int(f1[0] + gridmax), int(f1[1])], e);
+                placeOnGrid([int(f1[0] + gridmax), int(f1[1] + 1)], e);
+                placeOnGrid([int(f1[0]), int(f1[1])], e);
+                placeOnGrid([int(f1[0]), int(f1[1] + 1)], e);
             }
         } else if (trg.noneed) {
             if (trg.noned-- < 0) {
@@ -22040,7 +22090,7 @@ function physix() {
         trg = projectileClips[e];
         if (trg.bh && !trg.outway) {
             if (trg.s < 5 || trg.s == 44 || trg.s == 28) {
-                f1 = gridp(trg.xp, trg.yp);
+                f1 = getGridPosition(trg.xp, trg.yp);
                 i = f1[0];
                 o = f1[1];
                 z = 0;
@@ -22151,7 +22201,7 @@ function physix() {
             }
             if (trg.shot) {
                 if ((trg._alpha > 50 && trg.sss != 84 && !trg.knife) || trg.death) {
-                    if (mhity(f1, f2)) {
+                    if (checkHitY(f1, f2)) {
                         mhix();
                     } else if (getRoomType(f33) == 0.99) {
                         if (webs[f33] && !trg.slowed) {
@@ -22170,7 +22220,7 @@ function physix() {
                 for (i in hardx[v1]) {
                     f3 = !f3;
                     if (f3) {
-                        if (mhitx(f1 + hardx[v1][i], f2 + hardy[v1][i])) {
+                        if (checkHitX(f1 + hardx[v1][i], f2 + hardy[v1][i])) {
                             f5 += hardx[v1][i];
                             f6 += hardy[v1][i];
                         }
@@ -22181,7 +22231,7 @@ function physix() {
                     for (i in hardx[v1]) {
                         f3 = !f3;
                         if (f3) {
-                            if (mhitx(f1 + hardx[v1][i], f2 + hardy[v1][i])) {
+                            if (checkHitX(f1 + hardx[v1][i], f2 + hardy[v1][i])) {
                                 f5 += hardx[v1][i];
                                 f6 += hardy[v1][i];
                             }
@@ -22310,20 +22360,20 @@ function physix() {
                                 siz2 = 5;
                             }
                             v2 = siz2 - 10;
-                            while (!mhity(f1 + f5 * v2, f2 + f6 * v2) && v2 < siz2 + 10) {
+                            while (!checkHitY(f1 + f5 * v2, f2 + f6 * v2) && v2 < siz2 + 10) {
                                 v2 += 4;
                             }
                             v2 -= 4;
-                            while (!mhity(f1 + f5 * v2, f2 + f6 * v2) && v2 < siz2 + 10) {
+                            while (!checkHitY(f1 + f5 * v2, f2 + f6 * v2) && v2 < siz2 + 10) {
                                 v2 += 0.5;
                             }
                         } else if (trg.flyby) {
                             v2 = siz2 - 10;
-                            while (!mhitx(f1 + f5 * v2, f2 + f6 * v2) && v2 < siz2 + 10) {
+                            while (!checkHitX(f1 + f5 * v2, f2 + f6 * v2) && v2 < siz2 + 10) {
                                 v2 += 4;
                             }
                             v2 -= 4;
-                            while (!mhitx(f1 + f5 * v2, f2 + f6 * v2) && v2 < siz2 + 10) {
+                            while (!checkHitX(f1 + f5 * v2, f2 + f6 * v2) && v2 < siz2 + 10) {
                                 v2 += 0.5;
                             }
                         } else {
@@ -22993,7 +23043,7 @@ function spaceitem() {
                     if (f1.length > 0) {
                         f1 = f1[random(f1.length)];
                         _root.it = f1;
-                        f1 += itn2(f1);
+                        f1 += getEarlyItemRangeOffset(f1);
                         showSecondaryStatusText(_root.st1[f1]);
                     }
                     _root.over.gotoAndStop(14);
@@ -23343,7 +23393,7 @@ function spaceitem() {
                                 mom[z].dones = true;
                                 mom[z]._visible = false;
                             }
-                            momkill();
+                            defeatMom();
                             _root.locker[34] = true;
                         }
                         bible = true;
@@ -23510,9 +23560,9 @@ function updatePlayerPosition(): void {
             (_root.armor < 1 && _root.skiner == 4))
     ) {
         if (_root.skiner == 5) {
-            splater(trg.xp, trg.yp, random(10) + 1, 0.3 + Math.random() * 0.5);
+            createBloodSplatter(trg.xp, trg.yp, random(10) + 1, 0.3 + Math.random() * 0.5);
         } else {
-            splater(trg.xp, trg.yp, random(10) + 20, 0.3 + Math.random() * 0.5);
+            createBloodSplatter(trg.xp, trg.yp, random(10) + 20, 0.3 + Math.random() * 0.5);
         }
     }
     if (coinl) {
@@ -23561,7 +23611,7 @@ function updatePlayerPosition(): void {
     }
     trg2 = player;
     if (random(4) == 0 && ups[189]) {
-        splater(trg2.xp, trg2.yp + 5, 1 + random(10), Math.random() * 0.5 + 0.3);
+        createBloodSplatter(trg2.xp, trg2.yp + 5, 1 + random(10), Math.random() * 0.5 + 0.3);
     }
     for (a in projectileClips) {
         trg = projectileClips[a];
@@ -23605,10 +23655,10 @@ function updatePlayerPosition(): void {
                     trg.xbew *= 0.85;
                     trg.ybew *= 0.85;
                     if (trg.sf) {
-                        sideflip(trg.xbew);
+                        flipSpriteDirection(trg.xbew);
                     }
                     if (trg.wf) {
-                        walkframe();
+                        updateWalkingAnimation();
                     }
                 }
             }
@@ -23836,7 +23886,7 @@ function updatePlayerPosition(): void {
                             }
                             break;
                         case 26:
-                            curs();
+                            triggerTowerCardEffect();
                             ups[122] = 1.5;
                             break;
                         case 25:
@@ -24941,7 +24991,7 @@ function cspawn(f0, f12) {
                 xenf *= 0.4;
                 yenf *= 0.4;
             }
-            if (linecheckx(chestox, chestoy, trg.xp + xenf * 7, trg.yp + yenf * 7)) {
+            if (checkLineOfSightExtended(chestox, chestoy, trg.xp + xenf * 7, trg.yp + yenf * 7)) {
                 f13 = 1000;
             }
         }
@@ -26491,14 +26541,14 @@ let onEnterFrame = () => {
                 }
             }
         }
-        actions1();
+        updateGameEntities();
         if (brr.length > 0) {
             breakall();
             brr = [];
             brr2 = [];
         }
         startTimer(2);
-        physix();
+        updatePhysics();
         endTimer(2);
         v = 0.7;
         if (fra % 1000 == 999) {
@@ -28146,17 +28196,17 @@ function goblack() {
     }
 }
 
-function colorit_hmmm(trg, f1, f2, f3, f4, f5, f6) {
-    var _loc1_ = new flash.geom.ColorTransform();
-    _loc1_.redMultiplier = f1;
-    _loc1_.greenMultiplier = f2;
-    _loc1_.blueMultiplier = f3;
-    _loc1_.redOffset = f4;
-    _loc1_.greenOffset = f5;
-    _loc1_.blueOffset = f6;
-    var _loc2_ = new flash.geom.Transform(trg);
-    _loc2_.colorTransform = _loc1_;
-}
+// function colorit_hmmm(trg, f1, f2, f3, f4, f5, f6) {
+//     var _loc1_ = new flash.geom.ColorTransform();
+//     _loc1_.redMultiplier = f1;
+//     _loc1_.greenMultiplier = f2;
+//     _loc1_.blueMultiplier = f3;
+//     _loc1_.redOffset = f4;
+//     _loc1_.greenOffset = f5;
+//     _loc1_.blueOffset = f6;
+//     var _loc2_ = new flash.geom.Transform(trg);
+//     _loc2_.colorTransform = _loc1_;
+// }
 
 // Original: uncolera()
 function updateItemCooldown(): void {
