@@ -17,22 +17,24 @@ function getRoomType(roomIndex: number): number {
     return levz[roomIndex];
 }
 
-function horsch(trg) {
+// Original: horsch(trg)
+function updateHorseSprite(entity: any): void {
     if (_root.it == 141) {
-        trg.gotoAndStop(2);
+        entity.gotoAndStop(2);
     } else {
-        trg.gotoAndStop(1);
+        entity.gotoAndStop(1);
     }
 }
 
-function sloter(trg) {
-    trg.gotoAndStop(1);
-    trg2 = trg._parent._parent._parent;
+// Original: sloter(trg)
+function updateSlotSprite(entity: any): void {
+    entity.gotoAndStop(1);
+    trg2 = entity._parent._parent._parent;
     if (trg2.s != 5) {
-        trg2 = trg._parent._parent._parent._parent;
+        trg2 = entity._parent._parent._parent._parent;
     }
     if (trg2.col == 41) {
-        trg.gotoAndStop(2);
+        entity.gotoAndStop(2);
     }
 }
 
@@ -54,17 +56,17 @@ export function addPathTile(index: number): void {
 }
 
 // Original: hat(f1)
-function hat(f1: number): void {
-    var _loc2_ = 0;
-    _root.hat[f1] = true;
-    switch (f1) {
+function activatePassiveItem(itemId: number): void {
+    let effectId: number = 0;
+    _root.collectedPassiveItems[itemId] = true;
+    switch (itemId) {
         case 10:
         case 11:
         case 12:
         case 31:
         case 37:
         case 40:
-            _loc2_ = 2;
+            effectId = 2;
             break;
         case 4:
         case 6:
@@ -82,7 +84,7 @@ function hat(f1: number): void {
         case 48:
         case 50:
         case 54:
-            _loc2_ = 5;
+            effectId = 5;
             break;
         case 2:
         case 5:
@@ -92,7 +94,7 @@ function hat(f1: number): void {
         case 52:
         case 53:
         case 58:
-            _loc2_ = 3;
+            effectId = 3;
             break;
         case 3:
         case 8:
@@ -102,7 +104,7 @@ function hat(f1: number): void {
         case 56:
         case 60:
         case 61:
-            _loc2_ = 4;
+            effectId = 4;
             break;
         case 26:
         case 24:
@@ -115,7 +117,7 @@ function hat(f1: number): void {
         case 51:
         case 55:
         case 58:
-            _loc2_ = 1;
+            effectId = 1;
             break;
         case 13:
         case 14:
@@ -127,13 +129,13 @@ function hat(f1: number): void {
         case 47:
         case 49:
         case 59:
-            _loc2_ = 0;
+            effectId = 0;
     }
-    _root.hatmode[_loc2_] = f1;
+    _root.currentPassiveEffects[effectId] = itemId;
 }
 
 // Original: gish(trg, f1)
-function setEnemyAppearance(entity: any, variant: number): void {
+function setEnemyAppearance(entity: any, variant: number | boolean): void {
     if (variant == 2) {
         if (
             entity._parent._parent == player ||
@@ -163,26 +165,26 @@ function setEnemyAppearance(entity: any, variant: number): void {
 
 // Original: dmgdo()
 function calculateDamageMultiplier(): number {
-    var _loc2_ = 0;
+    let damageMultiplier: number = 0;
     if (doub) {
-        _loc2_ += 0.75;
+        damageMultiplier += 0.75;
     }
     if (ups[7]) {
-        _loc2_ = _loc2_ + 1;
+        damageMultiplier = damageMultiplier + 1;
     }
     if (_root.etol) {
-        _loc2_ += 3;
+        damageMultiplier += 3;
     }
     if (ups[90]) {
-        _loc2_ = _loc2_ + 1;
+        damageMultiplier = damageMultiplier + 1;
     }
     if (ups[109]) {
-        _loc2_ += _root.coins * 0.04;
+        damageMultiplier += _root.coins * 0.04;
     }
     if (ups[122] > 0) {
-        _loc2_ += ups[122] * ups[122] * 1.5;
+        damageMultiplier += ups[122] * ups[122] * 1.5;
     }
-    _loc2_ +=
+    damageMultiplier +=
         ups[50] +
         ups[51] +
         ups[70] +
@@ -191,78 +193,79 @@ function calculateDamageMultiplier(): number {
         (ups[12] + ups[101] + ups[121] + ups[138] + ups[193] + ups[189]) * 0.3 +
         (ups[176] + ups[184] + ups[165]) * 0.08;
     if (ups[120]) {
-        _loc2_ *= 0.95;
-        _loc2_ -= 0.4;
+        damageMultiplier *= 0.95;
+        damageMultiplier -= 0.4;
     }
     if (demon > 0) {
-        _loc2_ += 0.7;
+        damageMultiplier += 0.7;
     }
     if (rage != 1) {
-        _loc2_ += rage - 1;
+        damageMultiplier += rage - 1;
     }
     if (ups[154]) {
-        if (sob == -1 || (_root.hat[11] && random(2) == 0)) {
-            _loc2_ += 2;
+        if (sob == -1 || (_root.collectedPassiveItems[11] && random(2) == 0)) {
+            damageMultiplier += 2;
         }
     }
     if (ups[69] && !ups[118] && chaf > 0) {
         chal = Math.max(1, Math.min(5, 1 + (fra - chaf) / 10) * 1.8 - 2);
-        _loc2_ += (chal - 1) * 1.3;
+        damageMultiplier += (chal - 1) * 1.3;
     }
-    _loc2_ += razor * 0.6;
-    _loc2_ = 3.5 * Math.sqrt(1 + _loc2_ * 1.2);
+    damageMultiplier += razor * 0.6;
+    damageMultiplier = 3.5 * Math.sqrt(1 + damageMultiplier * 1.2);
     if (ups[169]) {
         if (ups[2] == 1 || ups[153] || ups[182] || true) {
-            _loc2_ += 6.6;
+            damageMultiplier += 6.6;
         } else {
-            _loc2_ += 4;
-            _loc2_ *= 2;
+            // unreachabe code
+            damageMultiplier += 4;
+            damageMultiplier *= 2;
         }
     }
-    var _loc3_ = [0, 0, 0.2, 0.35, 0.05, -0.23, 0];
+    const _loc3_: number[] = [0, 0, 0.2, 0.35, 0.05, -0.23, 0];
     if (ups[122]) {
         _loc3_[5] = -0.1;
     }
-    _loc2_ *= 1 + _loc3_[_root.skiner];
-    _root.firrb = _loc2_;
+    damageMultiplier *= 1 + _loc3_[_root.skiner];
+    _root.firrb = damageMultiplier;
     if (checkItemOwned(35)) {
-        _loc2_ += 2;
+        damageMultiplier += 2;
     }
     if (checkItemOwned(62)) {
-        _loc2_ += 1;
+        damageMultiplier += 1;
     }
     if (ups[182]) {
-        _loc2_ *= 1.3;
-        _loc2_ += 4;
+        damageMultiplier *= 1.3;
+        damageMultiplier += 4;
     }
     if (ups[152]) {
-        _loc2_ *= 0.65;
+        damageMultiplier *= 0.65;
     }
     if (_root.it == 83) {
-        _loc2_ += 0.5;
+        damageMultiplier += 0.5;
     }
     if (_root.hardmode) {
-        var _loc5_ = _loc2_;
-        var _loc4_ = 1 + Math.max(0, 12 - _root.firra) * 0.1;
-        _loc2_ *= _loc4_;
-        if (_loc2_ > 5) {
-            _loc2_ = 5 + (_loc2_ - 5) * 0.95;
+        //const _loc5_: number = damageMultiplier; //unused
+        const _loc4_: number = 1 + Math.max(0, 12 - _root.firra) * 0.1;
+        damageMultiplier *= _loc4_;
+        if (damageMultiplier > 5) {
+            damageMultiplier = 5 + (damageMultiplier - 5) * 0.95;
         }
-        if (_loc2_ > 10) {
-            _loc2_ = 10 + (_loc2_ - 10) * 0.85;
+        if (damageMultiplier > 10) {
+            damageMultiplier = 10 + (damageMultiplier - 10) * 0.85;
         }
-        if (_loc2_ > 15) {
-            _loc2_ = 15 + (_loc2_ - 15) * 0.85;
+        if (damageMultiplier > 15) {
+            damageMultiplier = 15 + (damageMultiplier - 15) * 0.85;
         }
-        if (_loc2_ > 20) {
-            _loc2_ = 20 + (_loc2_ - 20) * 0.85;
+        if (damageMultiplier > 20) {
+            damageMultiplier = 20 + (damageMultiplier - 20) * 0.85;
         }
-        if (_loc2_ > 30) {
-            _loc2_ = 25 + (_loc2_ - 25) * 0.85;
+        if (damageMultiplier > 30) {
+            damageMultiplier = 25 + (damageMultiplier - 25) * 0.85;
         }
-        _loc2_ /= _loc4_;
+        damageMultiplier /= _loc4_;
     }
-    return _loc2_;
+    return damageMultiplier;
 }
 
 // Original: omgz(f1)
@@ -719,11 +722,11 @@ export function initializePlayerStats(): void {
     _root.bmode = 1;
     _root.demonz = 0;
     _root.bookster = false;
-    _root.hatmode = [1, 1, 1, 1, 1];
+    _root.currentPassiveEffects = [1, 1, 1, 1, 1];
     _root.wtfuuz = false;
-    _root.hat = [];
+    _root.collectedPassiveItems = [];
     if (_root.skiner > 0 && _root.skiner < 4) {
-        hat(_root.skiner + 9);
+        activatePassiveItem(_root.skiner + 9);
         _root.classit = true;
     }
     _root.coins = _root.bombs = _root.keys = 0;
@@ -749,17 +752,17 @@ export function initializePlayerStats(): void {
             break;
         case 4:
             _root.sk = 5;
-            hat(31);
+            activatePassiveItem(31);
             _root.classit = true;
             break;
         case 5:
             _root.sk = 6;
-            hat(37);
+            activatePassiveItem(37);
             _root.classit = true;
             break;
         case 6:
             _root.sk = 8;
-            hat(40);
+            activatePassiveItem(40);
             _root.classit = true;
             _root.armor = 1;
     }
@@ -1270,20 +1273,21 @@ function endTimer(timerId: number): void {
     alltimer[timerId] += (getTimer() - timer[timerId]) / 25;
 }
 
-function crand(f1?) {
+// Original: crand(f1)
+function cosineRandom(radius?: number): number {
     if (cra1 == undefined) {
         cra1 = Math.random() * 3.141592653589793 * 2;
-        cra2 = f1;
-        return Math.cos(cra1) * f1;
+        cra2 = radius;
+        return Math.cos(cra1) * radius;
     }
-    f1 = cra1;
+    radius = cra1;
     cra1 = undefined;
-    return Math.sin(f1) * cra2;
+    return Math.sin(radius) * cra2;
 }
 
 // Original: itzz(f1)
 function notUpgrade(itemId: number): boolean {
-    var _loc2_ =
+    const _loc2_: boolean =
         itemId != 114 &&
         itemId != 118 &&
         itemId != 138 &&
@@ -1774,9 +1778,10 @@ function shouldAttachMovie(entityType: number | string): boolean {
     );
 }
 
-function trgdy(f1?) {
-    if (f1) {
-        var _loc1_ = Math.max(0, 8.5 + trg.dy);
+// Original: trgdy(f1)
+function updateProjectileVerticalOffset(useDynamicOffset?: boolean): void {
+    if (useDynamicOffset) {
+        const _loc1_: number = Math.max(0, 8.5 + trg.dy);
         trg.d._y = trg.dy * 0.5 - 15 + _loc1_ * _loc1_;
         if (trg.ba) {
             trg.d._y += 5;
@@ -1812,7 +1817,8 @@ function attachSpriteToEntity(entity: any, spriteId: number | string): void {
     }
 }
 
-function abr() {
+// Original: abr()
+function abr(): string {
     if (fra2) {
         return "A";
     }
@@ -2669,7 +2675,7 @@ export function createProjectile(spawnX: number, spawnY: number, rotationRadians
                 projectileClip.hp *= 0.85;
             }
         } else {
-            specoo(projectileClip);
+            applySpecialEntityEffects(projectileClip);
         }
     }
     if (projectileClip.special) {
@@ -3488,68 +3494,69 @@ export function createProjectile(spawnX: number, spawnY: number, rotationRadians
     return projectileClip;
 }
 
-function specoo(trg) {
-    applySpecialEffect(trg);
-    switch (trg.specoz) {
+// Original: specoo(trg)
+function applySpecialEntityEffects(entity: any): void {
+    applySpecialEffect(entity);
+    switch (entity.specoz) {
         case 23:
-            if (trg.s != 78) {
-                trg._yscale *= 1.2;
-                trg._xscale = _loc0_;
+            if (entity.s != 78) {
+                entity._yscale *= 1.2;
+                entity._xscale = _loc0_;
             } else {
-                trg.fra = -100;
+                entity.fra = -100;
             }
             if (_root.chaps == 1) {
-                if (trg.s != 19) {
-                    trg.mhp *= 1.125;
-                    trg.hp *= 1.125;
+                if (entity.s != 19) {
+                    entity.mhp *= 1.125;
+                    entity.hp *= 1.125;
                 }
             } else {
-                trg.mhp *= 1.25;
-                trg.hp *= 1.25;
+                entity.mhp *= 1.25;
+                entity.hp *= 1.25;
             }
             break;
         case 19:
-            if (trg.s == 67) {
-                trg._yscale = 80;
-                trg._xscale = 70;
+            if (entity.s == 67) {
+                entity._yscale = 80;
+                entity._xscale = 70;
             }
             break;
         case 14:
-            trg._yscale = _loc0_ = 80;
-            trg._xscale = _loc0_;
+            entity._yscale = _loc0_ = 80;
+            entity._xscale = _loc0_;
             break;
         case 12:
-            trg._yscale = _loc0_ = 85;
-            trg._xscale = _loc0_;
+            entity._yscale = _loc0_ = 85;
+            entity._xscale = _loc0_;
             break;
         case 9:
-            trg.mhp *= 0.85;
-            trg.hp *= 0.85;
-            trg._yscale = _loc0_ = 85;
-            trg._xscale = _loc0_;
+            entity.mhp *= 0.85;
+            entity.hp *= 0.85;
+            entity._yscale = _loc0_ = 85;
+            entity._xscale = _loc0_;
             break;
         case 5:
-            trg.spl = 30;
+            entity.spl = 30;
             break;
         case 3:
-            trg.spl = 30;
+            entity.spl = 30;
             break;
         case 1:
             if (!wtfe) {
                 i--;
                 wtfe = true;
             }
-            trg._yscale = _loc0_ = 75;
-            trg._xscale = _loc0_;
-            if (trg.s == 20) {
+            entity._yscale = _loc0_ = 75;
+            entity._xscale = _loc0_;
+            if (entity.s == 20) {
                 sizes[20] = 21;
             }
-            trg.mhp *= 0.45;
-            trg.hp *= 0.45;
+            entity.mhp *= 0.45;
+            entity.hp *= 0.45;
             break;
         case 11:
-            trg._yscale = _loc0_ = 111;
-            trg._xscale = _loc0_;
+            entity._yscale = _loc0_ = 111;
+            entity._xscale = _loc0_;
             break;
         case 21:
         case 18:
@@ -3559,40 +3566,40 @@ function specoo(trg) {
         case 8:
         case 15:
         case 16:
-            if (trg.s != 100) {
-                trg.mhp *= 1.25;
-                trg.hp *= 1.25;
-                if (trg.s == 67) {
-                    trg.mhp *= 1.25;
-                    trg.hp *= 1.25;
+            if (entity.s != 100) {
+                entity.mhp *= 1.25;
+                entity.hp *= 1.25;
+                if (entity.s == 67) {
+                    entity.mhp *= 1.25;
+                    entity.hp *= 1.25;
                 }
-                trg._yscale = _loc0_ = 115;
-                trg._xscale = _loc0_;
+                entity._yscale = _loc0_ = 115;
+                entity._xscale = _loc0_;
             }
             break;
         case 7:
-            if (trg.s == 99) {
-                trg.mhp *= 0.55;
-                trg.hp *= 0.55;
-                trg._yscale = _loc0_ = 58;
-                trg._xscale = _loc0_;
+            if (entity.s == 99) {
+                entity.mhp *= 0.55;
+                entity.hp *= 0.55;
+                entity._yscale = _loc0_ = 58;
+                entity._xscale = _loc0_;
                 if (!wtfe) {
                     i--;
                     wtfe = true;
                 }
-            } else if (trg.s != 63) {
-                trg.mhp *= 1.45;
-                trg.hp *= 1.45;
-                trg._yscale = _loc0_ = 115;
-                trg._xscale = _loc0_;
+            } else if (entity.s != 63) {
+                entity.mhp *= 1.45;
+                entity.hp *= 1.45;
+                entity._yscale = _loc0_ = 115;
+                entity._xscale = _loc0_;
             }
             break;
         case 22:
-            trg.mhp *= 2;
-            trg.hp *= 2;
+            entity.mhp *= 2;
+            entity.hp *= 2;
         case 20:
-            trg._yscale = _loc0_ = 75;
-            trg._xscale = _loc0_;
+            entity._yscale = _loc0_ = 75;
+            entity._xscale = _loc0_;
     }
 }
 
@@ -3652,19 +3659,20 @@ function calculateAngleFull(x: number, y: number): number {
     return f0;
 }
 
-// Original: rotget(f1, f2) *unused
+// Original: rotget(f1, f2) *unused, rotget2 instead
 // function calculateAngle(x: number, y: number): number {
 //     f0 = (Math.atan(-x / y) / 3.141592653589793) * 180 + 90;
 //     return f0;
 // }
 
-function absmax(f1, f2) {
-    if (f1 > f2) {
-        f1 = f2;
-    } else if (f1 < -f2) {
-        f1 = -f2;
+// Original: absmax(f1, f2)
+function clamp(value: number, max: number): number {
+    if (value > max) {
+        value = max;
+    } else if (value < -max) {
+        value = -max;
     }
-    return f1;
+    return value;
 }
 
 // Original: enfget(f1, f2)
@@ -3704,19 +3712,21 @@ function checkCollision(x1: number, y1: number, x2: number, y2: number, size: nu
     }
 }
 
-function t3d(f1, f2) {
-    f2 += f1._rotation;
-    f2 += 45;
-    while (f2 > 360) {
-        f2 -= 360;
+// Original: t3d(f1, f2) *unused
+function rotateTowardsAngle(target: any, angle: number): void {
+    angle += target._rotation;
+    angle += 45;
+    while (angle > 360) {
+        angle -= 360;
     }
-    while (f2 < 0) {
-        f2 += 360;
+    while (angle < 0) {
+        angle += 360;
     }
-    f1.gotoAndStop(Math.round((f2 / 360) * 72) + 1);
+    target.gotoAndStop(Math.round((angle / 360) * 72) + 1);
 }
 
-function pff(f1, f2) {
+// Original:
+function pff(f1, f2): void {
     if (trg.gridder[f1] >= 0 && trg.gridder[f1] < 1) {
         if (trg.gridder[f1] == 0) {
             f2 = f2 - 1;
@@ -3728,14 +3738,16 @@ function pff(f1, f2) {
     }
 }
 
-function pff1(f1, f2) {
+// Original:
+function pff1(f1, f2): void {
     if (trg.gridder[f1] + f2 * 3 > v3 && trg.gridder[f1] < 0) {
         v3 = trg.gridder[f1];
         v4 = f1;
     }
 }
 
-function pff2(f1) {
+// Original:
+function pff2(f1): void {
     if (getRoomType(f1) != 0) {
         convertTileToWorldCoordinates(f1);
         if (Math.abs(xenf) > 0 && Math.abs(yenf) > 0) {
@@ -4161,15 +4173,16 @@ function setColorTransform(target: any, redMultiplier: number, greenMultiplier: 
     newTarget.colorTransform = color;
 }
 
-function pilcol(f1, f2, f3) {
-    setColorTransform(player, 0.3, 0.3, 0.3, f1 * 1.3, f2 * 1.3, f3 * 1.3);
+// Original: pilcol(f1, f2, f3)
+function applyPillColorEffect(red: number, green: number, blue: number): void {
+    setColorTransform(player, 0.3, 0.3, 0.3, red * 1.3, green * 1.3, blue * 1.3);
     pillef = fra + 30;
     _root.playcol[0] *= 0.4;
     _root.playcol[1] *= 0.4;
     _root.playcol[2] *= 0.4;
-    _root.playcol[0] += f1 / 160;
-    _root.playcol[1] += f2 / 160;
-    _root.playcol[2] += f3 / 160;
+    _root.playcol[0] += red / 160;
+    _root.playcol[1] += green / 160;
+    _root.playcol[2] += blue / 160;
 }
 
 // Original: playcol(f1)
@@ -4423,7 +4436,7 @@ function createBloodSplatter(x: number, y: number, bloodType: number, scale: num
         }
         maxx = new flash.geom.Matrix();
         maxx.scale(v1, v2);
-        maxx.translate(x + crand(5), y + crand(5) - 5);
+        maxx.translate(x + cosineRandom(5), y + cosineRandom(5) - 5);
         maxx.scale(hdx, hdx);
         splat.draw(blood, maxx, bloc);
     }
@@ -4495,7 +4508,7 @@ function spawnTileEntity(entityType: string, tileIndex: number, center?: boolean
 }
 
 // Original: upa()
-export function updatePlayerAnimation(): void {
+export function updatePickedItemsEffects(): void {
     ups = _root.ups.slice(0, -1);
     if (_root.ceye) {
         ups[21] = true;
@@ -4577,7 +4590,7 @@ function fixWallConnections(): void {
 }
 
 // Original: golev()
-function golev(): void {
+function initializeRoom(): void {
     if (_root.ups[122]) {
         if (player.hp < 1) {
             ups[122] = 1;
@@ -5232,7 +5245,7 @@ function findPath(entity: any, targetX: number, targetY: number, speedMultiplier
         nogo = true;
         if ((fra + entity.e) % 6 == 1) {
             if (entity.see) {
-                entity.lastv = v5 = linecheckxx(xppp, yppp, xpp, ypp);
+                entity.lastv = v5 = checkLineOfSightExtended2(xppp, yppp, xpp, ypp);
             } else {
                 entity.lastv = v5 = checkLineOfSight(xppp, yppp, xpp, ypp);
             }
@@ -5389,7 +5402,8 @@ function checkHitX(x: number, y: number): boolean {
     return true;
 }
 
-function mhix() {
+// Original: mhix()
+function processHorizontalCollisions(): void {
     f3 = false;
     for (i in hardx[v1]) {
         f3 = !f3;
@@ -5419,50 +5433,54 @@ function checkCollisionWithLevelGeometry(x: number, y: number): boolean {
     return blorz.hitTest(x + _X, y + _Y, true);
 }
 
-function mhit(f1, f2) {
-    if (f1 > 20 && f1 < 620 && f2 > 110 && f2 < 447) {
-        f1 = getRoomType(convertWorldToTileCoordinates(f1, f2));
-        if (f1 >= 1) {
+// Original: mhit(f1, f2)
+function checkHit(x: number, y: number): boolean {
+    if (x > 20 && x < 620 && y > 110 && y < 447) {
+        x = getRoomType(convertWorldToTileCoordinates(x, y));
+        if (x >= 1) {
             return true;
         }
     }
     return true;
 }
 
-function pff3(f4) {
-    f4 = getRoomType(f4);
-    if (f4 != 0.99 && grox != f4) {
-        if (f4 >= 1) {
+// Original: pff3(f4)
+function updatePathfindingScore(roomIndex: number): void {
+    roomIndex = getRoomType(roomIndex);
+    if (roomIndex != 0.99 && grox != roomIndex) {
+        if (roomIndex >= 1) {
             f5 = -1;
-        } else if (f4 > 0.3) {
+        } else if (roomIndex > 0.3) {
             f5 -= 0.1;
         }
     }
 }
 
-function pff3x1(f4) {
-    f4 = getRoomType(f4);
-    if (f4 != 3 && grox != f4) {
-        if (f4 >= 1) {
+// Original: pff3x1(f4)
+function updatePathfindingScoreAlt(roomIndex: number): void {
+    roomIndex = getRoomType(roomIndex);
+    if (roomIndex != 3 && grox != roomIndex) {
+        if (roomIndex >= 1) {
             f5 = -1;
-        } else if (f4 > 0.3) {
+        } else if (roomIndex > 0.3) {
             f5 -= 0.1;
         }
     }
 }
 
-function linecheckxx(f1, f2, f3, f4) {
-    var _loc5_ = f1 - f3;
-    var _loc6_ = f2 - f4;
-    var _loc7_ = getDistance(_loc5_, _loc6_);
-    var _loc8_ = 2.5;
+// Original: linecheckxx(f1, f2, f3, f4)
+function checkLineOfSightExtended2(f1: number, f2: number, f3: number, f4: number): boolean {
+    let _loc5_: number = f1 - f3;
+    let _loc6_: number = f2 - f4;
+    let _loc7_: number = getDistance(_loc5_, _loc6_);
+    let _loc8_: number = 2.5;
     grox = convertWorldToTileCoordinates(f1, f2);
     if (_loc7_ > 0) {
         _loc5_ /= _loc7_;
         _loc6_ /= _loc7_;
         _loc5_ *= 10;
         _loc6_ *= 10;
-        var _loc2_ = 0;
+        let _loc2_: number = 0;
         while (_loc2_ < _loc7_) {
             f1 -= _loc5_;
             f2 -= _loc6_;
@@ -5482,7 +5500,7 @@ function linecheckxx(f1, f2, f3, f4) {
     return _loc8_ > 0;
 }
 
-// Original: linecheckxx(f1, f2, f3, f4)
+// Original: linecheckx(f1, f2, f3, f4)
 function checkLineOfSightExtended(x1: number, y1: number, x2: number, y2: number): boolean {
     let _loc5_: number = x1 - x2;
     let _loc6_: number = y1 - y2;
@@ -5499,7 +5517,7 @@ function checkLineOfSightExtended(x1: number, y1: number, x2: number, y2: number
         while (_loc1_ < _loc4_) {
             x1 -= _loc5_;
             y1 -= _loc6_;
-            pff3(convertWorldToTileCoordinates(x1, y1));
+            updatePathfindingScore(convertWorldToTileCoordinates(x1, y1));
             _loc1_ += 10;
         }
     }
@@ -5524,10 +5542,10 @@ function checkLineOfSight(x1: number, y1: number, x2: number, y2: number): boole
         while (_loc3_ < _loc4_) {
             x1 -= _loc5_;
             y1 -= _loc6_;
-            pff3(convertWorldToTileCoordinates(x1 + f6, y1 + f6));
-            pff3(convertWorldToTileCoordinates(x1 - f6, y1 + f6));
-            pff3(convertWorldToTileCoordinates(x1 - f6, y1 - f6));
-            pff3(convertWorldToTileCoordinates(x1 + f6, y1 - f6));
+            updatePathfindingScore(convertWorldToTileCoordinates(x1 + f6, y1 + f6));
+            updatePathfindingScore(convertWorldToTileCoordinates(x1 - f6, y1 + f6));
+            updatePathfindingScore(convertWorldToTileCoordinates(x1 - f6, y1 - f6));
+            updatePathfindingScore(convertWorldToTileCoordinates(x1 + f6, y1 - f6));
             _loc3_ += 6;
         }
     }
@@ -5535,7 +5553,8 @@ function checkLineOfSight(x1: number, y1: number, x2: number, y2: number): boole
     return f5 > 0;
 }
 
-function linechecky(f1, f2, f3, f4) {
+// Original:
+function linechecky(f1, f2, f3, f4): boolean {
     var _loc5_ = f1 - f3;
     var _loc6_ = f2 - f4;
     var _loc4_ = getDistance(_loc5_, _loc6_);
@@ -5551,10 +5570,10 @@ function linechecky(f1, f2, f3, f4) {
         while (_loc3_ < _loc4_) {
             f1 -= _loc5_;
             f2 -= _loc6_;
-            pff3x1(convertWorldToTileCoordinates(f1 + f6, f2 + f6));
-            pff3x1(convertWorldToTileCoordinates(f1 - f6, f2 + f6));
-            pff3x1(convertWorldToTileCoordinates(f1 - f6, f2 - f6));
-            pff3x1(convertWorldToTileCoordinates(f1 + f6, f2 - f6));
+            updatePathfindingScoreAlt(convertWorldToTileCoordinates(f1 + f6, f2 + f6));
+            updatePathfindingScoreAlt(convertWorldToTileCoordinates(f1 - f6, f2 + f6));
+            updatePathfindingScoreAlt(convertWorldToTileCoordinates(f1 - f6, f2 - f6));
+            updatePathfindingScoreAlt(convertWorldToTileCoordinates(f1 + f6, f2 - f6));
             _loc3_ += 10;
         }
     }
@@ -5637,7 +5656,7 @@ function updatePlayerPowerup(): void {
         } else if (highs.it == 12 || highs.it == 15 || highs.it == 16) {
             player.hp = 1000;
             if (highs.it == 15) {
-                hat(25);
+                activatePassiveItem(25);
             }
         }
         _root.ups[highs.it]++;
@@ -5655,12 +5674,12 @@ function updatePlayerPowerup(): void {
         player.d.d.d.gotoAndPlay(1);
         if (highs.it == 7) {
             _root.fmode = 8;
-            hat(7);
+            activatePassiveItem(7);
         } else if (highs.it < 8) {
             _root.hmode = _root.fmode = 1 + highs.it;
         }
         if (highs.it == 27) {
-            hat(27);
+            activatePassiveItem(27);
         }
         if (highs.it == 81) {
             if (_root.skiner == 4) {
@@ -5699,24 +5718,24 @@ function updatePlayerPowerup(): void {
             _root.bmode = 27;
             player.hp = player.hp + 1;
         } else if (highs.it == 190) {
-            hat(58);
+            activatePassiveItem(58);
             _root.bombs = 99;
         } else if (highs.it == 191) {
             _root.hmode = 44;
         } else if (highs.it == 193) {
-            hat(55);
+            activatePassiveItem(55);
             player.hp = player.hp + 1;
         } else if (highs.it == 194) {
             kogs = [5.3];
-            hat(60);
+            activatePassiveItem(60);
         } else if (highs.it == 195) {
             kogs = [5.07, 5.07, 5.07, 5.07];
-            hat(59);
+            activatePassiveItem(59);
         } else if (highs.it == 196) {
-            hat(56);
+            activatePassiveItem(56);
             kogs = [5.010000003, 5.010000003];
         } else if (highs.it == 197) {
-            hat(57);
+            activatePassiveItem(57);
         } else if (highs.it == 198) {
             _root.bmode = 26;
             kogs = [5.35, 5.07, 5.02, 5.010000003, 5.3, 5.03, 5.04];
@@ -5726,7 +5745,7 @@ function updatePlayerPowerup(): void {
             _root.armor = _root.armor + 1;
             player.hp += 15;
         } else if (highs.it == 183) {
-            hat(53);
+            activatePassiveItem(53);
         } else if (highs.it == 180) {
             _root.bmode = 24;
         } else if (highs.it == 149) {
@@ -5734,7 +5753,7 @@ function updatePlayerPowerup(): void {
                 ups[2] = _root.ups[2] = 0.5;
             }
         } else if (highs.it == 168) {
-            hat(50);
+            activatePassiveItem(50);
         } else if (highs.it == 139) {
             _root.bmode = 20;
         } else if (highs.it == 169) {
@@ -5744,21 +5763,21 @@ function updatePlayerPowerup(): void {
             }
             _root.fmode = 20;
         } else if (highs.it == 155) {
-            hat(47);
+            activatePassiveItem(47);
         } else if (highs.it == 156) {
-            hat(48);
+            activatePassiveItem(48);
         } else if (highs.it == 161) {
-            hat(49);
+            activatePassiveItem(49);
         } else if (highs.it == 153) {
-            hat(46);
+            activatePassiveItem(46);
             if (!ups[2]) {
                 ups[2] = _root.ups[2] = 0.4;
             }
             _root.fmode = 23;
         } else if (highs.it == 165) {
-            hat(51);
+            activatePassiveItem(51);
         } else if (highs.it == 176) {
-            hat(52);
+            activatePassiveItem(52);
             player.hp += 1.5;
         } else if (highs.it == 154) {
             _root.hmode = 38;
@@ -5770,24 +5789,24 @@ function updatePlayerPowerup(): void {
             _root.bmode = 22;
             _root.ups[115] = ups[115] = 1;
         } else if (highs.it == 157) {
-            hat(41);
+            activatePassiveItem(41);
         } else if (highs.it == 150) {
             _root.fmode = 24;
-            hat(44);
+            activatePassiveItem(44);
         } else if (highs.it == 151) {
             _root.hmode = 37;
             _root.fmode = 21;
         } else if (highs.it == 148) {
             _root.bmode = 21;
-            pilcol(40, 100, 40);
+            applyPillColorEffect(40, 100, 40);
         } else if (highs.it == 138) {
-            hat(42);
+            activatePassiveItem(42);
             player.hp = player.hp + 1;
         } else if (highs.it == 140) {
             _root.hmode = 34;
             _root.bombs += 5;
         } else if (highs.it == 141) {
-            hat(43);
+            activatePassiveItem(43);
             cowss = 7;
         } else if (highs.it == 125) {
             _root.bombs += 5;
@@ -5801,12 +5820,12 @@ function updatePlayerPowerup(): void {
             ups[122] = false;
         } else if (highs.it == 116) {
             _root.itc = 1;
-            hat(36);
+            activatePassiveItem(36);
         } else if (highs.it == 132) {
-            hat(39);
+            activatePassiveItem(39);
         } else if (highs.it == 119) {
             player.hp += 5;
-            hat(35);
+            activatePassiveItem(35);
         } else if (highs.it == 129) {
             player.hp += 0.5;
             _root.bmode = 14;
@@ -5815,21 +5834,21 @@ function updatePlayerPowerup(): void {
             _root.ups[115] = ups[115] = 1;
             _root.fmode = 18;
         } else if (highs.it == 110) {
-            hat(33);
+            activatePassiveItem(33);
         } else if (highs.it == 109) {
-            hat(34);
+            activatePassiveItem(34);
         } else if (highs.it == 103) {
             _root.hmode = 26;
             _root.fmode = 15;
         } else if (highs.it == 104) {
             _root.fmode = 16;
-            hat(32);
+            activatePassiveItem(32);
         } else if (highs.it == 106) {
             _root.hmode = 9;
             _root.bombs += 5;
         } else if (highs.it == 101) {
             player.hp = player.hp + 1;
-            hat(29);
+            activatePassiveItem(29);
         } else if (highs.it == 59) {
             _root.hmode = 24;
         } else if (highs.it == 29) {
@@ -5837,24 +5856,24 @@ function updatePlayerPowerup(): void {
         } else if (highs.it == 46) {
             _root.bmode = 11;
         } else if (highs.it == 64) {
-            hat(26);
+            activatePassiveItem(26);
         } else if (highs.it == 63) {
-            hat(24);
+            activatePassiveItem(24);
         } else if (highs.it == 92) {
             _root.armor += 2;
             player.hp = player.hp + 1;
-            hat(23);
+            activatePassiveItem(23);
         } else if (highs.it != 86) {
             if (highs.it == 87) {
-                hat(22);
+                activatePassiveItem(22);
             } else if (highs.it != 88) {
                 if (highs.it == 89) {
-                    hat(20);
+                    activatePassiveItem(20);
                     _root.fmode = 14;
                 } else if (highs.it == 90) {
-                    hat(21);
+                    activatePassiveItem(21);
                 } else if (highs.it == 91) {
-                    hat(19);
+                    activatePassiveItem(19);
                 } else if (highs.it == 81) {
                     ups[81] = _root.ups[81] = 8;
                     _root.catlives = 1;
@@ -5867,7 +5886,7 @@ function updatePlayerPowerup(): void {
                     _root.bmode = 6;
                 } else if (highs.it == 79) {
                     _root.armor += 1;
-                    hat(17);
+                    activatePassiveItem(17);
                 } else if (highs.it == 80) {
                     _root.armor += 2;
                     _root.bmode = 8;
@@ -5889,18 +5908,18 @@ function updatePlayerPowerup(): void {
                 } else if (highs.it == 21 || highs.it == 54) {
                     drawMap();
                 } else if (highs.it == 9) {
-                    hat(9);
+                    activatePassiveItem(9);
                 } else if (highs.it == 69) {
                     _root.hmode = 17;
                 } else if (highs.it == 55) {
                     _root.hmode = 18;
                 } else if (highs.it == 76) {
-                    hat(13);
+                    activatePassiveItem(13);
                 } else if (highs.it == 75) {
                     player.hp += 2;
-                    hat(15);
+                    activatePassiveItem(15);
                 } else if (highs.it == 32) {
-                    hat(16);
+                    activatePassiveItem(16);
                 } else if (highs.it == 28) {
                     _root.bmode = 7;
                 }
@@ -6007,16 +6026,16 @@ function updatePlayerPowerup(): void {
             }
         }
         if (highs.it >= 50 && highs.it < 54) {
-            hat(highs.it - 48);
+            activatePassiveItem(highs.it - 48);
         } else {
             switch (highs.it) {
                 case 19:
                     _root.bombs += 10;
-                    hat(30);
+                    activatePassiveItem(30);
                     break;
                 case 17:
                     _root.keys = 99;
-                    hat(14);
+                    activatePassiveItem(14);
                     break;
                 case 18:
                     _root.coins = 99;
@@ -6026,10 +6045,10 @@ function updatePlayerPowerup(): void {
             }
         }
         if (highs.it == 48) {
-            hat(6);
+            activatePassiveItem(6);
         }
         if (highs.it == 70) {
-            hat(8);
+            activatePassiveItem(8);
         }
         if (highs.it == 62) {
             _root.hmode = 15;
@@ -6298,7 +6317,7 @@ function pillc(trg): void {
                 f1 = _root.trix > 0;
             }
             if (f2 == 53) {
-                hat(61);
+                activatePassiveItem(61);
             }
         } else {
             _loc3_ = true;
@@ -6437,7 +6456,8 @@ function setCoinDropAmount(isElite: boolean): void {
     }
 }
 
-function balljunk(): void {
+// Original: balljunk()
+function processBallEntityCollisions(): void {
     if (highs.s == 51) {
         if (lows.s == 51) {
             if (
@@ -7066,12 +7086,12 @@ function balljunk(): void {
 }
 
 // Original: ballhit(e, a)
-function handleBallCollision(e, a): void {
-    trg = projectileClips[e];
-    trg2 = projectileClips[a];
+function handleBallCollision(entity1, entity2): void {
+    trg = projectileClips[entity1];
+    trg2 = projectileClips[entity2];
     if (trg.s != 2 || trg2.s != 2) {
-        f1 = Math.max(e, a);
-        f2 = Math.min(e, a);
+        f1 = Math.max(entity1, entity2);
+        f2 = Math.min(entity1, entity2);
         if (tests.getPixel(f1, f2) == 0) {
             tests.setPixel(f1, f2, 1);
             nohit = false;
@@ -7168,7 +7188,7 @@ function handleBallCollision(e, a): void {
                             enf < siz * siz &&
                             (!lows.hh[highs.e] || lows.s != 2)
                         ) {
-                            balljunk();
+                            processBallEntityCollisions();
                             if (!nohit) {
                                 v6 = lows.damger;
                                 if (lows.s == 2 || v6) {
@@ -7486,7 +7506,8 @@ function advanceToNextChapter(): void {
     beginNextRun(false);
 }
 
-function pull(f1, f2, f3, f4, f5) {
+// Original:
+function pull(f1, f2, f3, f4, f5): void {
     if (f1 == 0) {
         v = 0.8;
     } else {
@@ -7553,7 +7574,8 @@ function updateWalkingAnimation(speed?: number): void {
     }
 }
 
-function randrunc() {
+// Original: randrunc()
+function randomChasePlayer(): void {
     if (trg.xpp == undefined || trg.randd < fra - 10) {
         trg.d.gotoAndStop(1);
         if (trg.wait++ > 13) {
@@ -7568,8 +7590,8 @@ function randrunc() {
                 if (random(10) == 0) {
                     f1 *= 0.2;
                 }
-                f1 = trg.xp + crand(f1);
-                f2 = trg.yp + crand();
+                f1 = trg.xp + cosineRandom(f1);
+                f2 = trg.yp + cosineRandom();
                 if (random(3) == 0) {
                     f1 = Math.min(580, Math.max(60, f1));
                     f2 = Math.min(410, Math.max(150, f2));
@@ -7610,14 +7632,15 @@ function randrunc() {
     trg.randd = fra;
 }
 
-function randrun() {
+// Original: randrun()
+function performRandomMovement(): void {
     if (trg.xpp == undefined || trg.randd < fra - 10) {
         f1 = 40;
         if (trg.s == 68) {
             f1 = 80;
         }
-        f1 = trg.xp + crand(f1);
-        f2 = trg.yp + crand();
+        f1 = trg.xp + cosineRandom(f1);
+        f2 = trg.yp + cosineRandom();
         if (trg.s == 68 || random(2) != 0) {
             f1 = Math.min(540, Math.max(120, f1));
             f2 = Math.min(360, Math.max(210, f2));
@@ -7656,7 +7679,8 @@ function randrun() {
     trg.randd = fra;
 }
 
-function randruny() {
+// Original: randruny()
+function specialRandomMovement(): void {
     if (trg.d.d._currentframe == 19) {
         _root.soundy("Meat_impacts_" + random(3) + ".wav");
         if (trg.eternal) {
@@ -7677,7 +7701,7 @@ function randruny() {
             if (trg.d._currentframe > 2) {
                 advanceAnimationFrame();
             }
-            firemode(180, 20, true);
+            updateEnemyFiring(180, 20, true);
             trg.ggh = true;
         }
         if (
@@ -7712,11 +7736,11 @@ function randruny() {
                 if (trg.eternal) {
                     checkCollision(trg.xp, trg.yp, player.xp, player.yp, 10000);
                     f0 = random(80) + 100 + f1;
-                    f1 = trg.xp - (xenf / enf) * f0 + crand(30);
-                    f2 = trg.yp - (yenf / enf) * f0 + crand(30);
+                    f1 = trg.xp - (xenf / enf) * f0 + cosineRandom(30);
+                    f2 = trg.yp - (yenf / enf) * f0 + cosineRandom(30);
                 } else {
-                    f1 = trg.xp + crand(95 + f1);
-                    f2 = trg.yp + crand();
+                    f1 = trg.xp + cosineRandom(95 + f1);
+                    f2 = trg.yp + cosineRandom();
                 }
                 if (trg.s == 34) {
                     if (trg.xpp == undefined && random(7) == 0) {
@@ -7732,8 +7756,8 @@ function randruny() {
             f1 = convertWorldToTileCoordinates(f1, f2);
             if (getRoomType(f1) < 1) {
                 convertTileToWorldCoordinates(f1);
-                trg.xpp = xenf + crand(3);
-                trg.ypp = yenf + crand(3);
+                trg.xpp = xenf + cosineRandom(3);
+                trg.ypp = yenf + cosineRandom(3);
             }
         }
     }
@@ -8292,16 +8316,17 @@ function spawnEnemyProjectile(f1: number, f2: number, f3: number, f4: number, f5
     return projectile;
 }
 
-function shots(v1, v2, xenf, yenf, v3?) {
+// Original: shots(v1, v2, xenf, yenf, v3)
+function fireEnemyProjectiles(spawnX: number, spawnY: number, velocityX: number, velocityY: number, shotType?: number | boolean): void {
     if (trg.s == 38) {
         _root.soundy("Floaty_Baby_Roar_" + random(3) + ".mp", 85);
     }
     if (
         (trg.s == 26 && trg.alter != 2 && trg.alter != 3 && trg.eternal) ||
         ((trg.s == 36 || trg.s == 46) && trg.specoz == 23) ||
-        v3 == 23
+        shotType == 23
     ) {
-        f5 = (-(calculateAngleFull(xenf, yenf) + 90) * 3.141592653589793) / 180;
+        f5 = (-(calculateAngleFull(velocityX, velocityY) + 90) * 3.141592653589793) / 180;
         var _loc6_ = 8;
         if (trg.s == 36) {
             _loc6_ = 16;
@@ -8317,7 +8342,7 @@ function shots(v1, v2, xenf, yenf, v3?) {
         while (z < _loc6_) {
             f6 = Math.sin(f5) * f3;
             f7 = Math.cos(f5) * f3;
-            trg2 = spawnEnemyProjectile(v1, v2, 0, f6, f7, 0, 9);
+            trg2 = spawnEnemyProjectile(spawnX, spawnY, 0, f6, f7, 0, 9);
             f5 += 0.1;
             if (trg.s >= 49) {
                 trg2.dm -= 2;
@@ -8332,34 +8357,34 @@ function shots(v1, v2, xenf, yenf, v3?) {
             z++;
         }
     } else if (trg.s == 12 && trg.eternal) {
-        spawnEnemyProjectile(v1, v2, 0, xenf, yenf, 0, 9);
-        spawnEnemyProjectile(v1, v2, 0, yenf, -xenf, 0, 9);
-        spawnEnemyProjectile(v1, v2, 0, -yenf, xenf, 0, 9);
-        spawnEnemyProjectile(v1, v2, 0, (xenf + yenf) / 1.41, (yenf - xenf) / 1.41, 0, 9);
-        spawnEnemyProjectile(v1, v2, 0, (xenf - yenf) / 1.41, (yenf + xenf) / 1.41, 0, 9);
+        spawnEnemyProjectile(spawnX, spawnY, 0, velocityX, velocityY, 0, 9);
+        spawnEnemyProjectile(spawnX, spawnY, 0, velocityY, -velocityX, 0, 9);
+        spawnEnemyProjectile(spawnX, spawnY, 0, -velocityY, velocityX, 0, 9);
+        spawnEnemyProjectile(spawnX, spawnY, 0, (velocityX + velocityY) / 1.41, (velocityY - velocityX) / 1.41, 0, 9);
+        spawnEnemyProjectile(spawnX, spawnY, 0, (velocityX - velocityY) / 1.41, (velocityY + velocityX) / 1.41, 0, 9);
     } else if (trg.s == 63 && trg.d.d._currentframe == 24) {
-        spawnEnemyProjectile(v1, v2, 0, xenf * 0.8 - yenf * 0.25, yenf * 0.8 + xenf * 0.25, 0, 9);
-        spawnEnemyProjectile(v1, v2, 0, xenf * 0.8 + yenf * 0.25, yenf * 0.8 - xenf * 0.25, 0, 9);
+        spawnEnemyProjectile(spawnX, spawnY, 0, velocityX * 0.8 - velocityY * 0.25, velocityY * 0.8 + velocityX * 0.25, 0, 9);
+        spawnEnemyProjectile(spawnX, spawnY, 0, velocityX * 0.8 + velocityY * 0.25, velocityY * 0.8 - velocityX * 0.25, 0, 9);
     } else if (
         (trg.s == 14 && trg.alter > 1) ||
         trg.s == 86 ||
         ((trg.s == 79 || trg.s == 31) && trg.eternal)
     ) {
         trg3 = spawnEnemyProjectile(
-            v1,
-            v2,
+            spawnX,
+            spawnY,
             0,
-            xenf * 0.8 - yenf * 0.2,
-            yenf * 0.8 + xenf * 0.2,
+            velocityX * 0.8 - velocityY * 0.2,
+            velocityY * 0.8 + velocityX * 0.2,
             0,
             9
         );
         trg4 = spawnEnemyProjectile(
-            v1,
-            v2,
+            spawnX,
+            spawnY,
             0,
-            xenf * 0.8 + yenf * 0.2,
-            yenf * 0.8 - xenf * 0.2,
+            velocityX * 0.8 + velocityY * 0.2,
+            velocityY * 0.8 - velocityX * 0.2,
             0,
             9
         );
@@ -8369,35 +8394,35 @@ function shots(v1, v2, xenf, yenf, v3?) {
             (trg.s == 86 && trg.eternal) ||
             trg.s == 79
         ) {
-            trg2 = spawnEnemyProjectile(v1, v2, 0, xenf, yenf, 0, 9);
+            trg2 = spawnEnemyProjectile(spawnX, spawnY, 0, velocityX, velocityY, 0, 9);
             if (trg.s == 50) {
-                trg3.xbew -= yenf * 3;
-                trg3.ybew += xenf * 3;
-                trg4.xbew += yenf * 3;
-                trg4.ybew -= xenf * 3;
+                trg3.xbew -= velocityY * 3;
+                trg3.ybew += velocityX * 3;
+                trg4.xbew += velocityY * 3;
+                trg4.ybew -= velocityX * 3;
             }
         }
-    } else if (v3 == 2) {
+    } else if (shotType == 2) {
         if (trg.s == 50 && trg.eternal) {
-            spawnEnemyProjectile(v1, v2, 0, xenf * 0.9 - yenf * 0.4, yenf * 0.9 + xenf * 0.4, 0, 9);
-            spawnEnemyProjectile(v1, v2, 0, xenf * 0.9 + yenf * 0.4, yenf * 0.9 - xenf * 0.4, 0, 9);
-            spawnEnemyProjectile(v1, v2, 0, xenf * 0.7 - yenf * 1, yenf * 0.7 + xenf * 1, 0, 9);
-            spawnEnemyProjectile(v1, v2, 0, xenf * 0.7 + yenf * 1, yenf * 0.7 - xenf * 1, 0, 9);
+            spawnEnemyProjectile(spawnX, spawnY, 0, velocityX * 0.9 - velocityY * 0.4, velocityY * 0.9 + velocityX * 0.4, 0, 9);
+            spawnEnemyProjectile(spawnX, spawnY, 0, velocityX * 0.9 + velocityY * 0.4, velocityY * 0.9 - velocityX * 0.4, 0, 9);
+            spawnEnemyProjectile(spawnX, spawnY, 0, velocityX * 0.7 - velocityY * 1, velocityY * 0.7 + velocityX * 1, 0, 9);
+            spawnEnemyProjectile(spawnX, spawnY, 0, velocityX * 0.7 + velocityY * 1, velocityY * 0.7 - velocityX * 1, 0, 9);
         } else {
-            spawnEnemyProjectile(v1, v2, 0, xenf * 0.9 - yenf * 0.1, yenf * 0.9 + xenf * 0.1, 0, 9);
-            spawnEnemyProjectile(v1, v2, 0, xenf * 0.9 + yenf * 0.1, yenf * 0.9 - xenf * 0.1, 0, 9);
-            spawnEnemyProjectile(v1, v2, 0, xenf * 0.7 - yenf * 0.3, yenf * 0.7 + xenf * 0.3, 0, 9);
-            spawnEnemyProjectile(v1, v2, 0, xenf * 0.7 + yenf * 0.3, yenf * 0.7 - xenf * 0.3, 0, 9);
+            spawnEnemyProjectile(spawnX, spawnY, 0, velocityX * 0.9 - velocityY * 0.1, velocityY * 0.9 + velocityX * 0.1, 0, 9);
+            spawnEnemyProjectile(spawnX, spawnY, 0, velocityX * 0.9 + velocityY * 0.1, velocityY * 0.9 - velocityX * 0.1, 0, 9);
+            spawnEnemyProjectile(spawnX, spawnY, 0, velocityX * 0.7 - velocityY * 0.3, velocityY * 0.7 + velocityX * 0.3, 0, 9);
+            spawnEnemyProjectile(spawnX, spawnY, 0, velocityX * 0.7 + velocityY * 0.3, velocityY * 0.7 - velocityX * 0.3, 0, 9);
         }
     } else {
-        trg2 = spawnEnemyProjectile(v1, v2, 0, xenf, yenf, 0, 9);
-        if (v3 || (trg.s == 38 && trg.alter == 2)) {
-            spawnEnemyProjectile(v1, v2, 0, xenf * 0.8 - yenf * 0.2, yenf * 0.8 + xenf * 0.2, 0, 9);
-            spawnEnemyProjectile(v1, v2, 0, xenf * 0.8 + yenf * 0.2, yenf * 0.8 - xenf * 0.2, 0, 9);
+        trg2 = spawnEnemyProjectile(spawnX, spawnY, 0, velocityX, velocityY, 0, 9);
+        if (shotType || (trg.s == 38 && trg.alter == 2)) {
+            spawnEnemyProjectile(spawnX, spawnY, 0, velocityX * 0.8 - velocityY * 0.2, velocityY * 0.8 + velocityX * 0.2, 0, 9);
+            spawnEnemyProjectile(spawnX, spawnY, 0, velocityX * 0.8 + velocityY * 0.2, velocityY * 0.8 - velocityX * 0.2, 0, 9);
         }
         if (trg.s == 27 && trg.eternal) {
-            spawnEnemyProjectile(v1, v2, 0, xenf * 0.9 - yenf * 0.1, yenf * 0.9 + xenf * 0.1, 0, 9);
-            spawnEnemyProjectile(v1, v2, 0, xenf * 0.9 + yenf * 0.1, yenf * 0.9 - xenf * 0.1, 0, 9);
+            spawnEnemyProjectile(spawnX, spawnY, 0, velocityX * 0.9 - velocityY * 0.1, velocityY * 0.9 + velocityX * 0.1, 0, 9);
+            spawnEnemyProjectile(spawnX, spawnY, 0, velocityX * 0.9 + velocityY * 0.1, velocityY * 0.9 - velocityX * 0.1, 0, 9);
         }
         if (
             trg.s == 36 ||
@@ -8406,20 +8431,20 @@ function shots(v1, v2, xenf, yenf, v3?) {
             trg.s == 84
         ) {
             spawnEnemyProjectile(
-                v1,
-                v2,
+                spawnX,
+                spawnY,
                 0,
-                xenf * 0.68 - yenf * 0.42,
-                yenf * 0.58 + xenf * 0.42,
+                velocityX * 0.68 - velocityY * 0.42,
+                velocityY * 0.58 + velocityX * 0.42,
                 0,
                 9
             );
             spawnEnemyProjectile(
-                v1,
-                v2,
+                spawnX,
+                spawnY,
                 0,
-                xenf * 0.68 + yenf * 0.42,
-                yenf * 0.58 - xenf * 0.42,
+                velocityX * 0.68 + velocityY * 0.42,
+                velocityY * 0.58 - velocityX * 0.42,
                 0,
                 9
             );
@@ -8431,28 +8456,29 @@ function shots(v1, v2, xenf, yenf, v3?) {
     }
 }
 
-function firemode(siz, f1, f2?) {
+// Original: firemode(siz, f1, f2)
+function updateEnemyFiring(attackRange: number, cooldownTime: number, forceFire?: boolean): void {
     if (trg.s == 56 || trg.s == 90) {
-        siz += 60;
+        attackRange += 60;
     } else if (trg.s == 42 || trg.s == 38 || trg.s == 27) {
         if (trg.s == 38 && trg.eternal) {
-            siz += 65;
+            attackRange += 65;
         }
-        siz += 40;
+        attackRange += 40;
     }
     if (trg.s == 56) {
-        f1 += 5;
+        cooldownTime += 5;
     }
     if (trg.s == 90) {
-        f1 += 2 + random(2);
+        cooldownTime += 2 + random(2);
     }
     b1 = false;
     if (trg.eternal && trg.s == 32) {
         b1 = random(3) != 0;
     }
-    if (((fra + trg.e) % 7 == 0 || f2) && !b1) {
+    if (((fra + trg.e) % 7 == 0 || forceFire) && !b1) {
         if (trg.fire <= 0) {
-            if ((enf = checkCollision(trg.xp, trg.yp, player.xp, player.yp, siz))) {
+            if ((enf = checkCollision(trg.xp, trg.yp, player.xp, player.yp, attackRange))) {
                 if (linechecky(trg.xp, trg.yp, player.xp, player.yp)) {
                     if (trg.s == 42) {
                         trg.d.gotoAndStop(2);
@@ -8473,10 +8499,10 @@ function firemode(siz, f1, f2?) {
                         }
                         if (trg.s == 14 && trg.eternal) {
                             trg.rep = 2;
-                            f1 += 4;
+                            cooldownTime += 4;
                         }
                     }
-                    trg.fire = f1;
+                    trg.fire = cooldownTime;
                     trg.fir = -7;
                     if (trg.s == 27) {
                         trg.fir = -25;
@@ -8537,10 +8563,10 @@ function firemode(siz, f1, f2?) {
                 }
                 trg.xo = xenf;
                 trg.yo = yenf;
-                f1 = xenf;
-                f2 = fra / 2;
-                xenf -= Math.sin(f2) * yenf * 0.1;
-                yenf += Math.cos(f2) * f1 * 0.1;
+                cooldownTime = xenf;
+                const temp: number = fra / 2;
+                xenf -= Math.sin(temp) * yenf * 0.1;
+                yenf += Math.cos(temp) * cooldownTime * 0.1;
                 trg2 = spawnEnemyProjectile(
                     trg.xp - xenf * 0.5,
                     trg.yp - yenf * 0.5 + 5,
@@ -8591,13 +8617,13 @@ function firemode(siz, f1, f2?) {
             yenf *= 1.3;
         }
         if (trg.s == 42 && trg.alter == 2) {
-            trg2 = green();
+            trg2 = spawnGreenProjectiles();
             trg2.dm -= 3;
             trg2.dy = -10;
             trg2.ggh = true;
             trg2.nog = 15;
         } else if (trg.s == 63 && trg.specoz == 7) {
-            bossfire(10, true);
+            executeBossAttack(10, true);
         } else {
             if (trg.s == 63 && trg.specoz == 23 && trg.d.d._currentframe == 19) {
                 trg.fir = 2;
@@ -8606,7 +8632,7 @@ function firemode(siz, f1, f2?) {
                 xenf *= 0.44;
                 yenf *= 0.44;
             }
-            shots(
+            fireEnemyProjectiles(
                 trg.xp,
                 trg.yp,
                 xenf,
@@ -8617,7 +8643,8 @@ function firemode(siz, f1, f2?) {
     }
 }
 
-function firewalk() {
+// Original: firewalk()
+function executeAutoFiring(): void {
     if (trg.fire <= 0) {
         var _loc3_ = trg.xp;
         var _loc2_ = trg.yp;
@@ -8747,15 +8774,15 @@ function findTarget(targetX?: number, targetY?: number): void {
                         xenf = 0;
                     }
                 }
-                xenf = _loc4_ + crand(f10);
-                yenf = _loc5_ + crand() * 0.5;
+                xenf = _loc4_ + cosineRandom(f10);
+                yenf = _loc5_ + cosineRandom() * 0.5;
                 f1 = convertWorldToTileCoordinates(xenf, yenf);
                 if (trg.checked[f1]) {
                     i -= 0.7;
                 } else {
                     convertTileToWorldCoordinates(f1);
                     trg.checked[f1] = true;
-                    if (!mhit(xenf, yenf)) {
+                    if (!checkHit(xenf, yenf)) {
                         if (checkLineOfSightExtended(trg.xp, trg.yp, xenf, yenf)) {
                             f13 = !checkLineOfSightExtended(targetX, targetY, xenf, yenf);
                             if (f13 || trg.failfind >= 20) {
@@ -8806,33 +8833,34 @@ function findTarget(targetX?: number, targetY?: number): void {
         trg.failfind *= 0.9;
         trg.rpx = true;
         trg.noco = 0;
-        randrun();
+        performRandomMovement();
         trg.xbew *= 0.9;
         trg.ybew *= 0.9;
     }
     endTimer(8);
 }
 
-function pffy(f1, f2) {
+// Original: pffy(f1, f2)
+function checkEnvironmentalHazardCollision(x: number, y: number): boolean {
     if (trg.s != 54) {
-        f1 = convertWorldToTileCoordinates(f1, f2);
+        x = convertWorldToTileCoordinates(x, y);
         f3 =
-            getRoomType(f1) == 0.99 &&
+            getRoomType(x) == 0.99 &&
             !f44 &&
-            !webs[f1] &&
+            !webs[x] &&
             (!trg.flyby || _root.lev == _root.sac || _root.lev == _root.cus) &&
             !trg.flyai;
         if (f3) {
-            f55 = f1;
+            f55 = x;
         }
-        if ((getRoomType(f1) > 1 && getRoomType(f1) < 2) || f3) {
-            var _loc4_ = this["de" + f1];
+        if ((getRoomType(x) > 1 && getRoomType(x) < 2) || f3) {
+            var _loc4_ = this["de" + x];
             if ((_loc4_.fire && trg.s != 28) || f3) {
                 relf = f3;
                 if (trg.s == 27) {
                     trg.dones = true;
                 }
-                convertTileToWorldCoordinates(f1);
+                convertTileToWorldCoordinates(x);
                 enf = checkCollision(trg.xp, trg.yp, xenf, yenf, siz);
                 if (f3) {
                     enf += 20;
@@ -8859,16 +8887,17 @@ function pffy(f1, f2) {
     }
 }
 
-function firecheck(trg) {
+// Original: firecheck(trg)
+function checkFireCollision(trg: any): boolean {
     trg3 = 0;
     siz = 38;
-    var _loc3_ = 20;
+    const _loc3_: number = 20;
     relf = true;
-    var _loc4_ =
-        pffy(trg.xp + _loc3_, trg.yp + _loc3_) ||
-        pffy(trg.xp - _loc3_, trg.yp + _loc3_) ||
-        pffy(trg.xp + _loc3_, trg.yp - _loc3_) ||
-        pffy(trg.xp - _loc3_, trg.yp - _loc3_);
+    let _loc4_: boolean =
+        checkEnvironmentalHazardCollision(trg.xp + _loc3_, trg.yp + _loc3_) ||
+        checkEnvironmentalHazardCollision(trg.xp - _loc3_, trg.yp + _loc3_) ||
+        checkEnvironmentalHazardCollision(trg.xp + _loc3_, trg.yp - _loc3_) ||
+        checkEnvironmentalHazardCollision(trg.xp - _loc3_, trg.yp - _loc3_);
     if (_loc4_) {
         if (!f7) {
             xenf = f4;
@@ -8906,32 +8935,34 @@ function firecheck(trg) {
     return _loc4_;
 }
 
-function breakfloor(f1) {
-    if (getRoomType(f1) < 0.99) {
+// Original: breakfloor(f1)
+function breakFloor(roomIndex: number): void {
+    if (getRoomType(roomIndex) < 0.99) {
         var _loc1_ = true;
         for (i in brr) {
-            _loc1_ = _loc1_ && f1 != brr[i];
+            _loc1_ = _loc1_ && roomIndex != brr[i];
         }
         for (i in brr2) {
-            _loc1_ = _loc1_ && f1 != brr2[i];
+            _loc1_ = _loc1_ && roomIndex != brr2[i];
         }
         if (_loc1_) {
             v1 = [
-                getRoomType(f1 + 1) == 3,
-                getRoomType(f1 + rowz) == 3,
-                getRoomType(f1 - 1) == 3,
-                getRoomType(f1 - rowz) == 3,
+                getRoomType(roomIndex + 1) == 3,
+                getRoomType(roomIndex + rowz) == 3,
+                getRoomType(roomIndex - 1) == 3,
+                getRoomType(roomIndex - rowz) == 3,
             ];
             if ((v1[0] && v1[2]) || (v1[1] && v1[3])) {
-                brr.push(f1);
+                brr.push(roomIndex);
             } else {
-                brr2.push(f1);
+                brr2.push(roomIndex);
             }
         }
     }
 }
 
-function breakall() {
+// Original: breakall()
+function renderBrokenFloors(): void {
     f1 = false;
     for (i in brr) {
         f1 = brr[i];
@@ -8944,7 +8975,8 @@ function breakall() {
     }
 }
 
-function pathcheck(trg, v2, v3) {
+// Original: pathcheck(trg, v2, v3) *unused
+function checkPath(trg, v2, v3): number | false {
     v1 = convertWorldToTileCoordinates(trg.xp, trg.yp);
     trg.gridder = levz.slice(0, -1);
     z = 0;
@@ -9108,8 +9140,8 @@ function playSplashEffect(): void {
         z = 0;
         while (z < 150) {
             var _loc2_ = Math.random() * f4;
-            f5 = crand(_loc2_);
-            f6 = crand();
+            f5 = cosineRandom(_loc2_);
+            f6 = cosineRandom();
             f1 = trg.xp + f5;
             f2 = trg.yp + f6;
             v2 = convertWorldToTileCoordinates(f1, f2);
@@ -9125,14 +9157,14 @@ function playSplashEffect(): void {
             if (!f11[v2]) {
                 f11[v2] = true;
                 if (levz[v2] > 0.9) {
-                    if (linecheckxx(trg.xp, trg.yp, xenf, yenf)) {
+                    if (checkLineOfSightExtended2(trg.xp, trg.yp, xenf, yenf)) {
                         if (levz[v2] == 1 || levz[v2] == 1.85 || webs[v2]) {
                             createExplosionEffect(v2, f5, f6);
                         } else {
                             damageTile(v2, 10);
                         }
                         if (_loc2_ < 40) {
-                            breakfloor(v2);
+                            breakFloor(v2);
                         }
                     }
                 }
@@ -9192,7 +9224,7 @@ function playSplashEffect(): void {
                     f1 = trg2.s == 7 || trg2.s == 8 || trg2.s == 45 || trg2.s == 101;
                     f2 = true;
                     if (!f1) {
-                        f2 = linecheckxx(trg.xp, trg.yp, trg2.xp, trg2.yp);
+                        f2 = checkLineOfSightExtended2(trg.xp, trg.yp, trg2.xp, trg2.yp);
                     }
                     if (f2) {
                         if (enf > 0 && trg2.s != 101) {
@@ -9270,8 +9302,8 @@ function playSplashEffect(): void {
                 z = 0;
                 while (z < 5) {
                     createBloodSplatter(
-                        trg.xp + crand(),
-                        trg.yp + crand(random(10)),
+                        trg.xp + cosineRandom(),
+                        trg.yp + cosineRandom(random(10)),
                         1 + random(10),
                         Math.random() + 1
                     );
@@ -9296,8 +9328,8 @@ function playSplashEffect(): void {
                     while (z < 20) {
                         f1 = z * 3;
                         createBloodSplatter(
-                            trg.xp + crand(f1),
-                            trg.yp + crand(f1),
+                            trg.xp + cosineRandom(f1),
+                            trg.yp + cosineRandom(f1),
                             31 + random(10),
                             Math.random() * 0.5 + 1.2 - z / 20
                         );
@@ -9360,8 +9392,8 @@ function fireOrbitalProjectiles(): void {
     while (i < 4 / (1 + ashut * 0.2)) {
         f0 = Math.random() * 6;
         createProjectile(
-            trg.xp + crand(f0),
-            trg.yp + crand(f0),
+            trg.xp + cosineRandom(f0),
+            trg.yp + cosineRandom(f0),
             0,
             0,
             0,
@@ -9443,7 +9475,7 @@ function spawnGibs(x?: number, y?: number): void {
             big = 3;
             f10 *= 1.3;
         }
-        var _loc1_ = createProjectile(x, y, 0, crand(f10), crand(f10) * 0.5, 0, f2);
+        var _loc1_ = createProjectile(x, y, 0, cosineRandom(f10), cosineRandom(f10) * 0.5, 0, f2);
         if (f11 || trg.s == 19) {
             _loc1_.ybew *= 1.4;
             _loc1_.d._xscale = _loc1_.d._yscale = 100 + random(70);
@@ -9619,7 +9651,7 @@ function damageTile(tileIndex: number, damage?: any): boolean {
 
 // Original: moveon()
 export function moveToNextArea(): void {
-    // redundant code
+    // *redundant code
     // if (_root.chaps == 11 && _root.lev == _root.bossl) {
     // }
     _root.aloc();
@@ -9629,7 +9661,8 @@ export function moveToNextArea(): void {
     onEnterFrame = undefined;
 }
 
-function getf() {
+// Original: getf()
+function getFacingDirection(): void {
     if (Math.abs(xenf) > Math.abs(yenf)) {
         if (xenf > 0) {
             f1 = 2;
@@ -9851,62 +9884,63 @@ function calculateFireRate(entity: any): void {
     }
 }
 
-function bossfire(f10, f9?, f11?, f12?, f13?) {
+// Original: bossfire(f10, f9, f11, f12, f13)
+function executeBossAttack(projectileCount: number, useTargeting?: boolean, damageModifier?: number, horizontalTarget?: number, verticalTarget?: number): any {
     f1 = trg.xp;
     f2 = trg.yp;
     f3 = 10;
-    if (f11 <= 0) {
-        f11 = 0;
+    if (damageModifier <= 0) {
+        damageModifier = 0;
     }
     if (helpss > 1 && trg.s == 20) {
-        f10 *= 0.6;
+        projectileCount *= 0.6;
     }
     if (helpss > 2 && trg.s == 20) {
-        f10 *= 0.8;
+        projectileCount *= 0.8;
     }
     if (trg.specoz == 23 && trg.s == 20) {
-        f10 *= 0.7;
+        projectileCount *= 0.7;
     }
     i = 0;
-    while (i < f10) {
-        if (f9) {
+    while (i < projectileCount) {
+        if (useTargeting) {
             xenf = yenf = 0;
-            if (f12 != 0 || f12 == undefined) {
+            if (horizontalTarget != 0 || horizontalTarget == undefined) {
                 xenf = trg.xp - player.xp;
             }
-            if (f13 != 0 || f13 == undefined) {
+            if (verticalTarget != 0 || verticalTarget == undefined) {
                 yenf = trg.yp - player.yp;
             }
-            if (f13) {
-                if (f13 * yenf > 0) {
+            if (verticalTarget) {
+                if (verticalTarget * yenf > 0) {
                     yenf = 0;
                 }
-                yenf *= Math.abs(f13);
+                yenf *= Math.abs(verticalTarget);
             }
-            if (f12) {
-                if (f12 * xenf > 0) {
+            if (horizontalTarget) {
+                if (horizontalTarget * xenf > 0) {
                     xenf = 0;
                 }
-                xenf *= Math.abs(f12);
+                xenf *= Math.abs(horizontalTarget);
             }
             enf = getDistance(xenf, yenf);
             enf = -7 / enf;
             xenf *= enf;
             yenf *= enf;
             f14 = Math.random() * 3.5;
-            if (trg.worm && f10 == 1) {
+            if (trg.worm && projectileCount == 1) {
                 f14 *= 3;
             }
-            xenf += crand(f14);
-            yenf += crand();
+            xenf += cosineRandom(f14);
+            yenf += cosineRandom();
         } else {
-            xenf = crand(7);
-            yenf = crand();
+            xenf = cosineRandom(7);
+            yenf = cosineRandom();
         }
         f0 = Math.random() * 6;
         trg2 = createProjectile(trg.xp, trg.yp, 0, xenf, yenf, 0, 9, trg.s);
-        trg2.fd = 0.32 + f11 * 0.1;
-        trg2.dm = -random(30) * 0.8 + 5 - f11;
+        trg2.fd = 0.32 + damageModifier * 0.1;
+        trg2.dm = -random(30) * 0.8 + 5 - damageModifier;
         trg2.d._xscale = trg2.d._yscale = 90 + random(2) * 40 + Math.random() * 5;
         if (trg.s == 62) {
             trg2.dy -= 50;
@@ -9992,7 +10026,7 @@ function updatePlayerFire(): void {
             secol += 0.2;
         }
     }
-    if (ups[152] && (sob == -1 || _root.hat[11]) && trg.fire < 0) {
+    if (ups[152] && (sob == -1 || _root.collectedPassiveItems[11]) && trg.fire < 0) {
         secol += 1;
         calculateFireRate(trg);
         sob = 1;
@@ -10037,7 +10071,7 @@ function updatePlayerFire(): void {
             xenf *= enf;
             yenf *= enf;
         }
-        if (sob == 1 && !_root.hat[11]) {
+        if (sob == 1 && !_root.collectedPassiveItems[11]) {
             sob = -1;
         } else {
             sob = 1;
@@ -10358,7 +10392,8 @@ function updatePlayerFire(): void {
     }
 }
 
-function chaxx() {
+// Original: chaxx()
+function calculateDirectionalMovement(): boolean {
     f1 = 1;
     if (Math.abs(xenf) > Math.abs(yenf)) {
         yenf = 0;
@@ -10380,7 +10415,8 @@ function chaxx() {
     return true;
 }
 
-function chaxy() {
+// Original: chaxy()
+function calculatePlayerPrediction(): void {
     convertTileToWorldCoordinates(trg.til);
     f3 = xenf;
     f4 = yenf;
@@ -10389,23 +10425,25 @@ function chaxy() {
     f2 = player.yp + player.ybew * f5;
 }
 
-function chaa(f9?) {
-    chaxy();
+// Original: chaa(f9)
+function chaa(f9?: any): boolean {
+    calculatePlayerPrediction();
     if (checkExtendedCollision(f3, f4, f1, f2, 200)) {
         if (f9 == 2) {
             f3 = true;
         } else if (!f9) {
             f3 = checkLineOfSight(f3, f4, f1, f2);
         } else {
-            f3 = linecheckxx(f3, f4, f1, f2);
+            f3 = checkLineOfSightExtended2(f3, f4, f1, f2);
         }
         if (f3) {
-            return chaxx();
+            return calculateDirectionalMovement();
         }
     }
 }
 
-function eyefly() {
+// Original: eyefly()
+function updateFlyingEnemyMovement(): void {
     trg.xbew *= 0.7;
     trg.ybew *= 0.7;
     v1 = 1;
@@ -10434,7 +10472,8 @@ function eyefly() {
     }
 }
 
-function friends() {
+// Original: friends()
+function updateFamiliarLogic(): void {
     trg.damger =
         trg.s == 3 &&
         ((trg.alt && trg.fly) ||
@@ -10495,7 +10534,7 @@ function friends() {
                 trg.hh = [];
             }
             trg.d.gotoAndStop(130);
-            eyefly();
+            updateFlyingEnemyMovement();
         } else if (
             trg.meat > 2 ||
             trg.bird ||
@@ -10947,7 +10986,7 @@ function friends() {
                 f2 = 580 - player.yp;
             }
             if (trg.baa == 11) {
-                eyefly();
+                updateFlyingEnemyMovement();
             } else {
                 checkCollision(trg.xp, trg.yp, f1, f2, 100000);
                 f1 = 20;
@@ -11384,8 +11423,8 @@ function processAllEntityActions(): void {
     if (splaz) {
         while (random(2) != 0) {
             f10 = random(15) + 2;
-            xenf = crand(f10);
-            yenf = crand(f10);
+            xenf = cosineRandom(f10);
+            yenf = cosineRandom(f10);
             trg2 = createProjectile(320 - xenf * 100, 280 - yenf * 100, 0, xenf, yenf, 0, 8);
             trg2.d._xscale = trg2.d._yscale = 140 + random(80);
             trg2.md -= random(20);
@@ -11416,13 +11455,13 @@ function processAllEntityActions(): void {
                     f2 = trg.yp;
                 }
                 if (_root.bossl == _root.lev || (b1 && trg.s != 51)) {
-                    createProjectile(f1, f2, 0, crand(7), crand(7), 0, f0);
+                    createProjectile(f1, f2, 0, cosineRandom(7), cosineRandom(7), 0, f0);
                     if (_root.so.data.wins < 6 && !b1) {
-                        createProjectile(f1, f2, 0, crand(7), crand(7), 0, f0);
+                        createProjectile(f1, f2, 0, cosineRandom(7), cosineRandom(7), 0, f0);
                     }
                 }
                 if (spezz || b1) {
-                    trg2 = createProjectile(f1, f2, 0, crand(7), crand(7), 0, 5.01);
+                    trg2 = createProjectile(f1, f2, 0, cosineRandom(7), cosineRandom(7), 0, 5.01);
                     if (spezz == 4 || spezz == 7) {
                         trg2.col = 3;
                     }
@@ -11524,11 +11563,11 @@ function handleEntityDeath(): void {
     ) {
         trg.wtfsto = true;
         if (trg.alter == 2 && trg.s == 61) {
-            green();
+            spawnGreenProjectiles();
             if (trg.eternal) {
-                green(false, true);
-                green(false, true);
-                green(false, true);
+                spawnGreenProjectiles(false, true);
+                spawnGreenProjectiles(false, true);
+                spawnGreenProjectiles(false, true);
             }
         } else {
             fireQuadShot(
@@ -11539,11 +11578,11 @@ function handleEntityDeath(): void {
                 ((trg.s == 61 || trg.s == 22) && trg.eternal)
             );
             if (trg.s == 22) {
-                boil();
-                boil();
-                boil(false, 2);
-                boil(false, 2);
-                boil(false, 2);
+                executeBoilAttack();
+                executeBoilAttack();
+                executeBoilAttack(false, 2);
+                executeBoilAttack(false, 2);
+                executeBoilAttack(false, 2);
             }
         }
     }
@@ -11667,12 +11706,12 @@ function handleEntityDeath(): void {
                     z = 0;
                     while (z < f3) {
                         f4 = random(5) + 2;
-                        createProjectile(trg.xp, trg.yp, 0, crand(f4), crand(f4), 0, f0);
+                        createProjectile(trg.xp, trg.yp, 0, cosineRandom(f4), cosineRandom(f4), 0, f0);
                         z++;
                     }
                 } else if (f0 == 5.01 || f0 == 5.04) {
-                    f1 = crand(5);
-                    f2 = crand();
+                    f1 = cosineRandom(5);
+                    f2 = cosineRandom();
                     createProjectile(trg.xp, trg.yp, 0, f1, f2, 0, f0);
                     createProjectile(trg.xp, trg.yp, 0, -f1, -f2, 0, f0);
                 } else {
@@ -11720,8 +11759,8 @@ function handleEntityDeath(): void {
         helpss++;
         helps = 1;
         trg.wtfst = true;
-        f1 = crand(10);
-        f2 = crand();
+        f1 = cosineRandom(10);
+        f2 = cosineRandom();
         trg2 = [];
         f3 = trg.s;
         if (trg.alter == 2) {
@@ -11806,8 +11845,8 @@ function handleEntityDeath(): void {
             trg.wtfsss = true;
             if (trg.specoz == 23) {
                 if (altboss) {
-                    boil(false, 2);
-                    boil(false, 2);
+                    executeBoilAttack(false, 2);
+                    executeBoilAttack(false, 2);
                 } else {
                     fireQuadShot(trg.xp, trg.yp, 8.5, 1);
                 }
@@ -11827,8 +11866,8 @@ function handleEntityDeath(): void {
                 f1 = 31;
             }
             if (altboss) {
-                boil(true);
-                boil(false);
+                executeBoilAttack(true);
+                executeBoilAttack(false);
                 if (trg.specoz == 23 && random(3) == 0) {
                     trg2 = createProjectile(trg.xp, trg.yp, 0, 0, 0, 0, 94);
                 }
@@ -11847,8 +11886,8 @@ function handleEntityDeath(): void {
     }
     if ((trg.s == 71 || trg.s == 72) && trg.dones && !trg.wtfst) {
         trg.wtfst = true;
-        f1 = crand(20);
-        f2 = crand();
+        f1 = cosineRandom(20);
+        f2 = cosineRandom();
         trg2 = [];
         f3 = trg.s + 1;
         trg2.push(createProjectile(trg.xp + f1, trg.yp + f2, 0, f1 * 0.2, f2 * 0.2, 0, f3));
@@ -11879,8 +11918,8 @@ function handleEntityDeath(): void {
     }
     if (trg.s == 57 && trg.dones && !trg.wtfst) {
         trg.wtfst = true;
-        f1 = crand(10);
-        f2 = crand();
+        f1 = cosineRandom(10);
+        f2 = cosineRandom();
         if (trg.alter == 2) {
             f3 = 40;
         } else {
@@ -11932,8 +11971,8 @@ function handleEntityDeath(): void {
             f1 *= enf;
             f2 *= enf;
         } else {
-            f1 = crand(10);
-            f2 = crand(10);
+            f1 = cosineRandom(10);
+            f2 = cosineRandom(10);
         }
         if (trg.s == 94) {
             f3 = 85;
@@ -11949,14 +11988,14 @@ function handleEntityDeath(): void {
             applySpecialEffect(trg2);
             trg3.specoz = 23;
             applySpecialEffect(trg3);
-            boil();
-            boil();
-            boil();
-            boil();
-            boil();
-            boil();
-            boil();
-            boil();
+            executeBoilAttack();
+            executeBoilAttack();
+            executeBoilAttack();
+            executeBoilAttack();
+            executeBoilAttack();
+            executeBoilAttack();
+            executeBoilAttack();
+            executeBoilAttack();
         }
         if (trg.specoz == 23 && trg.s == 80) {
             trg2.mhp = trg2.hp *= 1.5;
@@ -12051,7 +12090,7 @@ function handleBossDeath(): void {
     }
     if ((trg.s == 16 || trg.s == 22 || trg.s == 67) && trg.dones && !trg.wtfst) {
         if (trg.s == 22 && trg.specoz == 23) {
-            boil(false, 2);
+            executeBoilAttack(false, 2);
         }
         trg.wtfst = true;
         if (trg.alter == 3) {
@@ -12091,9 +12130,9 @@ function handleBossDeath(): void {
     }
     if (trg.s == 100 && altboss && trg.dones && !trg.wtfst) {
         trg.wtfst = true;
-        boil();
-        boil();
-        boil();
+        executeBoilAttack();
+        executeBoilAttack();
+        executeBoilAttack();
     }
     if (trg.s == 101 && trg.dones && !trg.wtfst) {
         trg.wtfst = true;
@@ -12103,13 +12142,13 @@ function handleBossDeath(): void {
     if (trg.s == 91 && trg.dones && !trg.wtfst) {
         trg.wtfst = true;
         if (trg.eternal) {
-            f1 = crand(f1);
-            f2 = crand();
+            f1 = cosineRandom(f1);
+            f2 = cosineRandom();
             f3 = 0.3;
             trg2 = createProjectile(trg.xp + f1, trg.yp + f2, 0, f1 * f3, f2 * f3, 0, 91);
             trg3 = createProjectile(trg.xp - f1, trg.yp - f2, 0, -f1 * f3, -f2 * f3, 0, 91);
-            f1 = crand(f1);
-            f2 = crand();
+            f1 = cosineRandom(f1);
+            f2 = cosineRandom();
             f3 = 0.3;
             trg4 = createProjectile(trg.xp - f1, trg.yp - f2, 0, -f1 * f3, -f2 * f3, 0, 91);
             trg2.fra = -100;
@@ -12144,7 +12183,7 @@ function processActiveEntities(): void {
     if (fra - trg.fra < 10 && !trg.dones && trg.s != 84 && trg.s != 101) {
         trg.d.gotoAndStop(4);
     }
-    if (firecheck(trg)) {
+    if (checkFireCollision(trg)) {
         if (fra - trg.lastfir >= 10) {
             trg.lastfir = fra;
             damageEntity(trg, 8);
@@ -12209,7 +12248,7 @@ function processActiveEntities(): void {
                         trg.d.gotoAndStop(1);
                     }
                     if (!ups[9]) {
-                        firemode(200, 4);
+                        updateEnemyFiring(200, 4);
                     }
                     if (trg.fire > 0) {
                         trg.xbew *= 0.8;
@@ -12231,7 +12270,7 @@ function processActiveEntities(): void {
                         } else if (fra % 3 == 1) {
                             if (checkCollision(trg.xp, trg.yp, duke.xp, duke.yp, 260)) {
                                 f3 = duked;
-                                f1 = (absmax(enf - f3, 5) / enf) * 0.5;
+                                f1 = (clamp(enf - f3, 5) / enf) * 0.5;
                                 f2 = 0.2 / (2 + Math.abs(f3 - enf));
                                 trg.xbew -= xenf * f1;
                                 trg.ybew -= yenf * f1;
@@ -12268,8 +12307,8 @@ function processActiveEntities(): void {
                             if (trg.s == 18 || trg.s == 61 || ups[9] || trg.s == 80) {
                                 trg.goshit = 1;
                             } else {
-                                f1 = trg.xp + crand(Math.random() * Math.random() * 240);
-                                f2 = trg.yp + crand();
+                                f1 = trg.xp + cosineRandom(Math.random() * Math.random() * 240);
+                                f2 = trg.yp + cosineRandom();
                                 f3 = convertWorldToTileCoordinates(f1, f2);
                                 v1 = getRoomType(f3);
                                 if (v1 > 1 && v1 < 1.8) {
@@ -12331,8 +12370,8 @@ function processActiveEntities(): void {
                         f0 = 0.17;
                     }
                     if (fra % 4 == 1) {
-                        trg.xbb += crand(f0 * 2);
-                        trg.ybb += crand();
+                        trg.xbb += cosineRandom(f0 * 2);
+                        trg.ybb += cosineRandom();
                         trg.xbb *= 0.8;
                         trg.ybb *= 0.8;
                         f1 = getRoomType(convertWorldToTileCoordinates(trg.xp, trg.yp));
@@ -12382,7 +12421,8 @@ function processActiveEntities(): void {
     }
 }
 
-function aicol() {
+// Original: aicol()
+function updateEnemyAI(): void {
     if (trg.d.d.d._currentframe == 25 && trg.d.d._currentframe == 3 && fra > 35) {
         switch (trg.d._currentframe) {
             case 1:
@@ -12416,8 +12456,8 @@ function aicol() {
                     if ((enf = checkCollision(trg.xp, trg.yp, trg2.xp, trg2.yp, 40))) {
                         if (getDistance(trg2.xbew, trg2.ybew) < 0.2) {
                             if (enf == 0) {
-                                xenf = crand(1);
-                                yenf = crand(1);
+                                xenf = cosineRandom(1);
+                                yenf = cosineRandom(1);
                                 enf = 1;
                             }
                             enf = 2 / enf;
@@ -12673,13 +12713,13 @@ function aicol() {
                             f13 = 0;
                             while (f13++ < 10) {
                                 if (f1 >= 43 && f1 <= 45) {
-                                    yenf = 4 + crand(2);
-                                    xenf = (f1 - 44) * 4 + crand(2);
+                                    yenf = 4 + cosineRandom(2);
+                                    xenf = (f1 - 44) * 4 + cosineRandom(2);
                                     f14 = xenf * 5;
                                     f15 = 5;
                                 } else {
-                                    xenf = crand(5);
-                                    yenf = crand(5) * 0.2 + 3;
+                                    xenf = cosineRandom(5);
+                                    yenf = cosineRandom(5) * 0.2 + 3;
                                     f14 = 0;
                                     f15 = 0;
                                 }
@@ -12840,7 +12880,7 @@ function processAI(): void {
             if (!trg.dones) {
                 switch (trg.s) {
                     case 3:
-                        friends();
+                        updateFamiliarLogic();
                         break;
                     case 2:
                         if (ups[48] && !trg.ba) {
@@ -13073,7 +13113,7 @@ function processAI(): void {
                                 if (trg.s == 2) {
                                     trg.wtfst = true;
                                 }
-                                if ((trg.s == 8 || trg.s == 7) && !mhit(trg.xp, trg.yp)) {
+                                if ((trg.s == 8 || trg.s == 7) && !checkHit(trg.xp, trg.yp)) {
                                     maxx = new flash.geom.Matrix();
                                     maxx.translate(trg.xp, trg.yp);
                                     maxx.scale(hdx, hdx);
@@ -13106,7 +13146,7 @@ function processAI(): void {
                         }
                         break;
                     case 5:
-                        aicol();
+                        updateEnemyAI();
                         break;
                     case 4:
                         if (trg.bolt) {
@@ -13288,15 +13328,15 @@ function updateGameEntities(): void {
 }
 
 // Original: green(f11, f12)
-function green(f11?, f12?) {
-    trg2 = bossfire(1, !f12, 10);
+function spawnGreenProjectiles(useSpecialVariant?: boolean | number, isEternalMode?: boolean): any {
+    trg2 = executeBossAttack(1, !isEternalMode, 10);
     trg2.bomb = true;
     trg2.d._xscale = trg2.d._yscale = 160;
     if (trg.s != 43) {
         trg2.xbew *= 0.55;
         trg2.ybew *= 0.55;
     }
-    if (f12) {
+    if (isEternalMode) {
         f1 = Math.random() + 0.6;
         trg2.xbew *= f1;
         trg2.ybew *= f1;
@@ -13330,9 +13370,9 @@ function green(f11?, f12?) {
     ) {
         trg2.pois = 4;
         trg2.spl = 0;
-    } else if (f11 == 2) {
+    } else if (useSpecialVariant == 2) {
         setColorTransform(trg2, 0.2, 0.2, 0.2, 0, 0, 0);
-    } else if (!f11) {
+    } else if (!useSpecialVariant) {
         setColorTransform(trg2, 0.4, 2, 0.5, 0, 0, 0);
     }
     if (trg.s == 62) {
@@ -13375,21 +13415,22 @@ function updateBoilerBehavior(setAppearance: boolean, slowAttack?: boolean): voi
                 ) &&
                 !trg.boss
             ) {
-                boil(true);
+                executeBoilAttack(true);
             } else {
-                boil(false);
+                executeBoilAttack(false);
             }
             if (trg.specoz == 23 && (trg.alter != 3 || _root.chaps > 2)) {
-                boil(trg.alter == 2);
+                executeBoilAttack(trg.alter == 2);
                 if (trg.alter != 3) {
-                    boil(trg.alter == 2);
+                    executeBoilAttack(trg.alter == 2);
                 }
             }
         }
     }
 }
 
-function boil(f1?, f2?): void {
+// Original: boil(f1, f2)
+function executeBoilAttack(f1?: boolean, f2?: number): void {
     if (
         ((trg.alter == 3 ||
                 trg.c2 ||
@@ -13434,11 +13475,11 @@ function boil(f1?, f2?): void {
         trg2.yp = trg.yp;
         xenf = trg2.xpp - trg2.xp;
         yenf = trg2.ypp - trg2.yp;
-        f1 = getDistance(xenf, yenf);
-        f1 = f2 / f1;
-        f1 = 0.04;
-        trg2.f1 = trg2.xbew = xenf * f1;
-        trg2.f2 = trg2.ybew = yenf * f1;
+        let temp: number = getDistance(xenf, yenf);
+        temp = f2 / temp;
+        temp = 0.04;
+        trg2.f1 = trg2.xbew = xenf * temp;
+        trg2.f2 = trg2.ybew = yenf * temp;
         trg2.fra = 0;
         trg2.d.gotoAndStop(5);
         trg2.apf = false;
@@ -13458,10 +13499,10 @@ function boil(f1?, f2?): void {
         f2 == 1
     ) {
         trg.fire = -50;
-        green(false, f1);
+        spawnGreenProjectiles(false, f1);
         _root.soundy("heartout.wav", 70);
     } else {
-        bossfire(3 + random(2), f1, 10);
+        executeBossAttack(3 + random(2), f1, 10);
     }
 }
 
@@ -13477,6 +13518,7 @@ function handleAreaDamage(): void {
     }
 }
 
+// Original:
 function spih(): void {
     var _loc1_ = spawnEntity(player.xp, player.yp, 50, 29.3);
     _loc1_.fra = 0;
@@ -13515,7 +13557,7 @@ function updateStandardEnemyBehaviors(): void {
                 trg.ybew *= 0.9;
                 trg.d.gotoAndStop(1);
             } else {
-                randrunc();
+                randomChasePlayer();
             }
             break;
         case 96:
@@ -13631,7 +13673,7 @@ function updateStandardEnemyBehaviors(): void {
                             trg.xpp = undefined;
                         }
                     } else {
-                        randrun();
+                        performRandomMovement();
                     }
                     if (trg.d.d._currentframe > 19) {
                         trg.xbew *= 0.6;
@@ -13657,8 +13699,8 @@ function updateStandardEnemyBehaviors(): void {
                             }
                         } else {
                             f1 = 1.5;
-                            xenf = crand(10);
-                            yenf = crand();
+                            xenf = cosineRandom(10);
+                            yenf = cosineRandom();
                             enf = 10;
                         }
                         f1 /= enf;
@@ -13714,9 +13756,9 @@ function updateStandardEnemyBehaviors(): void {
                         if (trg.d._currentframe == 5) {
                             fireQuadShot(trg.xp, trg.yp + 25, 10, true);
                         } else {
-                            bossfire(8, false);
+                            executeBossAttack(8, false);
                             if (trg.eternal) {
-                                bossfire(16, false);
+                                executeBossAttack(16, false);
                             }
                         }
                     }
@@ -13742,8 +13784,8 @@ function updateStandardEnemyBehaviors(): void {
                         } else {
                             f1 = 20;
                         }
-                        f1 = crand(f1);
-                        f2 = crand();
+                        f1 = cosineRandom(f1);
+                        f2 = cosineRandom();
                         f3 = 0.3;
                         trg2 = createProjectile(
                             trg.xp + f1,
@@ -13802,7 +13844,7 @@ function updateStandardEnemyBehaviors(): void {
                     }
                     break;
                 case 13:
-                    randrun();
+                    performRandomMovement();
                     if (trg.d.d._currentframe == 1) {
                         trg.xpp = undefined;
                     }
@@ -13863,7 +13905,7 @@ function updateStandardEnemyBehaviors(): void {
             switch (trg.d._currentframe) {
                 case 1:
                 case 2:
-                    randrun();
+                    performRandomMovement();
                     if (random(30) == 0) {
                         trg.d.gotoAndStop(5);
                     }
@@ -13887,7 +13929,8 @@ function updateStandardEnemyBehaviors(): void {
     }
 }
 
-function splush() {
+// Original:
+function splush(): void {
     if (trg.firee <= 0) {
         trg.firee = 0;
     }
@@ -13928,7 +13971,7 @@ function updateSimpleEnemyBehaviors(): void {
         case 32:
             constrainToScreenBounds();
             if (trg.eternal) {
-                firemode(300, 5);
+                updateEnemyFiring(300, 5);
             }
             if (fra % 3 == 0) {
                 createBloodSplatter(trg.xp, trg.yp + 8, 1 + random(10), Math.random() * 0.5 + 0.2);
@@ -13984,7 +14027,7 @@ function updateSimpleEnemyBehaviors(): void {
             trg.xbew *= 0.75;
             trg.ybew *= 0.75;
             if (trg.d._currentframe < 3) {
-                randrun();
+                performRandomMovement();
                 updateWalkingAnimation(2);
                 flipSpriteDirection(trg.xbew);
                 updateBoilerBehavior(true);
@@ -14056,8 +14099,8 @@ function updateSimpleEnemyBehaviors(): void {
                     trg.hppp += 1 + Math.random();
                     if (ashut < 7) {
                         ashut++;
-                        xenf = (player.xp - trg.xp) * 0.1 + crand(10);
-                        yenf = (player.yp - trg.yp) * 0.1 + crand(10);
+                        xenf = (player.xp - trg.xp) * 0.1 + cosineRandom(10);
+                        yenf = (player.yp - trg.yp) * 0.1 + cosineRandom(10);
                         createProjectile(trg.xp, trg.yp, 0, xenf, yenf, 0, 14);
                     }
                 }
@@ -14066,8 +14109,8 @@ function updateSimpleEnemyBehaviors(): void {
                 (random(100) == 0 || (trg.eternal && random(30) == 0 && ashut < 5)) &&
                 ashut < 10
             ) {
-                xenf = crand(10);
-                yenf = crand(10);
+                xenf = cosineRandom(10);
+                yenf = cosineRandom(10);
                 if (ashut < 10) {
                     trg2 = createProjectile(trg.xp, trg.yp, 0, xenf, yenf, 0, 18);
                     if (trg.specoz == 23) {
@@ -14182,20 +14225,20 @@ function updateSimpleEnemyBehaviors(): void {
             trg.ybew *= 0.6;
             if (trg.hurt && trg.state != 2) {
                 trg.hurt = false;
-                bossfire(1, true);
+                executeBossAttack(1, true);
             }
             if (trg.eternal) {
                 if (!altboss) {
                     if (random(20) == 0) {
-                        bossfire(1, true);
+                        executeBossAttack(1, true);
                         if (random(3) == 0) {
-                            bossfire(1, true);
+                            executeBossAttack(1, true);
                         }
                     }
                 }
             }
             if (altboss && random(60) == 0 && ashut < 20) {
-                trg2 = createProjectile(trg.xp, trg.yp, 0, crand(10), crand(10), 0, 18);
+                trg2 = createProjectile(trg.xp, trg.yp, 0, cosineRandom(10), cosineRandom(10), 0, 18);
                 trg2.die = true;
                 trg2.outway = true;
                 trg2.fra = -20;
@@ -14386,15 +14429,15 @@ function updateSimpleEnemyBehaviors(): void {
                     if (trg.d.d._currentframe == 20) {
                         trg.yp += 15;
                         if (!altboss) {
-                            boil();
-                            boil();
+                            executeBoilAttack();
+                            executeBoilAttack();
                             if (random(2) == 0) {
-                                boil();
+                                executeBoilAttack();
                             }
                             if (trg.eternal) {
-                                boil();
-                                boil();
-                                boil();
+                                executeBoilAttack();
+                                executeBoilAttack();
+                                executeBoilAttack();
                             }
                         }
                         _root.soundy("Boss_Spit_Blob_Barf.mp", 100);
@@ -14431,7 +14474,7 @@ function updateSimpleEnemyBehaviors(): void {
                         f1 = trg.d.d._currentframe;
                         if (f1 > 5 && f1 < 29) {
                             f2 = 50 + 2 * f1;
-                            trg2 = createParticle("bloo", trg.xp + crand(f2), trg.yp + crand(f2));
+                            trg2 = createParticle("bloo", trg.xp + cosineRandom(f2), trg.yp + cosineRandom(f2));
                             trg2._xscale *= 1 + f1 * 0.05;
                             trg2._yscale = trg2._xscale;
                             setColorTransform(trg2, 0, 0, 0, 255, 255, 255);
@@ -14554,22 +14597,22 @@ function updateSimpleEnemyBehaviors(): void {
                             if (random(3) == 0) {
                                 spih();
                             } else if (random(2) == 0 && ashut < 5) {
-                                boil();
-                                boil();
+                                executeBoilAttack();
+                                executeBoilAttack();
                                 if (trg.eternal && ashut < 9) {
-                                    boil();
+                                    executeBoilAttack();
                                     if (random(2) == 0) {
-                                        boil();
+                                        executeBoilAttack();
                                     }
                                 }
                             } else {
                                 bigone = true;
-                                boil();
+                                executeBoilAttack();
                                 bigone = undefined;
                                 if (trg.eternal) {
-                                    boil();
+                                    executeBoilAttack();
                                     if (random(2) == 0) {
-                                        boil();
+                                        executeBoilAttack();
                                     }
                                 }
                             }
@@ -14605,10 +14648,10 @@ function updateSimpleEnemyBehaviors(): void {
                         } else if (trg.specoz < 20) {
                             spawnCircularProjectiles(trg.xp, trg.yp - 15, 8, 6);
                         } else {
-                            boil();
+                            executeBoilAttack();
                             if (trg.specoz == 23) {
-                                boil();
-                                boil();
+                                executeBoilAttack();
+                                executeBoilAttack();
                             }
                         }
                     }
@@ -14616,7 +14659,7 @@ function updateSimpleEnemyBehaviors(): void {
                 case 6:
                     f1 = trg.d.d._currentframe - 18;
                     if (f1 > 0 && f1 < 17 && (altboss || f1 < 8)) {
-                        trg2 = createParticle("bloo", trg.xp + crand(f1 * 3), trg.yp + crand(f1 * 3));
+                        trg2 = createParticle("bloo", trg.xp + cosineRandom(f1 * 3), trg.yp + cosineRandom(f1 * 3));
                         trg2._xscale *= 1 + f1 * 0.2;
                         trg2._yscale = trg2._xscale;
                         if (trg.specoz < 20) {
@@ -14669,8 +14712,8 @@ function updateSimpleEnemyBehaviors(): void {
                 f1 = Math.random() * 2;
                 f2 = 20 - f1 * 10;
                 createBloodSplatter(
-                    trg.xp + crand(f2),
-                    trg.yp + crand(f1),
+                    trg.xp + cosineRandom(f2),
+                    trg.yp + cosineRandom(f1),
                     1 + random(10),
                     ((f1 + 0.4) * trg._xscale) / 100
                 );
@@ -14912,11 +14955,11 @@ function updateAdvancedBasicEnemyBehaviors(): void {
                                 if (trg.d.d._currentframe > 27 && trg.d.d._currentframe < 60) {
                                     if (altboss) {
                                         if (trg.d.d._currentframe == 29) {
-                                            green(true);
+                                            spawnGreenProjectiles(true);
                                             _root.soundy("Boss_Spit_Blob_Barf.mp", 100);
                                             if (trg.specoz == 23) {
-                                                green(true);
-                                                green(false);
+                                                spawnGreenProjectiles(true);
+                                                spawnGreenProjectiles(false);
                                             }
                                         }
                                         trg.modedone = true;
@@ -14939,8 +14982,8 @@ function updateAdvancedBasicEnemyBehaviors(): void {
                                                             f0 = -f0;
                                                         }
                                                     }
-                                                    f1 = trg.xp + trg.xpp * f0 + crand(10);
-                                                    f2 = trg.yp + trg.ypp * f0 + crand(10);
+                                                    f1 = trg.xp + trg.xpp * f0 + cosineRandom(10);
+                                                    f2 = trg.yp + trg.ypp * f0 + cosineRandom(10);
                                                     if (f1 > 60 && f1 < 580) {
                                                         if (f2 > 150 && f2 < 410) {
                                                             trg2 = createParticle("bloo", f1, f2, 0, 123);
@@ -14961,12 +15004,12 @@ function updateAdvancedBasicEnemyBehaviors(): void {
                                         _root.soundy("Boss_Spit_Blob_Barf.mp", 100);
                                         f1 = 5;
                                     }
-                                    bossfire(f1, true);
+                                    executeBossAttack(f1, true);
                                     trg.modedone = true;
                                 }
                             } else if (trg.d.d._currentframe > 23 && !trg.modedone) {
                                 _root.soundy("Boss_Spit_Blob_Barf.mp", 100);
-                                bossfire(13, true);
+                                executeBossAttack(13, true);
                                 trg.modedone = true;
                             }
                         }
@@ -15146,7 +15189,7 @@ function updateAdvancedBasicEnemyBehaviors(): void {
                                     fireQuadShot(trg.xp, trg.yp, 10, true);
                                 }
                             } else {
-                                bossfire(18);
+                                executeBossAttack(18);
                             }
                             _root.soundy("ForestBoss_Stomps" + random(3) + ".wav", 100);
                         }
@@ -15240,8 +15283,8 @@ function updateComplexBasicEnemyBehaviors(): void {
                             fireQuadShot(trg.xp, trg.yp, 8, f1);
                             createBloodSplatter(trg.xp, trg.yp + 12, 1 + random(10), Math.random() + 0.6);
                             createBloodSplatter(
-                                trg.xp + crand(10),
-                                trg.yp + 12 + crand(10),
+                                trg.xp + cosineRandom(10),
+                                trg.yp + 12 + cosineRandom(10),
                                 1 + random(10),
                                 Math.random() * 0.5 + 0.6
                             );
@@ -15317,7 +15360,7 @@ function updateComplexBasicEnemyBehaviors(): void {
                             trg.ybeww = _loc0_;
                             trg.help -= 0.3;
                             _root.soundy("hell_portal2.wav");
-                            chaxx();
+                            calculateDirectionalMovement();
                             trg.gogo = true;
                             trg.xpp *= 2;
                             trg.ypp *= 2;
@@ -15351,9 +15394,9 @@ function updateComplexBasicEnemyBehaviors(): void {
                     }
                 }
                 if (f2 && random(2) == 0) {
-                    chaxy();
+                    calculatePlayerPrediction();
                     enf = checkCollision(f3, f4, f1, f2, 1000);
-                    chaxx();
+                    calculateDirectionalMovement();
                     trg.gogo = 2;
                     f1 = 1.6;
                     trg.xpp *= f1;
@@ -15482,8 +15525,8 @@ function updateComplexBasicEnemyBehaviors(): void {
                         if (fra % 4 == 0 || (fra % 2 == 0 && trg.gogo)) {
                             trg2 = createParticle(
                                 "bloo",
-                                trg.xp + crand(),
-                                trg.yp + crand(Math.random() * 8)
+                                trg.xp + cosineRandom(),
+                                trg.yp + cosineRandom(Math.random() * 8)
                             );
                             trg2._yscale *= 0.7;
                             trg2._xscale = _loc0_;
@@ -15571,7 +15614,7 @@ function updateComplexBasicEnemyBehaviors(): void {
                             trg2.dy = -14;
                             trg2.fd = -0.08;
                         } else {
-                            shots(
+                            fireEnemyProjectiles(
                                 trg.xp + trg.xpp,
                                 trg.yp + trg.ypp,
                                 trg.xpp,
@@ -15732,7 +15775,7 @@ function updateSpecializedBasicEnemyBehaviors(): void {
                     }
                 }
             } else {
-                randruny();
+                specialRandomMovement();
                 trg.xbew *= 0.7;
                 trg.ybew *= 0.7;
             }
@@ -15984,8 +16027,8 @@ function updateSpecializedBasicEnemyBehaviors(): void {
                         if (altboss == 2) {
                             if (trg.specoz) {
                                 trg2 = createProjectile(
-                                    trg.xp + crand(1),
-                                    trg.yp + crand(1),
+                                    trg.xp + cosineRandom(1),
+                                    trg.yp + cosineRandom(1),
                                     0,
                                     0,
                                     0,
@@ -16017,8 +16060,8 @@ function updateSpecializedBasicEnemyBehaviors(): void {
                             }
                             if (f1 != 30) {
                                 trg3 = createProjectile(
-                                    trg.xp + crand(30),
-                                    trg.yp + crand(30),
+                                    trg.xp + cosineRandom(30),
+                                    trg.yp + cosineRandom(30),
                                     0,
                                     0,
                                     0,
@@ -16030,8 +16073,8 @@ function updateSpecializedBasicEnemyBehaviors(): void {
                                 _root.soundy("summonsound.wav", 70);
                             }
                             trg2 = createProjectile(
-                                trg.xp + crand(1),
-                                trg.yp + crand(1),
+                                trg.xp + cosineRandom(1),
+                                trg.yp + cosineRandom(1),
                                 0,
                                 0,
                                 0,
@@ -16120,8 +16163,8 @@ function breakdance(f0): void {
             f3 *= 3;
         }
         f3 = convertWorldToTileCoordinates(
-            Math.max(60, Math.min(560, trg.xp + trg.xbew * _loc1_ + crand(f3))),
-            Math.max(170, Math.min(410, trg.yp + trg.ybew * _loc1_ + crand(f3)))
+            Math.max(60, Math.min(560, trg.xp + trg.xbew * _loc1_ + cosineRandom(f3))),
+            Math.max(170, Math.min(410, trg.yp + trg.ybew * _loc1_ + cosineRandom(f3)))
         );
         convertTileToWorldCoordinates(f3);
         if (getRoomType(f3) >= 1 && getRoomType(f3) < 2) {
@@ -16157,7 +16200,7 @@ function updateSpecialEnemyBehaviors(): void {
                         enf = -10 / enf;
                         xenf *= enf;
                         yenf *= enf;
-                        shots(trg.xp + xenf, trg.yp + yenf, xenf, yenf, true);
+                        fireEnemyProjectiles(trg.xp + xenf, trg.yp + yenf, xenf, yenf, true);
                     }
                 }
                 if (trg.d._currentframe == 20) {
@@ -16332,7 +16375,7 @@ function updateSpecialEnemyBehaviors(): void {
                                 f0 = true;
                             }
                             if (f1 == 85) {
-                                boil(false, 2);
+                                executeBoilAttack(false, 2);
                             } else {
                                 trg2 = createProjectile(
                                     trg.xp - xenf,
@@ -16407,7 +16450,7 @@ function updateSpecialEnemyBehaviors(): void {
             if (trg.eternal) {
                 if (trg.bloo-- > 0) {
                     if (fra2) {
-                        trg2 = createParticle("bloo", trg.xp + crand(10), trg.yp + crand(10));
+                        trg2 = createParticle("bloo", trg.xp + cosineRandom(10), trg.yp + cosineRandom(10));
                     }
                 }
             }
@@ -16530,7 +16573,7 @@ function updateSpecialEnemyBehaviors(): void {
                             enf = -10 / enf;
                             xenf *= enf;
                             yenf *= enf;
-                            shots(trg.xp, trg.yp, xenf, yenf, true);
+                            fireEnemyProjectiles(trg.xp, trg.yp, xenf, yenf, true);
                         }
                         if ((trg.bobo = !trg.bobo)) {
                             if (random(2) == 0) {
@@ -16561,7 +16604,7 @@ function updateSpecialEnemyBehaviors(): void {
                 trg.d.bo.gotoAndStop(3);
             }
             if (trg.nohead) {
-                firewalk();
+                executeAutoFiring();
             } else {
                 if (trg.alter != 2) {
                     if (trg.eternal) {
@@ -16605,7 +16648,7 @@ function updateSpecialEnemyBehaviors(): void {
                         }
                         while (f0-- > 0) {
                             f1 = 18;
-                            var trg2 = createProjectile(trg.xp, trg.yp, 0, crand(25), crand(25), 0, f1);
+                            var trg2 = createProjectile(trg.xp, trg.yp, 0, cosineRandom(25), cosineRandom(25), 0, f1);
                             trg2.fra -= 20;
                             trg2.die = true;
                             trg2.pbh = true;
@@ -16690,12 +16733,12 @@ function updateSpecialEnemyBehaviors(): void {
                 if (trg.d.d._currentframe == 5) {
                     if (trg.d._currentframe == 6) {
                         if (trg.alter == 3) {
-                            bossfire(3, true, 10);
+                            executeBossAttack(3, true, 10);
                             _root.soundy("heartout.wav", 70);
                         } else if (trg.alter == 2) {
                             if (trg.specoz != 23 || random(2) == 0) {
-                                boil(true);
-                                boil(true);
+                                executeBoilAttack(true);
+                                executeBoilAttack(true);
                                 _root.soundy("Boss_Lite_Roar.mp", 100);
                             } else {
                                 xenf = trg.xp - player.xp;
@@ -16712,8 +16755,8 @@ function updateSpecialEnemyBehaviors(): void {
                                     trg2.die = true;
                                     trg2.pbh = true;
                                     if (f0 != 0) {
-                                        trg2.xbew += crand(5);
-                                        trg2.ybew += crand(5);
+                                        trg2.xbew += cosineRandom(5);
+                                        trg2.ybew += cosineRandom(5);
                                     }
                                 }
                                 _root.soundy("Boss_Lite_HIss.mp", 100);
@@ -16752,11 +16795,11 @@ function updateSpecialEnemyBehaviors(): void {
                                 enf = -10 / enf;
                                 xenf *= enf;
                                 yenf *= enf;
-                                shots(trg.xp, trg.yp, xenf, yenf, true);
+                                fireEnemyProjectiles(trg.xp, trg.yp, xenf, yenf, true);
                             } else {
-                                green();
+                                spawnGreenProjectiles();
                                 if (trg.alter == 2) {
-                                    green();
+                                    spawnGreenProjectiles();
                                 }
                             }
                         }
@@ -16819,9 +16862,9 @@ function updateSpecialEnemyBehaviors(): void {
                     }
                     if (trg.alter == 2) {
                         trg.fire = 30;
-                        shots(trg.xp, trg.yp, xenf, yenf, true);
+                        fireEnemyProjectiles(trg.xp, trg.yp, xenf, yenf, true);
                     } else {
-                        shots(trg.xp, trg.yp, xenf, yenf);
+                        fireEnemyProjectiles(trg.xp, trg.yp, xenf, yenf);
                     }
                 }
             }
@@ -17044,9 +17087,9 @@ function updateSpecialEnemyBehaviors(): void {
                         }
                         _root.soundy("summonsound.wav", 120);
                     } else if (trg.alter == 1) {
-                        shots(trg.xp, trg.yp, -xenf, -yenf, true);
+                        fireEnemyProjectiles(trg.xp, trg.yp, -xenf, -yenf, true);
                     } else {
-                        shots(trg.xp, trg.yp, -xenf, -yenf, 2);
+                        fireEnemyProjectiles(trg.xp, trg.yp, -xenf, -yenf, 2);
                     }
                 }
             }
@@ -17211,10 +17254,11 @@ function updateSpecialEnemyBehaviors(): void {
                 trg.d.gotoAndStop(3);
             }
     }
-    smux();
+    handleSpecialMovement();
 }
 
-function smux() {
+// Original: smux()
+function handleSpecialMovement(): void {
     switch (trg.s) {
         case 39:
             if ((fra + trg.e) % 5 == 0) {
@@ -17303,12 +17347,12 @@ function smux() {
                             enf = -8.2 / enf;
                             xenf *= enf;
                             yenf *= enf;
-                            shots(trg.xp, trg.yp, xenf, yenf, 23);
+                            fireEnemyProjectiles(trg.xp, trg.yp, xenf, yenf, 23);
                         } else {
                             fireQuadShot(trg.xp, trg.yp, 8, true);
                         }
                         if (trg.alter == 2) {
-                            bossfire(5, true);
+                            executeBossAttack(5, true);
                         }
                     }
                 } else if (trg.alter == 3) {
@@ -17353,8 +17397,8 @@ function smux() {
                     if (trg.trg2 != null && trg.eternal) {
                         trg2 = createParticle(
                             "bloo",
-                            trg.trg2.xp + crand(10),
-                            trg.trg2.yp + crand(10),
+                            trg.trg2.xp + cosineRandom(10),
+                            trg.trg2.yp + cosineRandom(10),
                             0,
                             123
                         );
@@ -17389,8 +17433,8 @@ function smux() {
                                         f0 = -f0;
                                     }
                                 }
-                                f1 = trg.xp + trg.xpp * f0 + crand(10);
-                                f2 = trg.yp + trg.ypp * f0 + crand(10);
+                                f1 = trg.xp + trg.xpp * f0 + cosineRandom(10);
+                                f2 = trg.yp + trg.ypp * f0 + cosineRandom(10);
                                 if (f1 > 60 && f1 < 580) {
                                     if (f2 > 150 && f2 < 410) {
                                         trg2 = createParticle("bloo", f1, f2, 0, 123);
@@ -17522,11 +17566,11 @@ function smux() {
                         }
                         break;
                     case 9:
-                        shots(trg.xp + randomOffset() * 30, trg.yp - 20, randomOffset() * 3, 10, true);
+                        fireEnemyProjectiles(trg.xp + randomOffset() * 30, trg.yp - 20, randomOffset() * 3, 10, true);
                         _root.soundy("Boss_Lite_Gurgle.mp", 100);
                         break;
                     case 10:
-                        shots(
+                        fireEnemyProjectiles(
                             trg.xp + 13,
                             trg.yp - 18 - randomOffset() * 30,
                             -10,
@@ -17536,7 +17580,7 @@ function smux() {
                         _root.soundy("Boss_Gurgle_Roar.mp", 100);
                         break;
                     case 11:
-                        shots(
+                        fireEnemyProjectiles(
                             trg.xp - 13,
                             trg.yp - 18 - randomOffset() * 30,
                             10,
@@ -17561,8 +17605,8 @@ function telpx(f3?: any): void {
     } else {
         f2 = 220 * Math.random() + 120;
     }
-    f1 = trg.xp + crand(f2);
-    f2 = trg.yp + crand();
+    f1 = trg.xp + cosineRandom(f2);
+    f2 = trg.yp + cosineRandom();
     if (f3 == 2) {
         f3 = checkCollision(f1, f2, player.xp, player.yp, 700);
         if (f3) {
@@ -17627,8 +17671,8 @@ function updateMidTierEnemyAI(): void {
                 i++;
             }
             trg3 = trg2.trg3;
-            trg.xbew += crand(0.01);
-            trg.ybew += crand(0.01);
+            trg.xbew += cosineRandom(0.01);
+            trg.ybew += cosineRandom(0.01);
             if (altboss == 2) {
                 if (trg2.s != 79) {
                     trg.dones = true;
@@ -17654,7 +17698,7 @@ function updateMidTierEnemyAI(): void {
                         }
                     } else {
                         f1 = player.yp - trg.yp;
-                        trg.ybew += absmax(f1 * 0.01, 0.2);
+                        trg.ybew += clamp(f1 * 0.01, 0.2);
                     }
                     trg.fire--;
                     if (trg.fire < 0) {
@@ -17722,7 +17766,7 @@ function updateMidTierEnemyAI(): void {
                 if (trg.d._currentframe <= 6) {
                     trg.d.gotoAndStop(7);
                 }
-                firemode(300, 5);
+                updateEnemyFiring(300, 5);
             }
         } else {
             b1 = false;
@@ -17838,39 +17882,40 @@ function updateMidTierEnemyAI(): void {
             }
         }
     }
-    smux2();
+    handleAdvancedMovement();
 }
 
-function gem(trg2, f0) {
-    if (trg.s == trg2.s && trg.specoz != 3 && !trg2.dones) {
+// Original: gem(trg2, f0)
+function updateLinkedEnemyConnection(linkedEntity: any, segmentIndex: number): void {
+    if (trg.s == linkedEntity.s && trg.specoz != 3 && !linkedEntity.dones) {
         if (trg.eternal) {
             f1 = 20 / (240 + fra);
             if (trg.hp < trg.mhp) {
                 trg.hp += f1;
             }
-            if (trg2.hp < trg2.mhp) {
-                trg2.hp += f1 * 2;
+            if (linkedEntity.hp < linkedEntity.mhp) {
+                linkedEntity.hp += f1 * 2;
             }
         }
-        enf = checkCollision(trg.xp, trg.yp, trg2.xp, trg2.yp, 1000);
+        enf = checkCollision(trg.xp, trg.yp, linkedEntity.xp, linkedEntity.yp, 1000);
         if (xenf != 0) {
         }
         f3 = 76;
         if (altboss) {
-            if (enf > 0 && !trg2.onown) {
+            if (enf > 0 && !linkedEntity.onown) {
                 f2 = ((enf - 20) / enf) * 0.1;
-                trg2.xbew += xenf * f2;
-                trg2.ybew += yenf * f2;
+                linkedEntity.xbew += xenf * f2;
+                linkedEntity.ybew += yenf * f2;
             }
         } else if (enf > f3) {
             f2 = ((enf - f3) / enf) * 0.01;
-            trg2.xbew += xenf * f2;
-            trg2.ybew += yenf * f2;
+            linkedEntity.xbew += xenf * f2;
+            linkedEntity.ybew += yenf * f2;
         }
         f3 += 120;
         i = 0;
         while (i < 19) {
-            var _loc2_ = trg["n" + i + " " + f0];
+            var _loc2_ = trg["n" + i + " " + segmentIndex];
             f1 = (16 - i) / 17;
             _loc2_._x = -xenf * f1 - 6;
             f2 = Math.abs(i - 9) * 0.5;
@@ -17881,9 +17926,9 @@ function gem(trg2, f0) {
             _loc2_._y /= Math.abs(trg._yscale / 100);
             _loc2_._visible = true;
             if (yenf < 0) {
-                _loc2_.swapDepths(80 - i - f0 * 20);
+                _loc2_.swapDepths(80 - i - segmentIndex * 20);
             } else {
-                _loc2_.swapDepths(3 + i + f0 * 20);
+                _loc2_.swapDepths(3 + i + segmentIndex * 20);
             }
             if (i == 18) {
                 _loc2_._visible = false;
@@ -17893,14 +17938,15 @@ function gem(trg2, f0) {
     } else {
         i = 0;
         while (i < 19) {
-            _loc2_ = trg["n" + i + " " + f0];
+            _loc2_ = trg["n" + i + " " + segmentIndex];
             _loc2_._visible = false;
             i++;
         }
     }
 }
 
-function smux2() {
+// Original: smux2()
+function handleAdvancedMovement(): void {
     switch (trg.s) {
         case 78:
             if (trg.eternal) {
@@ -17947,8 +17993,8 @@ function smux2() {
             f3 = Math.min(3, 4 - Math.round((trg.hp / trg.mhp) * 3 + 0.45));
             if (momstate == 3) {
                 createBloodSplatter(
-                    trg.xp + crand() * 2,
-                    trg.yp + crand(Math.random() * Math.random() * 200) + 8,
+                    trg.xp + cosineRandom() * 2,
+                    trg.yp + cosineRandom(Math.random() * Math.random() * 200) + 8,
                     1 + random(10),
                     Math.random() * 0.5 + 0.2
                 );
@@ -17989,7 +18035,7 @@ function smux2() {
             }
             if ((_loc0_ = momstate) === 3) {
                 if (random(2) == 0 && fra % 23 == 0) {
-                    green(true, true);
+                    spawnGreenProjectiles(true, true);
                 }
             }
             if (trg.fire < 0) {
@@ -18083,7 +18129,7 @@ function smux2() {
             switch (trg.d._currentframe) {
                 case 1:
                 case 2:
-                    randrun();
+                    performRandomMovement();
                     if (
                         random(40) == 0 &&
                         checkExtendedCollision(trg.xp, trg.yp, player.xp, player.yp, 300)
@@ -18201,7 +18247,7 @@ function smux2() {
             switch (trg.d._currentframe) {
                 case 1:
                 case 2:
-                    randrun();
+                    performRandomMovement();
                     if (trg.specoz != 12 || random(3) == 0) {
                         if (random(23) == 0) {
                             trg.d.gotoAndStop(10);
@@ -18254,17 +18300,17 @@ function smux2() {
                         if (altboss) {
                             z = 0;
                             while (z < 10) {
-                                f1 = crand(random(100));
-                                f2 = crand();
+                                f1 = cosineRandom(random(100));
+                                f2 = cosineRandom();
                                 trg2 = createParticle("bloo", trg.xp + f1, trg.yp + f2);
                                 trg2._xscale *= 2;
                                 trg2._yscale = trg2._xscale;
                                 z++;
                             }
                             if (trg.specoz) {
-                                green(false, false);
-                                green(false, true);
-                                green(false, true);
+                                spawnGreenProjectiles(false, false);
+                                spawnGreenProjectiles(false, true);
+                                spawnGreenProjectiles(false, true);
                                 trg.ploo = trg.ploo + 1;
                             } else {
                                 fireQuadShot(trg.xp, trg.yp, 10, 1);
@@ -18279,8 +18325,8 @@ function smux2() {
                     if (trg.d.d._currentframe == 38) {
                         if (altboss) {
                             if (trg.specoz) {
-                                green(false, true);
-                                green(false, true);
+                                spawnGreenProjectiles(false, true);
+                                spawnGreenProjectiles(false, true);
                                 trg.ploo = trg.ploo + 1;
                             } else {
                                 fireQuadShot(trg.xp, trg.yp, 10, 1);
@@ -18300,8 +18346,8 @@ function smux2() {
                                 spawnEntity(trg.xp, trg.yp, 50, 23);
                             }
                         }
-                        f1 = crand(random(100));
-                        f2 = crand();
+                        f1 = cosineRandom(random(100));
+                        f2 = cosineRandom();
                         if (altboss) {
                             f1 *= 1.5;
                             f2 *= 1.5;
@@ -18357,8 +18403,8 @@ function smux2() {
                 f1 = 21 + random(10);
             }
             createBloodSplatter(
-                trg.xp + crand() * 2,
-                trg.yp + crand(random(20)) + 8,
+                trg.xp + cosineRandom() * 2,
+                trg.yp + cosineRandom(random(20)) + 8,
                 f1,
                 Math.random() * 0.5 + 0.2
             );
@@ -18372,8 +18418,8 @@ function smux2() {
                 _root.slugeye < 3
             ) {
                 _root.slugeye = _root.slugeye + 1;
-                f1 = crand(30);
-                f2 = crand();
+                f1 = cosineRandom(30);
+                f2 = cosineRandom();
                 _root.soundy("plop.wav");
                 noet = true;
                 trg2 = createProjectile(trg.xp + f1, trg.yp + f2, 0, f1 * 0.4, f2 * 0.4, 0, 25);
@@ -18480,7 +18526,7 @@ function smux2() {
                             trg2.push(createProjectile(trg.xp, trg.yp + 20, 0, 0, 0, 0, 18));
                             if (altboss) {
                                 if (random(2) == 0) {
-                                    boil(true);
+                                    executeBoilAttack(true);
                                 }
                             } else {
                                 trg2.push(createProjectile(trg.xp - f1 * 2, trg.yp + 20, 0, 0, 0, 0, 18));
@@ -18499,7 +18545,7 @@ function smux2() {
                         trg2 = [];
                         f5 = 5;
                         if (altboss) {
-                            bossfire(10, true);
+                            executeBossAttack(10, true);
                         } else {
                             if (trg.specoz == 6) {
                                 trg2.push(createProjectile(trg.xp, trg.yp + 20, 0, 0, 0, 0, 61));
@@ -18687,8 +18733,8 @@ function updateMajorBossAI(): void {
                                     trg.d.gotoAndStop(5);
                                     trg.llo = 5;
                                 } else if (Math.abs(xenf) > 100 || yenf < 0) {
-                                    trg.xbew += absmax(xenf, 15) * 0.1;
-                                    trg.ybew += absmax(yenf, 7) * 0.1;
+                                    trg.xbew += clamp(xenf, 15) * 0.1;
+                                    trg.ybew += clamp(yenf, 7) * 0.1;
                                 } else if (
                                     Math.abs(xenf) > 40 &&
                                     Math.abs(xenf1) < 200 &&
@@ -18703,8 +18749,8 @@ function updateMajorBossAI(): void {
                                 if (trg.eternal) {
                                     yenf = Math.max(305, player.yp * 0.93) - trg.yp - 140;
                                     xenf = player.xp - trg.xp;
-                                    trg.xbew += absmax(xenf, 15) * 0.03;
-                                    trg.ybew += absmax(yenf, 7) * 0.03;
+                                    trg.xbew += clamp(xenf, 15) * 0.03;
+                                    trg.ybew += clamp(yenf, 7) * 0.03;
                                 }
                                 if (trg.d.d._currentframe == 56) {
                                     enf = checkCollision(
@@ -18743,7 +18789,7 @@ function updateMajorBossAI(): void {
                                     }
                                     xenf *= enf;
                                     yenf *= enf;
-                                    shots(trg.xp, trg.yp, xenf, yenf, f1);
+                                    fireEnemyProjectiles(trg.xp, trg.yp, xenf, yenf, f1);
                                 }
                                 break;
                             case 6:
@@ -18820,7 +18866,7 @@ function updateMajorBossAI(): void {
                 case 1:
                 case 2:
                     trg.xp = Math.min(580, Math.max(60, trg.xp));
-                    randrun();
+                    performRandomMovement();
                     flipSpriteDirection(trg.xbew);
                     f1 = checkCollision(trg.xp, trg.yp, player.xp, player.yp, 1000);
                     if (
@@ -18897,7 +18943,7 @@ function updateMajorBossAI(): void {
                         enf = -9.2 / enf;
                         xenf *= enf;
                         yenf *= enf;
-                        shots(trg.xp, trg.yp, xenf, yenf, f1);
+                        fireEnemyProjectiles(trg.xp, trg.yp, xenf, yenf, f1);
                     }
                     break;
                 case 6:
@@ -18943,7 +18989,7 @@ function updateMajorBossAI(): void {
                     break;
                 case 5:
                     if (trg.d.d._currentframe == 9) {
-                        green();
+                        spawnGreenProjectiles();
                         _root.soundy("heartout.wav", 100);
                     }
             }
@@ -18960,8 +19006,8 @@ function updateMajorBossAI(): void {
             }
             if (fra % 3 == 0 && trg.specoz != 17) {
                 createBloodSplatter(
-                    trg.xp + crand(),
-                    trg.yp + crand(random(20)),
+                    trg.xp + cosineRandom(),
+                    trg.yp + cosineRandom(random(20)),
                     trg.spl + 1 + random(10),
                     Math.random() * 0.5 + 0.4
                 );
@@ -19003,7 +19049,7 @@ function updateMajorBossAI(): void {
             switch (trg.d._currentframe) {
                 case 7:
                     trg.xp = Math.min(580, Math.max(60, trg.xp));
-                    randrun();
+                    performRandomMovement();
                     if (random(40) == 0 && ashut < 4) {
                         trg.d.gotoAndStop(9);
                     } else if (random(20) == 0) {
@@ -19030,8 +19076,8 @@ function updateMajorBossAI(): void {
                 case 6:
                     if (trg.d.d._currentframe == 25) {
                         _root.soundy("Monster_Grunt_5.mp", 100);
-                        xenf = crand(10);
-                        yenf = crand();
+                        xenf = cosineRandom(10);
+                        yenf = cosineRandom();
                         if (trg.specoz == 17) {
                             createProjectile(trg.xp + xenf, trg.yp + yenf, 0, 0, 0, 0, 29.1);
                         } else {
@@ -19062,13 +19108,13 @@ function updateMajorBossAI(): void {
                 case 9:
                     if (trg.specoz == 17) {
                         if (trg.d.d._currentframe == 19) {
-                            boil();
+                            executeBoilAttack();
                             _root.soundy("Wheezy_Cough_" + random(3) + ".mp", 100);
                         }
                     } else if (trg.d.d._currentframe == 25) {
                         _root.soundy("Wheezy_Cough_" + random(3) + ".mp", 100);
-                        xenf = crand(10);
-                        yenf = crand();
+                        xenf = cosineRandom(10);
+                        yenf = cosineRandom();
                         trg2 = createProjectile(
                             trg.xp + trg.d._xscale * 0.4 + xenf,
                             trg.yp + yenf,
@@ -19129,7 +19175,7 @@ function updateMajorBossAI(): void {
                     spawnCircularProjectiles(trg.xp, trg.yp - 50, 8, 6);
                     trg.s = 64;
                 } else {
-                    green();
+                    spawnGreenProjectiles();
                 }
             }
             allets = b1;
@@ -19149,7 +19195,7 @@ function updateMajorBossAI(): void {
             switch (trg.d._currentframe) {
                 case 8:
                 case 9:
-                    firemode(300, 8);
+                    updateEnemyFiring(300, 8);
                     createBloodSplatter(
                         trg.xp,
                         trg.yp,
@@ -19165,7 +19211,7 @@ function updateMajorBossAI(): void {
                     break;
                 case 1:
                 case 2:
-                    randrun();
+                    performRandomMovement();
                     if (
                         (random(40) == 0 ||
                             (Math.abs(trg.yp - player.yp) < 20 &&
@@ -19226,8 +19272,8 @@ function updateMajorBossAI(): void {
                                 );
                                 trg.s = 63;
                             } else {
-                                xenf = crand(50);
-                                yenf = crand();
+                                xenf = cosineRandom(50);
+                                yenf = cosineRandom();
                                 b1 = allets;
                                 allets = false;
                                 trg2 = createProjectile(
@@ -19297,8 +19343,8 @@ function updateMajorBossAI(): void {
                             spawnCircularProjectiles(trg.xp, trg.yp - 33, 8, 6);
                             trg.s = 63;
                         } else {
-                            xenf = crand(50);
-                            yenf = crand();
+                            xenf = cosineRandom(50);
+                            yenf = cosineRandom();
                             createProjectile(trg.xp + xenf, trg.yp + yenf, 0, 0, 0, 0, 14);
                             _root.soundy("summonsound.wav", 80);
                         }
@@ -19306,7 +19352,7 @@ function updateMajorBossAI(): void {
                     break;
                 case 7:
                     if (trg.specoz) {
-                        trg.ybew -= absmax((trg.yp - player.yp) / 100, 0.4);
+                        trg.ybew -= clamp((trg.yp - player.yp) / 100, 0.4);
                     }
                     trg.xbew = trg.d._xscale * 0.18;
                     if (!trg.gogo || trg.specoz == 23) {
@@ -19373,7 +19419,7 @@ function updateMajorBossAI(): void {
                     }
                     if (trg.d.d._currentframe == 46 && trg.d._currentframe == 8) {
                         _root.soundy("Boss_Lite_HIss.mp", 100);
-                        bossfire(15, true);
+                        executeBossAttack(15, true);
                     } else if (trg.d._currentframe == 9) {
                         if (trg.d.d._currentframe == 23) {
                             if (!altboss) {
@@ -19407,9 +19453,9 @@ function updateMajorBossAI(): void {
                                         trg.fire = 0;
                                     }
                                 }
-                                green(true, true);
+                                spawnGreenProjectiles(true, true);
                             } else {
-                                green();
+                                spawnGreenProjectiles();
                             }
                         }
                     }
@@ -19743,8 +19789,8 @@ function updateAllEnemyAI(): void {
                     break;
                 case 10:
                     if (trg.d.d._currentframe == 16) {
-                        xenf = crand(10);
-                        yenf = crand();
+                        xenf = cosineRandom(10);
+                        yenf = cosineRandom();
                         if (trg.specoz == 23) {
                             trg2 = createProjectile(trg.xp, trg.yp, 0, 0, 0, 0, 66);
                             trg2.sic = true;
@@ -19771,7 +19817,7 @@ function updateAllEnemyAI(): void {
                     }
                     break;
                 case 9:
-                    randrun();
+                    performRandomMovement();
                     if (
                         random(90) == 0 &&
                         ((ashut < 3 && trg.specoz != 23) ||
@@ -19783,7 +19829,7 @@ function updateAllEnemyAI(): void {
                     break;
                 case 1:
                 case 2:
-                    randrun();
+                    performRandomMovement();
                     f1 = checkCollision(trg.xp, trg.yp, player.xp, player.yp, 1000);
                     if (
                         random(90) == 0 &&
@@ -19809,8 +19855,8 @@ function updateAllEnemyAI(): void {
                         _root.soundy("Monster_Grunt_5.mp", 100);
                         _root.soundy("summonsound.wav", 120);
                         if (trg.specoz == 18) {
-                            xenf = crand(50);
-                            yenf = crand();
+                            xenf = cosineRandom(50);
+                            yenf = cosineRandom();
                             trg2 = createProjectile(
                                 trg.xp + xenf * 1.5,
                                 trg.yp + yenf * 1.5,
@@ -19997,9 +20043,9 @@ function updateAllEnemyAI(): void {
                     findPath(trg, playx, playy, trg.sp * 0.55 + 0.5);
                     trg.xp = Math.min(580, Math.max(60, trg.xp));
                     trg.yp = Math.min(410, Math.max(180, trg.yp));
-                    if (mhit(trg.xp, trg.yp)) {
-                        trg.xp += crand(5);
-                        trg.yp += crand(5);
+                    if (checkHit(trg.xp, trg.yp)) {
+                        trg.xp += cosineRandom(5);
+                        trg.yp += cosineRandom(5);
                     }
                     flipSpriteDirection(trg.xbew);
                     if (trg.ffra + 10 > fra) {
@@ -20026,7 +20072,7 @@ function updateAllEnemyAI(): void {
                     break;
                 case 1:
                 case 2:
-                    randrun();
+                    performRandomMovement();
                     f1 = checkCollision(trg.xp, trg.yp, player.xp, player.yp, 1000);
                     if (random(90) == 0 && f1 < 200) {
                         trg.d.gotoAndStop(5);
@@ -20263,7 +20309,7 @@ function updateAllEnemyAI(): void {
                         enf = -8.2 / enf;
                         xenf *= enf;
                         yenf *= enf;
-                        shots(trg.xp, trg.yp, xenf, yenf, f1);
+                        fireEnemyProjectiles(trg.xp, trg.yp, xenf, yenf, f1);
                     }
                     if (trg.specoz == 23) {
                         if (trg.d.d._currentframe == 44) {
@@ -20436,13 +20482,13 @@ function updateAllEntityBehaviors(): void {
                                 if (trg.s != 89) {
                                     if (!trg2.specoz) {
                                         trg.specoz = trg.trg2.specoz;
-                                        specoo(trg);
+                                        applySpecialEntityEffects(trg);
                                     }
                                     if (trg.specoz) {
                                         while (!trg2.specoz && trg2) {
                                             trg2.specoz = trg.specoz;
                                             trg2 = trg2.trg2;
-                                            specoo(trg2);
+                                            applySpecialEntityEffects(trg2);
                                         }
                                     }
                                 }
@@ -20561,7 +20607,7 @@ function updateAllEntityBehaviors(): void {
                             yenf *= enf;
                             trg.xp -= xenf;
                             trg.yp -= yenf;
-                            getf();
+                            getFacingDirection();
                             trg2.beenx.push(trg2.beenx[f0] + xenf);
                             trg2.beeny.push(trg2.beeny[f0] + yenf);
                             trg2.beenf.push(f1);
@@ -20575,12 +20621,12 @@ function updateAllEntityBehaviors(): void {
                     }
                     f1 = convertWorldToTileCoordinates(trg.xp, trg.yp);
                     if (getRoomType(f1) > 1) {
-                        trg.xbew += crand(2);
-                        trg.ybew += crand(2);
+                        trg.xbew += cosineRandom(2);
+                        trg.ybew += cosineRandom(2);
                     }
                     trg.lar = 0;
                     if (!trg.whop && trg.s != 89 && trg.specoz != 23) {
-                        getf();
+                        getFacingDirection();
                         if (trg.fail2++ > 10) {
                             trg.dones = true;
                         }
@@ -20599,8 +20645,8 @@ function updateAllEntityBehaviors(): void {
                         }
                         if (altboss && trg.s == 19) {
                             if (getDistance(trg.xbew, trg.ybew) < 0.4) {
-                                trg.xbew += crand(0.1);
-                                trg.ybew += crand(0.1);
+                                trg.xbew += cosineRandom(0.1);
+                                trg.ybew += cosineRandom(0.1);
                             }
                             if (trg.xbew > 0) {
                                 f1 = 1;
@@ -20695,9 +20741,9 @@ function updateAllEntityBehaviors(): void {
                         damageTile(trg.nextl);
                         xenf = trg.xbew;
                         yenf = trg.ybew;
-                        getf();
+                        getFacingDirection();
                         if (trg.specoz == 3 && random(3) == 0) {
-                            firewalk();
+                            executeAutoFiring();
                         }
                         if (!trg.whop && trg.s == 19) {
                             trg.xbew *= 0.8;
@@ -20726,7 +20772,7 @@ function updateAllEntityBehaviors(): void {
             } else {
                 if (trg2.s == 89) {
                     checkCollision(trg2.xp, trg2.yp, trg.xp, trg.yp, 1000);
-                    getf();
+                    getFacingDirection();
                 }
                 f2 = [0, 2, 6, 1, 5];
                 trg.d.gotoAndStop(f2[f1]);
@@ -20819,7 +20865,7 @@ function updateAllEntityBehaviors(): void {
             }
             if (trg.needmove > 0 && trg.fire-- <= 0 && ashut < random(5) + 4) {
                 if ((enf = checkCollision(trg.xp, trg.yp, player.xp, player.yp, 300))) {
-                    if (linecheckxx(trg.xp, trg.yp, player.xp, player.yp)) {
+                    if (checkLineOfSightExtended2(trg.xp, trg.yp, player.xp, player.yp)) {
                         _root.soundy("Wheezy_Cough_" + random(3) + ".mp", 100);
                         trg.fire = 75;
                         trg.d.gotoAndStop(5);
@@ -20840,8 +20886,8 @@ function updateAllEntityBehaviors(): void {
                             trg2.die = true;
                             trg2.pbh = true;
                             if (f0 != 0) {
-                                trg2.xbew += crand(5);
-                                trg2.ybew += crand(5);
+                                trg2.xbew += cosineRandom(5);
+                                trg2.ybew += cosineRandom(5);
                             }
                             if (trg.eternal == 2) {
                                 attachSpriteToEntity(trg2, 96);
@@ -20921,12 +20967,12 @@ function updateAllEntityBehaviors(): void {
                 if (trg.d._currentframe == 6) {
                     if (trg.d.d._currentframe == 14) {
                         if (trg.alter == 3) {
-                            boil(false, 1);
-                            boil(true, 1);
+                            executeBoilAttack(false, 1);
+                            executeBoilAttack(true, 1);
                         } else if (trg.alter == 2) {
-                            boil(false, 2);
+                            executeBoilAttack(false, 2);
                             if (ashut < 6 && _root.chaps > 2) {
-                                boil(false, 2);
+                                executeBoilAttack(false, 2);
                             }
                         } else {
                             fireQuadShot(trg.xp, trg.yp, 13.5);
@@ -20936,7 +20982,7 @@ function updateAllEntityBehaviors(): void {
             }
             break;
         case 17:
-            randrun();
+            performRandomMovement();
             if ((fra + trg.e) % 3 == 0) {
                 createBloodSplatter(trg.xp, trg.yp, 1 + random(10), Math.random() * 0.9 + 0.5);
             }
@@ -20983,7 +21029,7 @@ function updateAllEntityBehaviors(): void {
                                 fireQuadShot(trg.xp, trg.yp, 7);
                             }
                             if (trg.eternal) {
-                                boil();
+                                executeBoilAttack();
                                 if (trg.hp < trg.mhp + 10) {
                                     trg.hp = trg.hp + 1;
                                 }
@@ -21007,7 +21053,7 @@ function updateAllEntityBehaviors(): void {
                             trg.mode = 1;
                         }
                     } else {
-                        randrun();
+                        performRandomMovement();
                     }
                     break;
                 default:
@@ -21032,7 +21078,7 @@ function updateAllEntityBehaviors(): void {
                     createBloodSplatter(trg.xp, trg.yp, random(10), Math.random() * 0.3 + 0.2);
                 }
                 advanceAnimationFrame();
-                firemode(200, 5);
+                updateEnemyFiring(200, 5);
                 if (
                     checkExtendedCollision(trg.xp, trg.yp, player.xp, player.yp, 400) ||
                     trg.telp > 20
@@ -21160,7 +21206,7 @@ function updateAllEntityBehaviors(): void {
             } else if (trg.d._currentframe == 8) {
                 if (trg.d.d._currentframe == 9) {
                     _root.soundy("heartout.wav", 70);
-                    trg2 = green();
+                    trg2 = spawnGreenProjectiles();
                     if (trg.eternal) {
                         trg2.hom = 3;
                         setColorTransform(trg2, 0.8, 1, 2.5, 0, 0, 0);
@@ -21238,7 +21284,7 @@ function updateAllEntityBehaviors(): void {
                     f1 -= trg.rp;
                     checkCollision(trg.xp, trg.yp, player.xp, player.yp, 1000);
                     f2 = 3 + trg.alter * 3 - enf / 330;
-                    f1 = absmax(normalizeAngle(f1), f2);
+                    f1 = clamp(normalizeAngle(f1), f2);
                     if (Math.abs(f1) < f2 / 2) {
                         if (random(10) == 0) {
                             trg.d.gotoAndStop(5);
@@ -21375,13 +21421,13 @@ function updateAllEntityBehaviors(): void {
                         if (fra % 4 == 0) {
                             trg2 = createParticle(
                                 "bloo",
-                                trg.xp + crand(),
-                                trg.yp + crand(Math.random() * 8)
+                                trg.xp + cosineRandom(),
+                                trg.yp + cosineRandom(Math.random() * 8)
                             );
                         }
                     }
                 } else if (trg.s != 27 || trg.d._currentframe != 6) {
-                    firemode(200, f1);
+                    updateEnemyFiring(200, f1);
                 }
             }
             if (trg.s == 56) {
@@ -21452,17 +21498,17 @@ function updateAllEntityBehaviors(): void {
                     f1 = 0.6;
                 }
                 findPath(trg, playx, playy, f1);
-                firewalk();
+                executeAutoFiring();
                 trg.fire--;
             } else {
                 if (!trg.bnuts) {
                     trg.d.bb._visible = false;
                 } else {
-                    firewalk();
+                    executeAutoFiring();
                 }
                 trg.xbew *= 0.75;
                 trg.ybew *= 0.75;
-                randrun();
+                performRandomMovement();
             }
             if (random(10) == 0) {
                 createBloodSplatter(trg.xp, trg.yp, random(10), Math.random() * 0.5 + 0.4);
@@ -21581,13 +21627,13 @@ function updateAllEntityBehaviors(): void {
         case 10:
             if (trg.s == 87 && trg.eternal) {
                 if (fra10 && random(3) != 0) {
-                    trg2 = createParticle("bloo", trg.xp + crand(4), trg.yp + crand(4));
+                    trg2 = createParticle("bloo", trg.xp + cosineRandom(4), trg.yp + cosineRandom(4));
                     trg2._xscale *= 1.2;
                     trg2._yscale = trg2._xscale;
                     if (random(3) == 0) {
                         createBloodSplatter(
-                            trg.xp + crand(4),
-                            trg.yp + crand(4),
+                            trg.xp + cosineRandom(4),
+                            trg.yp + cosineRandom(4),
                             31 + random(10),
                             Math.random() + 0.2
                         );
@@ -21727,7 +21773,7 @@ function updateAllEntityBehaviors(): void {
                     trg.d._currentframe == 5 &&
                     trg.d.d._currentframe == 5
                 ) {
-                    trg2 = green();
+                    trg2 = spawnGreenProjectiles();
                     _root.soundy("heartout.wav", 70);
                     if (trg.eternal) {
                         trg2.hom = 3;
@@ -22202,7 +22248,7 @@ function updatePhysics(): void {
             if (trg.shot) {
                 if ((trg._alpha > 50 && trg.sss != 84 && !trg.knife) || trg.death) {
                     if (checkHitY(f1, f2)) {
-                        mhix();
+                        processHorizontalCollisions();
                     } else if (getRoomType(f33) == 0.99) {
                         if (webs[f33] && !trg.slowed) {
                             trg.slowed = true;
@@ -22214,7 +22260,7 @@ function updatePhysics(): void {
                     damageTile(convertWorldToTileCoordinates(trg.xp, trg.yp));
                 }
             } else if (trg.flyby == 2) {
-                mhix();
+                processHorizontalCollisions();
             } else if (trg.flyby) {
                 f3 = false;
                 for (i in hardx[v1]) {
@@ -22243,7 +22289,7 @@ function updatePhysics(): void {
                 for (i in hardx[v1]) {
                     f3 = !f3;
                     if (f3) {
-                        if (mhit(f1 + hardx[v1][i], f2 + hardy[v1][i])) {
+                        if (checkHit(f1 + hardx[v1][i], f2 + hardy[v1][i])) {
                             f5 += hardx[v1][i];
                             f6 += hardy[v1][i];
                         }
@@ -22254,7 +22300,7 @@ function updatePhysics(): void {
                     for (i in hardx[v1]) {
                         f3 = !f3;
                         if (f3) {
-                            if (mhit(f1 + hardx[v1][i], f2 + hardy[v1][i])) {
+                            if (checkHit(f1 + hardx[v1][i], f2 + hardy[v1][i])) {
                                 f5 += hardx[v1][i];
                                 f6 += hardy[v1][i];
                             }
@@ -22378,11 +22424,11 @@ function updatePhysics(): void {
                             }
                         } else {
                             v2 = siz2 - 10;
-                            while (!mhit(f1 + f5 * v2, f2 + f6 * v2) && v2 < siz2 + 10) {
+                            while (!checkHit(f1 + f5 * v2, f2 + f6 * v2) && v2 < siz2 + 10) {
                                 v2 += 4;
                             }
                             v2 -= 4;
-                            while (!mhit(f1 + f5 * v2, f2 + f6 * v2) && v2 < siz2 + 10) {
+                            while (!checkHit(f1 + f5 * v2, f2 + f6 * v2) && v2 < siz2 + 10) {
                                 v2 += 0.5;
                             }
                         }
@@ -22449,10 +22495,10 @@ function updatePhysics(): void {
                     trg2 = trg.trg2;
                     trg3 = trg.trg3;
                     if (trg2) {
-                        gem(trg2, 0);
+                        updateLinkedEnemyConnection(trg2, 0);
                     }
                     if (trg3) {
-                        gem(trg3, 1);
+                        updateLinkedEnemyConnection(trg3, 1);
                     }
                 }
             }
@@ -22476,9 +22522,9 @@ function updatePhysics(): void {
                 }
             }
             if (trg.s == 2) {
-                trgdy(!trg.piss && !ups[149]);
+                updateProjectileVerticalOffset(!trg.piss && !ups[149]);
             } else if (trg.s == 7 || trg.s == 8 || trg.s == 9) {
-                trgdy();
+                updateProjectileVerticalOffset();
             }
             if (!trg.nod) {
                 trg.dpppp = Math.max(e, Math.round(trg.yp) * 100 + 10030 + e);
@@ -22743,7 +22789,8 @@ function showLaserEffect(trg, f50?, b2?): void {
     }
 }
 
-function laps() {
+// Original:
+function laps(): void {
     keyhole = false;
     if (keypoww > 0) {
         keypoww -= 0.2;
@@ -22898,41 +22945,44 @@ function generateTarotCard(f1: number, hideStatus?: boolean): string {
     return text;
 }
 
-function goodpill() {
+// Original: goodpill()
+function playGoodPillSound(): void {
     _root.soundy("Powerup_spewer.wav", 100);
 }
 
-function fart() {
-    var _loc2_ = createProjectile(player.xp, player.yp, 0, 0, 0, 0, 4);
-    _loc2_.dones = true;
-    _loc2_._xscale = _loc2_._yscale = 70;
-    _loc2_.d.gotoAndStop(5);
-    _loc2_.fart = true;
-    _loc2_.s = 4.5;
-    _loc2_.dfr = true;
+// Original: fart()
+function createFartEffect(): void {
+    let entity: any = createProjectile(player.xp, player.yp, 0, 0, 0, 0, 4);
+    entity.dones = true;
+    entity._xscale = entity._yscale = 70;
+    entity.d.gotoAndStop(5);
+    entity.fart = true;
+    entity.s = 4.5;
+    entity.dfr = true;
     showit = false;
     for (z of projectileClips) {
-        _loc2_ = projectileClips[z];
-        siz = 85 + sizes[Math.round(_loc2_.s)];
-        enf = checkCollision(player.xp, player.yp, _loc2_.xp, _loc2_.yp, siz);
+        entity = projectileClips[z];
+        siz = 85 + sizes[Math.round(entity.s)];
+        enf = checkCollision(player.xp, player.yp, entity.xp, entity.yp, siz);
         if (
             enf < siz &&
-            !_loc2_.dones &&
-            _loc2_.s > 9 &&
-            _loc2_.bh &&
-            !_loc2_.shot
+            !entity.dones &&
+            entity.s > 9 &&
+            entity.bh &&
+            !entity.shot
         ) {
-            _loc2_.poiss = 200;
-            _loc2_.poisd = 3.5;
-            damageEntity(_loc2_, 5);
+            entity.poiss = 200;
+            entity.poisd = 3.5;
+            damageEntity(entity, 5);
         }
     }
     _root.soundy("fart.mp");
 }
 
-function horss(f1?) {
+// Original: horss(f1)
+function handleHorseLogic(isReverse?: boolean): void {
     if (horse == 100 || hfff == fra) {
-        if (f1) {
+        if (isReverse) {
             xenf = -xenf;
             yenf = -yenf;
         }
@@ -22949,7 +22999,7 @@ function horss(f1?) {
             horse = 99;
             hfff = fra;
         }
-        if (f1) {
+        if (isReverse) {
             xenf = -xenf;
             yenf = -yenf;
         }
@@ -22957,7 +23007,7 @@ function horss(f1?) {
 }
 
 // Original: piller()
-function piller(): void {
+function handlePillLogic(): void {
     f10 = !ups[46] && !ups[75];
     f1 = _root.piller[_root.pilc];
     while (f1 == undefined) {
@@ -23026,7 +23076,8 @@ function doubleResource(amount: number): number {
     return Math.max(amount * 2, 2);
 }
 
-function spaceitem() {
+// Original:
+function spaceitem(): void {
     nospo--;
     if (spac && fra > 10 && player._visible && nospo <= 0) {
         if (!nosp) {
@@ -23257,7 +23308,7 @@ function spaceitem() {
                         showit = false;
                         break;
                     case 71:
-                        fart();
+                        createFartEffect();
                         break;
                     case 67:
                         ups[20] = ups[20] + 1;
@@ -23585,7 +23636,7 @@ function updatePlayerPosition(): void {
             while (_loc3_ < f3) {
                 f5++;
                 f4 = random(5) + 2;
-                trg2 = createProjectile(player.xp, player.yp, 0, crand(f4), crand(f4), 0, f1);
+                trg2 = createProjectile(player.xp, player.yp, 0, cosineRandom(f4), cosineRandom(f4), 0, f1);
                 trg2.col = 1;
                 _loc3_ = _loc3_ + 1;
             }
@@ -23702,7 +23753,7 @@ function updatePlayerPosition(): void {
     } else {
         f55 = 0;
         f44 = false;
-        if (firecheck(player)) {
+        if (checkFireCollision(player)) {
             if (!relf) {
                 damagePlayer(0.5, 6);
             } else if (relf == 2) {
@@ -23802,7 +23853,7 @@ function updatePlayerPosition(): void {
         }
         if (farter) {
             farter = false;
-            fart();
+            createFartEffect();
         }
         spac = Key.isDown(32) || (Key.isDown(90) && !_root.so.data.frog);
         if (spac) {
@@ -24008,15 +24059,15 @@ function updatePlayerPosition(): void {
                             ups[20] = ups[20] + 1;
                     }
                 } else {
-                    piller();
+                    handlePillLogic();
                     switch (Math.round(f1)) {
                         case 14:
                             if (f2) {
                                 _root.luck = _root.luck + 1;
                                 showSecondaryStatusText("Luck Up");
-                                goodpill();
+                                playGoodPillSound();
                                 showPlayerEmotion();
-                                pilcol(50, 100, 50);
+                                applyPillColorEffect(50, 100, 50);
                             } else {
                                 showSecondaryStatusText("Luck Down");
                                 _root.luck = _root.luck - 1;
@@ -24051,12 +24102,12 @@ function updatePlayerPosition(): void {
                             } else {
                                 showSecondaryStatusText("Full Health");
                             }
-                            goodpill();
+                            playGoodPillSound();
                             showPlayerEmotion();
                             break;
                         case 2:
                             if (random(2) == 0) {
-                                hat(54);
+                                activatePassiveItem(54);
                                 showStatusText("Puberty");
                             } else {
                                 _root.hmode = 16;
@@ -24074,14 +24125,14 @@ function updatePlayerPosition(): void {
                         case 4:
                             _root.armor += 2;
                             showSecondaryStatusText("Balls of Steel");
-                            goodpill();
+                            playGoodPillSound();
                             showPlayerEmotion();
                             break;
                         case 5:
                             _root.ups[10] += 0.5;
                             ups[10] = _root.ups[10];
                             showSecondaryStatusText("Pretty Fly");
-                            goodpill();
+                            playGoodPillSound();
                             showPlayerEmotion();
                             break;
                         case 7:
@@ -24097,8 +24148,8 @@ function updatePlayerPosition(): void {
                                 } else {
                                     _root.ups[15] = _root.ups[15] + 1;
                                 }
-                                pilcol(100, 50, 50);
-                                goodpill();
+                                applyPillColorEffect(100, 50, 50);
+                                playGoodPillSound();
                                 showPlayerEmotion();
                             } else {
                                 if (_root.skiner == 4) {
@@ -24122,8 +24173,8 @@ function updatePlayerPosition(): void {
                             if (f2) {
                                 _root.ups[32] += 0.5;
                                 showSecondaryStatusText("Tears Up");
-                                pilcol(80, 80, 100);
-                                goodpill();
+                                applyPillColorEffect(80, 80, 100);
+                                playGoodPillSound();
                                 showPlayerEmotion();
                             } else {
                                 _root.ups[32] -= 0.4;
@@ -24136,9 +24187,9 @@ function updatePlayerPosition(): void {
                             if (f2 || (ups[6] && _root.chaps < 8)) {
                                 _root.ups[31] += 0.5;
                                 showSecondaryStatusText("Range Up");
-                                pilcol(50, 100, 100);
+                                applyPillColorEffect(50, 100, 100);
                                 showPlayerEmotion();
-                                goodpill();
+                                playGoodPillSound();
                             } else {
                                 _root.ups[31] -= 0.4;
                                 showSecondaryStatusText("Range Down");
@@ -24150,8 +24201,8 @@ function updatePlayerPosition(): void {
                             if (f2) {
                                 _root.ups[27] = _root.ups[27] + 1;
                                 showSecondaryStatusText("Speed Up");
-                                pilcol(100, 100, 50);
-                                goodpill();
+                                applyPillColorEffect(100, 100, 50);
+                                playGoodPillSound();
                                 showPlayerEmotion();
                             } else {
                                 _root.ups[27] -= 0.8;
@@ -24164,10 +24215,10 @@ function updatePlayerPosition(): void {
                             if (f2) {
                                 _root.ups[165] = _root.ups[165] + 1;
                                 showSecondaryStatusText("Shot Speed Up");
-                                goodpill();
+                                playGoodPillSound();
                                 showPlayerEmotion();
                             } else {
-                                pilcol(50, 50, 50);
+                                applyPillColorEffect(50, 50, 50);
                                 _root.ups[165] -= 1.4;
                                 showSecondaryStatusText("Shot Speed Down");
                                 showPlayerEmotion(true);
@@ -24175,7 +24226,7 @@ function updatePlayerPosition(): void {
                             ups[165] = _root.ups[165];
                             break;
                         case 12:
-                            fart();
+                            createFartEffect();
                             showSecondaryStatusText("Bad Gas");
                             break;
                         case 126:
@@ -24295,7 +24346,7 @@ function updatePlayerPosition(): void {
             _root.playcol[2] = 5;
         }
         handleDirectionalInput(true);
-        horss(true);
+        handleHorseLogic(true);
         if (xenf == 0) {
             lastx = fra;
         }
@@ -24426,7 +24477,7 @@ function updatePlayerPosition(): void {
             knil += knill;
             knill -= 1.4;
             f1 -= knife.d.z._rotation;
-            f1 = absmax(normalizeAngle(f1), Math.max(0, 40 - knil));
+            f1 = clamp(normalizeAngle(f1), Math.max(0, 40 - knil));
             knife.d.z._rotation += f1 * 0.7;
             _root.knif *= 0.98;
             if (knil < 23) {
@@ -24675,7 +24726,7 @@ function updatePlayerPosition(): void {
         handleDirectionalInput(false);
         if (horse > 0) {
             if (horse == 100) {
-                horss();
+                handleHorseLogic();
             } else {
                 horse--;
                 xenf = horsx * 4.5;
@@ -24815,14 +24866,14 @@ function findValidSpawnPosition(x: number, y: number, radius: number, avoidPlaye
     var _loc1_ = -100;
     var _loc2_ = -100;
     var _loc7_ = true;
-    while (mhit(_loc1_, _loc2_) || getRoomType(convertWorldToTileCoordinates(_loc1_, _loc2_)) >= 0.2) {
+    while (checkHit(_loc1_, _loc2_) || getRoomType(convertWorldToTileCoordinates(_loc1_, _loc2_)) >= 0.2) {
         _loc7_ = true;
         if (radius > 500) {
             radius = 0;
         }
         radius += 5;
-        _loc1_ = x + crand(radius);
-        _loc2_ = y + crand();
+        _loc1_ = x + cosineRandom(radius);
+        _loc2_ = y + cosineRandom();
         if (trg.s == 101 || avoidPlayer) {
             var _loc3_ = 0;
             while (_loc3_ < projectileClips.length) {
@@ -24864,8 +24915,8 @@ function spawnEntity(x: number, y: number, radius: number, entityType: number): 
     findValidSpawnPosition(x, y, radius, entityType > 9 && _root.lev == _root.chamb);
     levz[convertWorldToTileCoordinates(xenf, yenf)] = 0.9;
     if (spispaw) {
-        xenf += crand(random(10));
-        yenf += crand();
+        xenf += cosineRandom(random(10));
+        yenf += cosineRandom();
     }
     return createProjectile(xenf, yenf, 0, 0, 0, 0, entityType);
 }
@@ -24942,51 +24993,55 @@ function handleDirectionalInput(reversed: boolean): void {
     }
 }
 
-function xox(f3) {
-    return random(7) == 0 || (f3 && random(2) == 0);
+// Original: xox(f3)
+function shouldTriggerRareEvent(boostChance: boolean): boolean {
+    return random(7) == 0 || (boostChance && random(2) == 0);
 }
 
 // Original: trixies(f3)
 function calculatePillEffect(f3: boolean): void {
     if (checkItemOwned(34) || checkItemOwned(36) || checkItemOwned(41) || checkItemOwned(44) || checkItemOwned(45)) {
-        if (xox(f3) && checkItemOwned(45)) {
+        if (shouldTriggerRareEvent(f3) && checkItemOwned(45)) {
             f2 = 5.3;
-        } else if (xox(f3) && checkItemOwned(44)) {
+        } else if (shouldTriggerRareEvent(f3) && checkItemOwned(44)) {
             f2 = 5.07;
-        } else if (xox(f3) && checkItemOwned(41)) {
+        } else if (shouldTriggerRareEvent(f3) && checkItemOwned(41)) {
             f2 = 5.04;
-        } else if ((xox(f3) || (random(17) == 0 && !f3)) && checkItemOwned(36)) {
+        } else if ((shouldTriggerRareEvent(f3) || (random(17) == 0 && !f3)) && checkItemOwned(36)) {
             if (random(2) == 0) {
                 f2 = 5.06;
             } else {
                 f2 = 5.03;
             }
-        } else if (xox(f3) && checkItemOwned(34)) {
+        } else if (shouldTriggerRareEvent(f3) && checkItemOwned(34)) {
             f2 = 5.01;
         }
     }
 }
 
-function picc(f2) {
+// Original: picc(f2)
+function picc(f2: number): void {
     if (random(2) == 0) {
         _root.picers[random(6)] = f2;
     }
 }
 
-function pic(f1) {
+// Original: pic(f1)
+function pic(f1: number): number {
     if (f1 < 7) {
         f1 = _root.picers[f1 - 1];
     }
     return f1;
 }
 
-function cspawn(f0, f12) {
+// Original: cspawn(f0, f12)
+function spawnCollectibles(itemType: number, count: number): void {
     i = 0;
-    while (i < f12) {
+    while (i < count) {
         f13 = 0;
         while (f13++ < 10) {
-            xenf = crand(5);
-            yenf = crand(5);
+            xenf = cosineRandom(5);
+            yenf = cosineRandom(5);
             if (_root.lev == _root.chamb) {
                 xenf *= 0.4;
                 yenf *= 0.4;
@@ -24995,16 +25050,16 @@ function cspawn(f0, f12) {
                 f13 = 1000;
             }
         }
-        if (f0 == 5.05 || f0 == 5.06) {
+        if (itemType == 5.05 || itemType == 5.06) {
             xenf = 0;
             yenf = 0;
             if (trg != 2) {
                 chestoy += 10;
             }
         }
-        var _loc2_ = createProjectile(chestox, chestoy, 0, xenf, yenf, 0, f0);
+        var _loc2_ = createProjectile(chestox, chestoy, 0, xenf, yenf, 0, itemType);
         _loc2_.alt = true;
-        if (f0 == 5.1) {
+        if (itemType == 5.1) {
             _loc2_.fra -= 15;
             trg.done = true;
             if (trg == 2 && _root.locker[18] && !ups[90]) {
@@ -25012,10 +25067,10 @@ function cspawn(f0, f12) {
                 _loc2_.it = 90;
             }
         }
-        if (f0 == 5 && trg == 2) {
+        if (itemType == 5 && trg == 2) {
             _loc2_.col = 3;
         }
-        if (f0 == 5.05 || f0 == 5.06) {
+        if (itemType == 5.05 || itemType == 5.06) {
             if (trg != 2) {
                 _loc2_._xscale = trg._xscale * 0.8;
                 _loc2_._yscale = _loc2_._xscale;
@@ -25104,7 +25159,7 @@ let onEnterFrame = () => {
                         _root.ups[161] = 0;
                         if (_root.skiner != 4) {
                             _root.ups[23]--;
-                            hat(31);
+                            activatePassiveItem(31);
                             _root.prsk = _root.sk;
                             _root.prsk2 = _root.skiner;
                             _root.skiner = 4;
@@ -25302,23 +25357,23 @@ let onEnterFrame = () => {
     }
     if (ups[155] && player.d._currentframe < 3 && !eyepie) {
         eyepie = true;
-        trg2 = createProjectile(player.xp, player.yp - 10, 0, crand(10), crand(10), 0, 3);
+        trg2 = createProjectile(player.xp, player.yp - 10, 0, cosineRandom(10), cosineRandom(10), 0, 3);
         trg2.eye = true;
     }
     if (ups[187] && player.d._currentframe < 3 && !hairb) {
         hairb = true;
-        trg2 = createProjectile(player.xp, player.yp - 10, 0, crand(10), crand(10), 0, 3);
+        trg2 = createProjectile(player.xp, player.yp - 10, 0, cosineRandom(10), cosineRandom(10), 0, 3);
         trg2.hairb = true;
     }
     if (ups[178] && player.d._currentframe < 3 && !holp) {
         holp = true;
-        trg2 = createProjectile(player.xp, player.yp - 10, 0, crand(10), crand(10), 0, 3);
+        trg2 = createProjectile(player.xp, player.yp - 10, 0, cosineRandom(10), cosineRandom(10), 0, 3);
         trg2.hol = true;
         holz = trg2;
     }
     if (ups[172] && player.d._currentframe < 3 && !knip) {
         knip = true;
-        trg2 = createProjectile(player.xp, player.yp - 10, 0, crand(10), crand(10), 0, 3);
+        trg2 = createProjectile(player.xp, player.yp - 10, 0, cosineRandom(10), cosineRandom(10), 0, 3);
         trg2.ni = true;
     }
     if (ups[117] == 0.55) {
@@ -25399,8 +25454,8 @@ let onEnterFrame = () => {
             trg2.fly = true;
             if (blufer != undefined) {
                 trg2.trg2 = blufer;
-                trg2.xbew += crand(10);
-                trg2.ybew += crand(10);
+                trg2.xbew += cosineRandom(10);
+                trg2.ybew += cosineRandom(10);
             }
         }
     } else {
@@ -25441,7 +25496,7 @@ let onEnterFrame = () => {
         }
     }
     if (ups[75] && random(150) == 0) {
-        piller();
+        handlePillLogic();
     }
     f1 = _root.it;
     if (f1 < 1) {
@@ -25863,7 +25918,7 @@ let onEnterFrame = () => {
                 }
             }
         }
-        golev();
+        initializeRoom();
         _root.black.prevFrame();
         drawMap();
     } else {
@@ -26543,7 +26598,7 @@ let onEnterFrame = () => {
         }
         updateGameEntities();
         if (brr.length > 0) {
-            breakall();
+            renderBrokenFloors();
             brr = [];
             brr2 = [];
         }
@@ -26615,8 +26670,8 @@ let onEnterFrame = () => {
                 }
                 trg.empty = true;
                 if (trg.col == 31) {
-                    boil(false);
-                    boil(true);
+                    executeBoilAttack(false);
+                    executeBoilAttack(true);
                 } else if (trg.c2) {
                     f10 = 2;
                     f1 = [81, 134, 133, 145];
@@ -26642,8 +26697,8 @@ let onEnterFrame = () => {
                         tar = 166;
                         activatePortalEffect();
                     } else if (random(5) == 0) {
-                        boil(false);
-                        boil(true);
+                        executeBoilAttack(false);
+                        executeBoilAttack(true);
                     } else if (random(5) == 0) {
                         spawnEntity(trg.xp, trg.yp, 20, 5.040000005);
                     } else if (random(5) == 0) {
@@ -26652,9 +26707,9 @@ let onEnterFrame = () => {
                         f1 = [5.010000003, 5.040000003, 5.07];
                         f1 = f1[random(f1.length)];
                         if (f1 == 5.010000003 && random(2) == 0) {
-                            cspawn(f1, 1);
+                            spawnCollectibles(f1, 1);
                         } else {
-                            cspawn(f1, 2);
+                            spawnCollectibles(f1, 2);
                         }
                     }
                 } else {
@@ -26677,7 +26732,7 @@ let onEnterFrame = () => {
                             _root.shitpenny = true;
                             createProjectile(trg.xp, trg.yp, 0, 0, 0, 0, 5.35);
                         } else {
-                            cspawn(5.02, 5 + random(3));
+                            spawnCollectibles(5.02, 5 + random(3));
                         }
                     } else {
                         z = 0;
@@ -26751,7 +26806,7 @@ let onEnterFrame = () => {
                                     f0 = 5;
                                 }
                             }
-                            cspawn(f0, f12);
+                            spawnCollectibles(f0, f12);
                             z++;
                         }
                     }
@@ -26946,7 +27001,7 @@ let onEnterFrame = () => {
             while (z < 6) {
                 f4 = false;
                 trg2 = trg.d.d.d["hat" + z];
-                f3 = _root.hatmode[z];
+                f3 = _root.currentPassiveEffects[z];
                 if (_root.colit == 86 && z == 0) {
                     f3 = 18;
                 }
@@ -27006,7 +27061,8 @@ let onEnterFrame = () => {
     }
 };
 
-function nooo() {
+// Original: nooo()
+function quitApplication(): void {
     if (!linx) {
         mdm.Application.exit();
     } else {
@@ -27014,36 +27070,39 @@ function nooo() {
     }
 }
 
-function ffss1(f0) {
-    if (f0 == true) {
-        f0 = 1;
+// Original: ffss1(f0)
+function toBoolean(value: any): boolean {
+    if (value == true) {
+        value = 1;
     }
-    if (f0 <= 0) {
-        f0 = 0;
+    if (value <= 0) {
+        value = 0;
     }
-    return f0;
+    return value;
 }
 
-function add(v1) {
-    if (v1.length > 0) {
-        f1 += "," + ffss1(v1[0]);
+// Original: add(v1)
+function appendSerializedValue(value: any): void {
+    if (value.length > 0) {
+        f1 += "," + toBoolean(value[0]);
         z = 1;
-        while (z < v1.length) {
-            f1 += "'" + ffss1(v1[z]);
+        while (z < value.length) {
+            f1 += "'" + toBoolean(value[z]);
             z++;
         }
     } else {
-        if (v1 == undefined || !v1 || v1 == "false") {
-            v1 = 0;
+        if (value == undefined || !value || value == "false") {
+            value = 0;
         }
-        f1 += "," + v1;
+        f1 += "," + value;
     }
 }
 
-function sub(f3?) {
+// Original: sub(f3)
+function parseSerializedValue(parseAsArray?: boolean): any {
     f1++;
-    var _loc1_: any = checker2[f1];
-    if (f3) {
+    let _loc1_: any = checker2[f1];
+    if (parseAsArray) {
         _loc1_ = _loc1_.split("'");
         for (z of _loc1_) {
             _loc1_[z] *= 1;
@@ -27096,32 +27155,32 @@ function saveGameData(): void {
         f1 += checker1[e];
         e++;
     }
-    add(so.data.frog);
-    add(so.data.left);
-    add(so.data.frog);
-    add(so.data.wins);
-    add(so.data.shits);
-    add(so.data.pill);
-    add(so.data.dde);
-    add(so.data.gams);
-    add(so.data.bomb);
-    add(so.data.deads);
-    add(so.data.rocks);
-    add(so.data.cols);
-    add(so.data.boss);
-    add(so.data.lcomp);
-    add(so.data.mwin);
-    add(so.data.rox);
-    add(so.data.icer);
+    appendSerializedValue(so.data.frog);
+    appendSerializedValue(so.data.left);
+    appendSerializedValue(so.data.frog);
+    appendSerializedValue(so.data.wins);
+    appendSerializedValue(so.data.shits);
+    appendSerializedValue(so.data.pill);
+    appendSerializedValue(so.data.dde);
+    appendSerializedValue(so.data.gams);
+    appendSerializedValue(so.data.bomb);
+    appendSerializedValue(so.data.deads);
+    appendSerializedValue(so.data.rocks);
+    appendSerializedValue(so.data.cols);
+    appendSerializedValue(so.data.boss);
+    appendSerializedValue(so.data.lcomp);
+    appendSerializedValue(so.data.mwin);
+    appendSerializedValue(so.data.rox);
+    appendSerializedValue(so.data.icer);
     saverr = f1;
 }
 
 // Original: aloc2()
 function loadGameData(): void {
     if (!linx) {
-        var _loc3_ = mdm.Application.path;
-        var _loc2_ = mdm.FileSystem.loadFile(_loc3_ + "serial.txt");
-        checker2 = _loc2_.split(",");
+        const path: string = mdm.Application.path;
+        const fileContents: string = mdm.FileSystem.loadFile(path + "serial.txt");
+        checker2 = fileContents.split(",");
         f1 = 0;
         if (!so.data.cocks) {
             if (so.data.deads > 5) {
@@ -27129,23 +27188,23 @@ function loadGameData(): void {
             }
             if (checker2.length > 10) {
                 so.data.cocks = true;
-                so.data.frog = sub();
-                so.data.left = sub();
-                so.data.frog = sub();
-                so.data.wins = sub();
-                so.data.shits = sub();
-                so.data.pill = sub();
-                so.data.dde = sub();
-                so.data.gams = sub();
-                so.data.bomb = sub();
-                so.data.deads = sub();
-                so.data.rocks = sub();
-                so.data.cols = sub(true);
-                so.data.boss = sub(true);
-                so.data.lcomp = sub(true);
-                so.data.mwin = sub(true);
-                so.data.rox = sub();
-                so.data.icer = sub();
+                so.data.frog = parseSerializedValue();
+                so.data.left = parseSerializedValue();
+                so.data.frog = parseSerializedValue();
+                so.data.wins = parseSerializedValue();
+                so.data.shits = parseSerializedValue();
+                so.data.pill = parseSerializedValue();
+                so.data.dde = parseSerializedValue();
+                so.data.gams = parseSerializedValue();
+                so.data.bomb = parseSerializedValue();
+                so.data.deads = parseSerializedValue();
+                so.data.rocks = parseSerializedValue();
+                so.data.cols = parseSerializedValue(true);
+                so.data.boss = parseSerializedValue(true);
+                so.data.lcomp = parseSerializedValue(true);
+                so.data.mwin = parseSerializedValue(true);
+                so.data.rox = parseSerializedValue();
+                so.data.icer = parseSerializedValue();
             }
         }
         checker1 = checker2[0].split("");
@@ -28059,8 +28118,9 @@ export function launchAchievementApp(achievementId: string): void {
     }
 }
 
-function doit_foo(trg) {
-    switch (trg._name) {
+// Original: doit(trg)
+function handleSettingsButtonClick(button: any): void {
+    switch (button._name) {
         case "b4":
             so.data.frog = !so.data.frog;
             break;
@@ -28082,24 +28142,27 @@ function doit_foo(trg) {
     }
 }
 
-function wiq(f1) {
-    so.data.wind = _root.hdd = f1;
-    showit_foo();
+// Original: wiq(f1)
+function setWindowMode(mode: number): void {
+    so.data.wind = _root.hdd = mode;
+    updateSettingsDisplay();
     toggleFullscreen();
 }
 
-function reser(f1) {
+// Original: reser(f1)
+function selectResolution(resolutionFrame: number): void {
     if (win) {
-        f2 = refs[f1];
-        so.data.res = _root.res = f1;
-        showit_foo();
+        f2 = refs[resolutionFrame];
+        so.data.res = _root.res = resolutionFrame;
+        updateSettingsDisplay();
         if (so.data.full) {
             toggleFullscreen();
         }
     }
 }
 
-function showit_foo() {
+// Original: showit()
+function updateSettingsDisplay(): void {
     trg = _root.paus;
     _root.paus.b0.gotoAndStop(1);
     _root.paus.b1.gotoAndStop(1);
@@ -28145,6 +28208,7 @@ function showit_foo() {
     }
 }
 
+// Original: qshow()
 function updateQualityButtons(): void {
     f1 = ["HIGH", "MEDIUM", "LOW", "AUTO"];
     z = 0;
@@ -28183,7 +28247,8 @@ function setQuality(newQuality?: string): void {
     updateQualityButtons();
 }
 
-function goblack() {
+// Original: goblack()
+function setBlackOverlay(): void {
     if (_currentframe >= 3 && _currentframe < 10) {
         f1 = _currentframe;
     } else {
@@ -28195,18 +28260,6 @@ function goblack() {
         _root.hud._visible = false;
     }
 }
-
-// function colorit_hmmm(trg, f1, f2, f3, f4, f5, f6) {
-//     var _loc1_ = new flash.geom.ColorTransform();
-//     _loc1_.redMultiplier = f1;
-//     _loc1_.greenMultiplier = f2;
-//     _loc1_.blueMultiplier = f3;
-//     _loc1_.redOffset = f4;
-//     _loc1_.greenOffset = f5;
-//     _loc1_.blueOffset = f6;
-//     var _loc2_ = new flash.geom.Transform(trg);
-//     _loc2_.colorTransform = _loc1_;
-// }
 
 // Original: uncolera()
 function updateItemCooldown(): void {

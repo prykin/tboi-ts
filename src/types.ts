@@ -99,9 +99,9 @@ interface GameRoot {
     bookster: boolean;
     bossd: any;
     bossk: any;
-    bossl2: number;
-    bossl: number;
-    bosslv1: any;
+    bossl2: number; //bossRoom2
+    bossl: number; //bossRoom
+    bosslv1: number; //*never set
     bossmusic: boolean | number;
     bosss2: any;
     bosss: any;
@@ -154,8 +154,8 @@ interface GameRoot {
     getup: any;
     hairb: any;
     hardmode: boolean;
-    hat: any;
-    hatmode: number[];
+    collectedPassiveItems: boolean[];
+    currentPassiveEffects: number[];
     hdd: boolean | number;
     heaven: any;
     hid2: any;
@@ -190,7 +190,7 @@ interface GameRoot {
     keys: number;
     knif: any;
     knir: any;
-    kramper: number | boolean;
+    kramper: number | boolean; //krampusFought
     lastdev: any;
     lasth: any;
     lastkeeps: number;
@@ -240,7 +240,7 @@ interface GameRoot {
     pauss: any;
     picers: any;
     pilc: number;
-    piller: any[];
+    piller: any[]; // pillEffects, known/unknown
     pillfirst: boolean;
     pinfo: number;
     playcol: any;

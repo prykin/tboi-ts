@@ -16,7 +16,7 @@ import {
     addPathTile,
     updateTreasureRoomCount,
     checkItemOwned,
-    updatePlayerAnimation,
+    updatePickedItemsEffects,
     createProjectile,
 } from "@/foos";
 
@@ -1461,7 +1461,7 @@ ref = [];
 drawMap();
 sk = _root.sk;
 webs = [];
-updatePlayerAnimation();
+updatePickedItemsEffects();
 drawMap();
 if (levz.length <= 1) {
     levz = new Array(200);
