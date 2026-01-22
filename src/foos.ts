@@ -40,12 +40,12 @@ function updateSlotSprite(entity: any): void {
 
 // Original: pffx(f1)
 export function addPathTile(index: number): void {
-    var _loc3_ =
+    const adjacentTileSum: number =
         _root.levz[index + 1] +
         _root.levz[index - 1] +
         _root.levz[index + 10] +
         _root.levz[index - 10];
-    if ((_root.levz[index] == 0 && _loc3_ < 2 && f5 < f6) || index == 35) {
+    if ((_root.levz[index] == 0 && adjacentTileSum < 2 && f5 < f6) || index == 35) {
         _root.levz[index] = 1;
         acts2.push(index);
         f8++;
@@ -222,11 +222,11 @@ function calculateDamageMultiplier(): number {
             damageMultiplier *= 2;
         }
     }
-    const _loc3_: number[] = [0, 0, 0.2, 0.35, 0.05, -0.23, 0];
+    const skinDamageMultipliers: number[] = [0, 0, 0.2, 0.35, 0.05, -0.23, 0];
     if (ups[122]) {
-        _loc3_[5] = -0.1;
+        skinDamageMultipliers[5] = -0.1;
     }
-    damageMultiplier *= 1 + _loc3_[_root.skiner];
+    damageMultiplier *= 1 + skinDamageMultipliers[_root.skiner];
     _root.firrb = damageMultiplier;
     if (checkItemOwned(35)) {
         damageMultiplier += 2;
@@ -245,9 +245,9 @@ function calculateDamageMultiplier(): number {
         damageMultiplier += 0.5;
     }
     if (_root.hardmode) {
-        //const _loc5_: number = damageMultiplier; //unused
-        const _loc4_: number = 1 + Math.max(0, 12 - _root.firra) * 0.1;
-        damageMultiplier *= _loc4_;
+        //const baseDamageMultiplier: number = damageMultiplier; //unused
+        const hardmodeScale: number = 1 + Math.max(0, 12 - _root.firra) * 0.1;
+        damageMultiplier *= hardmodeScale;
         if (damageMultiplier > 5) {
             damageMultiplier = 5 + (damageMultiplier - 5) * 0.95;
         }
@@ -263,7 +263,7 @@ function calculateDamageMultiplier(): number {
         if (damageMultiplier > 30) {
             damageMultiplier = 25 + (damageMultiplier - 25) * 0.85;
         }
-        damageMultiplier /= _loc4_;
+        damageMultiplier /= hardmodeScale;
     }
     return damageMultiplier;
 }
@@ -800,8 +800,8 @@ export function initializePlayerStats(): void {
         _root.firrr -= 5;
         _root.firra -= 2;
     }
-    var _loc2_ = [0, 0, 0.2, 0.35, 0.05, -0.25, 0];
-    v1 = 1 + _loc2_[_root.skiner];
+    const skinDamageAdjustments: number[] = [0, 0, 0.2, 0.35, 0.05, -0.25, 0];
+    v1 = 1 + skinDamageAdjustments[_root.skiner];
     _root.firrb = 3.5 * v1;
     _root.ups = [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -843,9 +843,9 @@ export function initializePlayerStats(): void {
 
 // Original: ender()
 export function getRandomEndRoom(): any {
-    var _loc1_ = random(endrooms.length);
-    f2 = endrooms[_loc1_];
-    endrooms.splice(_loc1_, 1);
+    const endRoomIndex: number = random(endrooms.length);
+    f2 = endrooms[endRoomIndex];
+    endrooms.splice(endRoomIndex, 1);
     return f2;
 }
 
@@ -1287,7 +1287,7 @@ function cosineRandom(radius?: number): number {
 
 // Original: itzz(f1)
 function notUpgrade(itemId: number): boolean {
-    const _loc2_: boolean =
+    const isExcludedUpgrade: boolean =
         itemId != 114 &&
         itemId != 118 &&
         itemId != 138 &&
@@ -1330,7 +1330,7 @@ function notUpgrade(itemId: number): boolean {
             itemId != 108 &&
             itemId != 109 &&
             itemId != 110 &&
-            _loc2_) ||
+            isExcludedUpgrade) ||
         itemId == 5
     );
 }
@@ -1360,25 +1360,25 @@ function keepItem(itemId: number): number {
         _root.trg.d.d.gotoAndStop(11);
     }
     const familiars: number[] = [8, 67, 95, 99, 100, 113, 163, 167, 174, 188];
-    var _loc4_ = false;
+    let isFamiliar: boolean = false;
     for (o in familiars) {
         if (familiars[o] == itemId) {
-            _loc4_ = true;
+            isFamiliar = true;
         }
     }
-    var _loc5_ = 0;
-    if (_loc4_) {
+    let familiarCount: number = 0;
+    if (isFamiliar) {
         for (o in familiars) {
-            _loc5_ += _root.ups[familiars[o]];
+            familiarCount += _root.ups[familiars[o]];
         }
     }
     wtftex = _root.wiptz;
-    var _loc6_ = 1.2 + _root.wiptz * 3;
+    let dropChanceScale: number = 1.2 + _root.wiptz * 3;
     if (_root.hardmode && _root.wiptz > 0) {
-        _loc6_ *= 0.6;
-        _loc6_ += _root.wiptz * _root.wiptz * 0.2;
+        dropChanceScale *= 0.6;
+        dropChanceScale += _root.wiptz * _root.wiptz * 0.2;
     }
-    if (_loc4_ && _loc5_ > 2) {
+    if (isFamiliar && familiarCount > 2) {
         return 0;
     }
     if (_root.ups[itemId] || (_root.colss[itemId] && random(5) == 0)) {
@@ -1387,7 +1387,7 @@ function keepItem(itemId: number): number {
     if (notUpgrade(itemId)) {
         return itemId;
     }
-    if (1 / Math.max(0.2, _loc6_) > Math.random()) {
+    if (1 / Math.max(0.2, dropChanceScale) > Math.random()) {
         return itemId;
     }
     return 0;
@@ -1395,26 +1395,27 @@ function keepItem(itemId: number): number {
 
 // Original: giveit()
 function distributeItem(): number {
-    var _loc2_ = 0;
-    var _loc4_ = 0;
-    while (_loc2_ == 0) {
-        _loc4_ = _loc4_ + 1;
-        if (_loc4_ > 100) {
-            var _loc3_ = random(_root.ittt.length);
-            _loc2_ = keepItem(_root.ittt[_loc3_]);
-            if (_loc2_ > 0) {
-                _root.ittt.splice(_loc3_, 1);
+    let selectedItemId: number = 0;
+    let attempts: number = 0;
+    let poolIndex: number = 0;
+    while (selectedItemId == 0) {
+        attempts = attempts + 1;
+        if (attempts > 100) {
+            poolIndex = random(_root.ittt.length);
+            selectedItemId = keepItem(_root.ittt[poolIndex]);
+            if (selectedItemId > 0) {
+                _root.ittt.splice(poolIndex, 1);
             }
             if (_root.ittt.length <= 5) {
                 refreshItemPool();
             }
         } else if (_root.lev == _root.lib) {
-            _loc3_ = random(_root.ittt9.length);
-            _loc2_ = keepItem(_root.ittt9[_loc3_]);
-            if (_loc2_ > 0) {
-                if (lib == _loc3_) {
-                    _loc2_ = -1;
-                    lib = _loc3_;
+            poolIndex = random(_root.ittt9.length);
+            selectedItemId = keepItem(_root.ittt9[poolIndex]);
+            if (selectedItemId > 0) {
+                if (lib == poolIndex) {
+                    selectedItemId = -1;
+                    lib = poolIndex;
                 }
             }
         } else if (
@@ -1422,10 +1423,10 @@ function distributeItem(): number {
             _root.lev == _root.chamb &&
             !_root.altch
         ) {
-            _loc3_ = random(_root.ittt8.length);
-            _loc2_ = keepItem(_root.ittt8[_loc3_]);
-            if (_loc2_ > 0) {
-                _root.ittt8.splice(_loc3_, 1);
+            poolIndex = random(_root.ittt8.length);
+            selectedItemId = keepItem(_root.ittt8[poolIndex]);
+            if (selectedItemId > 0) {
+                _root.ittt8.splice(poolIndex, 1);
             }
         } else if (
             (((_root.ittt7.length > 0 && !_root.altsat) ||
@@ -1435,110 +1436,111 @@ function distributeItem(): number {
         ) {
             _this.bummer = false;
             if (_root.altsat || _root.lev == _root.chamb) {
-                _loc3_ = random(_root.ittt10.length);
-                _loc2_ = keepItem(_root.ittt10[_loc3_]);
+                poolIndex = random(_root.ittt10.length);
+                selectedItemId = keepItem(_root.ittt10[poolIndex]);
             } else {
-                _loc3_ = random(_root.ittt7.length);
-                _loc2_ = keepItem(_root.ittt7[_loc3_]);
-                if (_loc2_ > 0) {
-                    _root.ittt7.splice(_loc3_, 1);
+                poolIndex = random(_root.ittt7.length);
+                selectedItemId = keepItem(_root.ittt7[poolIndex]);
+                if (selectedItemId > 0) {
+                    _root.ittt7.splice(poolIndex, 1);
                 }
             }
         } else if (_root.ittt6.length > 0 && treas && _root.chaps != 11) {
-            _loc3_ = random(_root.ittt6.length);
-            _loc2_ = keepItem(_root.ittt6[_loc3_]);
-            if (_loc2_ > 0) {
-                _root.ittt6.splice(_loc3_, 1);
+            poolIndex = random(_root.ittt6.length);
+            selectedItemId = keepItem(_root.ittt6[poolIndex]);
+            if (selectedItemId > 0) {
+                _root.ittt6.splice(poolIndex, 1);
             }
         } else if (
             (_root.lev == _root.shopl || _this.bummer) &&
             _root.ittt4.length > 1
         ) {
             _this.bummer = false;
-            _loc3_ = random(_root.ittt4.length);
-            _loc2_ = keepItem(_root.ittt4[_loc3_]);
-            if (_loc2_ > 0) {
-                _root.ittt4.splice(_loc3_, 1);
+            poolIndex = random(_root.ittt4.length);
+            selectedItemId = keepItem(_root.ittt4[poolIndex]);
+            if (selectedItemId > 0) {
+                _root.ittt4.splice(poolIndex, 1);
             }
         } else if (
             (_root.lev == _root.boner || _root.lev == _root.boner2) &&
             random(2) == 0 &&
             _root.ittt5.length > 1
         ) {
-            _loc3_ = random(_root.ittt5.length);
-            _loc2_ = keepItem(_root.ittt5[_loc3_]);
-            if (_loc2_ > 0) {
-                _root.ittt5.splice(_loc3_, 1);
+            poolIndex = random(_root.ittt5.length);
+            selectedItemId = keepItem(_root.ittt5[poolIndex]);
+            if (selectedItemId > 0) {
+                _root.ittt5.splice(poolIndex, 1);
             }
         } else if (_root.lev == _root.hide) {
-            _loc3_ = random(_root.ittt3.length);
-            _loc2_ = keepItem(_root.ittt3[_loc3_]);
-            if (_loc2_ > 0) {
-                _root.ittt3.splice(_loc3_, 1);
+            poolIndex = random(_root.ittt3.length);
+            selectedItemId = keepItem(_root.ittt3[poolIndex]);
+            if (selectedItemId > 0) {
+                _root.ittt3.splice(poolIndex, 1);
             }
         } else if (_root.lev == _root.chamb && _root.altch) {
-            _loc3_ = random(_root.ittt2.length);
-            _loc2_ = keepItem(_root.ittt2[_loc3_]);
-            if (_loc2_ > 0) {
-                _root.ittt2.splice(_loc3_, 1);
+            poolIndex = random(_root.ittt2.length);
+            selectedItemId = keepItem(_root.ittt2[poolIndex]);
+            if (selectedItemId > 0) {
+                _root.ittt2.splice(poolIndex, 1);
             }
         } else if (_root.lev == _root.bossl || _root.lev == _root.bossl2) {
             if (_root.chaps == 6 && _root.locker[74] && random(3) != 0 && !ups[139]) {
-                _loc2_ = 139;
+                selectedItemId = 139;
             } else if (_root.bosss == 23 && _root.ittt7.length > 0) {
                 e = 0;
                 while (e < 100) {
-                    _loc3_ = _root.ittt7[random(_root.ittt7.length)];
-                    if (!ups[_loc3_]) {
-                        _loc2_ = _loc3_;
+                    poolIndex = _root.ittt7[random(_root.ittt7.length)];
+                    if (!ups[poolIndex]) {
+                        selectedItemId = poolIndex;
                         e = 1000;
                     }
                     e++;
                 }
             } else if (_root.bosss == 38 && !ups[181]) {
-                _loc2_ = 181;
+                selectedItemId = 181;
             } else if (_root.bosss == 22 && !ups[130]) {
                 _root.locker[32] = true;
-                _loc2_ = 130;
+                selectedItemId = 130;
             } else if (_root.bosss == 21 && !ups[96]) {
                 _root.locker[32] = true;
-                _loc2_ = 96;
+                selectedItemId = 96;
             } else if (_root.bosss == 19 && !ups[99]) {
                 _root.locker[30] = true;
-                _loc2_ = 99;
+                selectedItemId = 99;
             } else if (_root.bosss == 20 && (!ups[100] || !ups[50])) {
                 _root.locker[31] = true;
                 if (ups[100] || random(6) == 0) {
-                    _loc2_ = 50;
+                    selectedItemId = 50;
                 } else {
-                    _loc2_ = 100;
+                    selectedItemId = 100;
                 }
             } else if (_root.bosss > 8 && _root.bosss < 13) {
                 _root.locker[7] = true;
-                _loc2_ = 73;
+                selectedItemId = 73;
             } else {
-                _loc3_ = random(_root.ittt2.length);
-                _loc2_ = keepItem(_root.ittt2[_loc3_]);
-                if (_loc2_ > 0) {
-                    _root.ittt2.splice(_loc3_, 1);
+                poolIndex = random(_root.ittt2.length);
+                selectedItemId = keepItem(_root.ittt2[poolIndex]);
+                if (selectedItemId > 0) {
+                    _root.ittt2.splice(poolIndex, 1);
                 }
             }
         } else {
-            _loc3_ = random(_root.ittt.length);
-            _loc2_ = keepItem(_root.ittt[_loc3_]);
-            if (_loc2_ > 0) {
-                _root.ittt.splice(_loc3_, 1);
+            poolIndex = random(_root.ittt.length);
+            selectedItemId = keepItem(_root.ittt[poolIndex]);
+            if (selectedItemId > 0) {
+                _root.ittt.splice(poolIndex, 1);
             }
         }
     }
-    return _loc2_;
+    return selectedItemId;
 }
 
 // Original: speco(trg, b1)
 function applySpecialEffect(entity: any, effectType?: boolean): void {
     entity.uncol = 200 + fra;
+    let specialColorIndex: number;
     if (entity.specoz) {
-        var _loc2_ = entity.specoz;
+        specialColorIndex = entity.specoz;
         if (entity.specoz == 23) {
             switch (entity.s) {
                 case 94:
@@ -1661,34 +1663,34 @@ function applySpecialEffect(entity: any, effectType?: boolean): void {
                 default:
                     setColorTransform(entity, 3, 3, 3, 0, 0, 0);
             }
-        } else if (specol2[_loc2_].length > 4) {
+        } else if (specol2[specialColorIndex].length > 4) {
             setColorTransform(
                 entity,
-                specol2[_loc2_][0],
-                specol2[_loc2_][1],
-                specol2[_loc2_][2],
-                specol2[_loc2_][3],
-                specol2[_loc2_][4],
-                specol2[_loc2_][5]
+                specol2[specialColorIndex][0],
+                specol2[specialColorIndex][1],
+                specol2[specialColorIndex][2],
+                specol2[specialColorIndex][3],
+                specol2[specialColorIndex][4],
+                specol2[specialColorIndex][5]
             );
         } else {
             setColorTransform(
                 entity,
-                specol2[_loc2_][0],
-                specol2[_loc2_][1],
-                specol2[_loc2_][2],
+                specol2[specialColorIndex][0],
+                specol2[specialColorIndex][1],
+                specol2[specialColorIndex][2],
                 0,
                 0,
                 0
             );
         }
     } else if (entity.special || entity.specozz) {
-        _loc2_ = entity.specol;
+        specialColorIndex = entity.specol;
         setColorTransform(
             entity,
-            specol[_loc2_][0],
-            specol[_loc2_][1],
-            specol[_loc2_][2],
+            specol[specialColorIndex][0],
+            specol[specialColorIndex][1],
+            specol[specialColorIndex][2],
             0,
             0,
             0
@@ -1720,18 +1722,18 @@ function applySpecialEffect(entity: any, effectType?: boolean): void {
                 60 + entity.colo.blueOffset * 0.6
             );
         } else if (entity.poiss > 0 && entity.s != 64 && entity.s != 46) {
-            _loc2_ = Math.max(0.6, (200 - entity.poiss) / 200 - 0.1);
+            const poisonScale: number = Math.max(0.6, (200 - entity.poiss) / 200 - 0.1);
             if (entity.specoz == 23) {
-                entity.colo.blueMultiplier *= _loc2_;
-                entity.colo.redMultiplier *= _loc2_;
+                entity.colo.blueMultiplier *= poisonScale;
+                entity.colo.redMultiplier *= poisonScale;
             }
             setColorTransform(
                 entity,
-                entity.colo.redMultiplier * (_loc2_ * 0.25 + 0.75),
-                entity.colo.greenMultiplier * 0.9 + 0.2 * (1 - _loc2_),
-                entity.colo.blueMultiplier * (_loc2_ * 0.25 + 0.75),
+                entity.colo.redMultiplier * (poisonScale * 0.25 + 0.75),
+                entity.colo.greenMultiplier * 0.9 + 0.2 * (1 - poisonScale),
+                entity.colo.blueMultiplier * (poisonScale * 0.25 + 0.75),
                 entity.colo.redOffset * 0.6,
-                entity.colo.greenOffset * 0.6 + 20 + (1 - _loc2_) * 90,
+                entity.colo.greenOffset * 0.6 + 20 + (1 - poisonScale) * 90,
                 entity.colo.blueOffset * 0.6
             );
         } else if (entity.alter == 2 && entity.s == 42) {
@@ -1781,8 +1783,8 @@ function shouldAttachMovie(entityType: number | string): boolean {
 // Original: trgdy(f1)
 function updateProjectileVerticalOffset(useDynamicOffset?: boolean): void {
     if (useDynamicOffset) {
-        const _loc1_: number = Math.max(0, 8.5 + trg.dy);
-        trg.d._y = trg.dy * 0.5 - 15 + _loc1_ * _loc1_;
+        const offsetFactor: number = Math.max(0, 8.5 + trg.dy);
+        trg.d._y = trg.dy * 0.5 - 15 + offsetFactor * offsetFactor;
         if (trg.ba) {
             trg.d._y += 5;
         }
@@ -3791,9 +3793,9 @@ function defeatMom(): void {
 
 // Original: hurtcol(trg)
 function applyDamageColorEffect(entity: any): void {
-    let _loc2_: number = entity.uncol;
+    let originalUncol: number = entity.uncol;
     if (entity.s == 78) {
-        _loc2_ = fra + 2;
+        originalUncol = fra + 2;
     }
     applySpecialEffect(entity, true);
     if (entity.spid > 0) {
@@ -3810,7 +3812,7 @@ function applyDamageColorEffect(entity: any): void {
                 50 + entity.colo.blueOffset * 0.45
             );
         }
-        _loc2_ = fra + 2;
+        originalUncol = fra + 2;
     } else if (entity.s == 36) {
         setColorTransform(
             entity,
@@ -3832,7 +3834,7 @@ function applyDamageColorEffect(entity: any): void {
             entity.colo.blueOffset * 0.45
         );
     }
-    entity.uncol = _loc2_;
+    entity.uncol = originalUncol;
 }
 
 // Original: hurt(trg, f1)
@@ -3874,15 +3876,15 @@ function damageEntity(entity: any, damage: number): void {
             }
         }
         if (entity.specoz == 23 || entity.eternal) {
-            var _loc4_ = 1;
+            let damageScale: number = 1;
             if (fra > 1666) {
-                _loc4_ = 1 + Math.random() * 0.175;
+                damageScale = 1 + Math.random() * 0.175;
             } else if (fra > 666) {
-                _loc4_ = 1 + Math.random() * 0.125;
+                damageScale = 1 + Math.random() * 0.125;
             } else if (fra > 430) {
-                _loc4_ = 1 + Math.random() * 0.75;
+                damageScale = 1 + Math.random() * 0.75;
             } else if (fra > 200) {
-                _loc4_ = 1 + Math.random() * 0.05;
+                damageScale = 1 + Math.random() * 0.05;
             }
             if (hitcc < fra) {
                 hitc++;
@@ -3895,17 +3897,17 @@ function damageEntity(entity: any, damage: number): void {
                 hitcc = fra + 7;
             }
             if (hitc > 300) {
-                _loc4_ += 0.2;
+                damageScale += 0.2;
             } else if (hitc > 150) {
-                _loc4_ += 0.15;
+                damageScale += 0.15;
             } else if (hitc > 50) {
-                _loc4_ += 0.08;
+                damageScale += 0.08;
             } else if (hitc > 20) {
-                _loc4_ += 0.05;
+                damageScale += 0.05;
             } else if (hitc > 10) {
-                _loc4_ += 0.03;
+                damageScale += 0.03;
             }
-            damage *= _loc4_ + hitc * 0.005;
+            damage *= damageScale + hitc * 0.005;
         }
         if (entity.s == 45) {
             if (damage > 10 + random(20)) {
@@ -4459,51 +4461,54 @@ function spawnTileEntity(entityType: string, tileIndex: number, center?: boolean
         clevc[tileIndex] = 1.5;
     }
     if (getRoomType(tileIndex) > 1.1) {
-        var _loc6_ = _root.levsav[_root.lev][savv];
+        const savedFrame: number = _root.levsav[_root.lev][savv];
         convertTileToWorldCoordinates(tileIndex);
         f2 = "de" + tileIndex * 1;
-        let _loc3_: any = undefined;
+        let tileEntity: any = undefined;
         if (entityType == "fireblock2") {
-            _loc3_ = attachMovie(entityType, "de" + f2, Math.round(tileIndex + 501), {
+            tileEntity = attachMovie(entityType, "de" + f2, Math.round(tileIndex + 501), {
                 _x: xenf,
                 _y: yenf,
             });
-            _loc3_.gotoAndStop(1);
-            this[f2] = _loc3_.d;
-            _loc3_ = _loc3_.d;
-            ref.push(_loc3_);
-            _loc3_.fra = 0;
+            tileEntity.gotoAndStop(1);
+            this[f2] = tileEntity.d;
+            tileEntity = tileEntity.d;
+            ref.push(tileEntity);
+            tileEntity.fra = 0;
         } else {
-            _loc3_ = attachMovie(entityType, f2, Math.round(tileIndex + 501), {_x: xenf, _y: yenf});
+            tileEntity = attachMovie(entityType, f2, Math.round(tileIndex + 501), {
+                _x: xenf,
+                _y: yenf,
+            });
         }
         if (entityType == "breakblock2" || entityType == "fireblock" || entityType == "fireblock2") {
-            _loc3_.fire = true;
+            tileEntity.fire = true;
         }
-        _loc3_.xp = xenf;
-        _loc3_.yp = yenf;
-        _loc3_.cent = center;
-        _loc3_.savv = savv;
-        _loc3_.nam = entityType;
-        _loc3_.til = tileIndex;
-        if (_loc6_ > 0 && _loc3_.nam != "breakblock2") {
-            _loc3_.gotoAndStop(_loc6_);
+        tileEntity.xp = xenf;
+        tileEntity.yp = yenf;
+        tileEntity.cent = center;
+        tileEntity.savv = savv;
+        tileEntity.nam = entityType;
+        tileEntity.til = tileIndex;
+        if (savedFrame > 0 && tileEntity.nam != "breakblock2") {
+            tileEntity.gotoAndStop(savedFrame);
             if (getRoomType(tileIndex) == 4) {
                 levz[tileIndex] = 0;
             } else {
-                levz[tileIndex] -= 0.13 * (_loc6_ - 1);
+                levz[tileIndex] -= 0.13 * (savedFrame - 1);
             }
         }
         if (fra < 10) {
-            _loc3_.p.gotoAndStop(_loc3_.p._totalframes);
+            tileEntity.p.gotoAndStop(tileEntity.p._totalframes);
         }
         if (fra > 10) {
-            _loc3_.gotoAndStop(6);
+            tileEntity.gotoAndStop(6);
         }
-        if (entityType == "locktile" && _loc6_ > 1) {
-            _loc3_.gotoAndStop(3);
+        if (entityType == "locktile" && savedFrame > 1) {
+            tileEntity.gotoAndStop(3);
         }
         savv++;
-        return _loc3_;
+        return tileEntity;
     }
 }
 
@@ -4570,13 +4575,13 @@ function fixWallConnections(): void {
     }
     e = 0;
     while (e < levz.length) {
-        var _loc2_ = clevc[e] + " " + clevc[e + rowz + 1];
-        var _loc1_ = clevc[e + 1] + " " + clevc[e + rowz];
-        if (_loc2_ == "0 0" && _loc1_ == "1 1") {
+        const diagonalKey: string = clevc[e] + " " + clevc[e + rowz + 1];
+        const crossKey: string = clevc[e + 1] + " " + clevc[e + rowz];
+        if (diagonalKey == "0 0" && crossKey == "1 1") {
             clevc[e] = 1;
             clevc[e + rowz + 1] = 1;
         }
-        if (_loc2_ == "1 1" && _loc1_ == "0 0") {
+        if (diagonalKey == "1 1" && crossKey == "0 0") {
             clevc[e + 1] = 1;
             clevc[e + rowz] = 1;
         }
@@ -5182,8 +5187,8 @@ function spawnb(f1, f2): void {
             f2 -= 0.1;
         }
     }
-    var _loc3_ = convertWorldToTileCoordinates(f1._x, f1._y);
-    levz[_loc3_] = f2;
+    const tileIndex: number = convertWorldToTileCoordinates(f1._x, f1._y);
+    levz[tileIndex] = f2;
 }
 
 // Original: sideflip(f1, trg2)
@@ -5366,10 +5371,10 @@ function findPath(entity: any, targetX: number, targetY: number, speedMultiplier
             }
         }
         if (!nogo && (enf = getDistance(xenf, yenf)) > 0.1) {
-            var _loc6_ = xenf - entity.xp;
-            var _loc7_ = yenf - entity.yp;
-            xenf = _loc6_;
-            yenf = _loc7_;
+            const deltaX: number = xenf - entity.xp;
+            const deltaY: number = yenf - entity.yp;
+            xenf = deltaX;
+            yenf = deltaY;
             enf = getDistance(xenf, yenf);
             if (enf > 1) {
                 enf = (Math.min(enf * 0.1, 2) / enf) * speedMultiplier;
@@ -5482,20 +5487,20 @@ function updatePathfindingScoreAlt(roomIndex: number): void {
 
 // Original: linecheckxx(f1, f2, f3, f4)
 function checkLineOfSightExtended2(startX: number, startY: number, endX: number, endY: number): boolean {
-    let _loc5_: number = startX - endX;
-    let _loc6_: number = startY - endY;
-    let _loc7_: number = getDistance(_loc5_, _loc6_);
-    let _loc8_: number = 2.5;
+    let deltaX: number = startX - endX;
+    let deltaY: number = startY - endY;
+    let distance: number = getDistance(deltaX, deltaY);
+    let clearance: number = 2.5;
     grox = convertWorldToTileCoordinates(startX, startY);
-    if (_loc7_ > 0) {
-        _loc5_ /= _loc7_;
-        _loc6_ /= _loc7_;
-        _loc5_ *= 10;
-        _loc6_ *= 10;
-        let _loc2_: number = 0;
-        while (_loc2_ < _loc7_) {
-            startX -= _loc5_;
-            startY -= _loc6_;
+    if (distance > 0) {
+        deltaX /= distance;
+        deltaY /= distance;
+        deltaX *= 10;
+        deltaY *= 10;
+        let step: number = 0;
+        while (step < distance) {
+            startX -= deltaX;
+            startY -= deltaY;
             const tileIndex = convertWorldToTileCoordinates(startX, startY);
             if (
                 getRoomType(tileIndex) >= 1.8 &&
@@ -5503,34 +5508,34 @@ function checkLineOfSightExtended2(startX: number, startY: number, endX: number,
                 getRoomType(tileIndex) != 3 &&
                 tileIndex != gro
             ) {
-                _loc8_ = -1;
+                clearance = -1;
             }
-            _loc2_ += 10;
+            step += 10;
         }
     }
     grox = undefined;
-    return _loc8_ > 0;
+    return clearance > 0;
 }
 
 // Original: linecheckx(f1, f2, f3, f4)
 function checkLineOfSightExtended(x1: number, y1: number, x2: number, y2: number): boolean {
-    let _loc5_: number = x1 - x2;
-    let _loc6_: number = y1 - y2;
-    let _loc4_: number = getDistance(_loc5_, _loc6_);
+    let deltaX: number = x1 - x2;
+    let deltaY: number = y1 - y2;
+    let distance: number = getDistance(deltaX, deltaY);
     f5 = 2.5;
     f6 = 5;
     grox = convertWorldToTileCoordinates(x1, y1);
-    if (_loc4_ > 0) {
-        _loc5_ /= _loc4_;
-        _loc6_ /= _loc4_;
-        _loc5_ *= 10;
-        _loc6_ *= 10;
-        let _loc1_: number = 0;
-        while (_loc1_ < _loc4_) {
-            x1 -= _loc5_;
-            y1 -= _loc6_;
+    if (distance > 0) {
+        deltaX /= distance;
+        deltaY /= distance;
+        deltaX *= 10;
+        deltaY *= 10;
+        let step: number = 0;
+        while (step < distance) {
+            x1 -= deltaX;
+            y1 -= deltaY;
             updatePathfindingScore(convertWorldToTileCoordinates(x1, y1));
-            _loc1_ += 10;
+            step += 10;
         }
     }
     grox = undefined;
@@ -5540,25 +5545,25 @@ function checkLineOfSightExtended(x1: number, y1: number, x2: number, y2: number
 // Original: linecheck(f1, f2, f3, f4)
 function checkLineOfSight(x1: number, y1: number, x2: number, y2: number): boolean {
     grox = convertWorldToTileCoordinates(x1, y1);
-    let _loc5_: number = x1 - x2;
-    let _loc6_: number = y1 - y2;
-    let _loc4_: number = getDistance(_loc5_, _loc6_);
+    let deltaX: number = x1 - x2;
+    let deltaY: number = y1 - y2;
+    let distance: number = getDistance(deltaX, deltaY);
     f5 = 2.5;
     f6 = 5;
-    if (_loc4_ > 0) {
-        _loc5_ /= _loc4_;
-        _loc6_ /= _loc4_;
-        _loc5_ *= 6;
-        _loc6_ *= 6;
-        let _loc3_: number = 0;
-        while (_loc3_ < _loc4_) {
-            x1 -= _loc5_;
-            y1 -= _loc6_;
+    if (distance > 0) {
+        deltaX /= distance;
+        deltaY /= distance;
+        deltaX *= 6;
+        deltaY *= 6;
+        let step: number = 0;
+        while (step < distance) {
+            x1 -= deltaX;
+            y1 -= deltaY;
             updatePathfindingScore(convertWorldToTileCoordinates(x1 + f6, y1 + f6));
             updatePathfindingScore(convertWorldToTileCoordinates(x1 - f6, y1 + f6));
             updatePathfindingScore(convertWorldToTileCoordinates(x1 - f6, y1 - f6));
             updatePathfindingScore(convertWorldToTileCoordinates(x1 + f6, y1 - f6));
-            _loc3_ += 6;
+            step += 6;
         }
     }
     grox = undefined;
@@ -5567,26 +5572,26 @@ function checkLineOfSight(x1: number, y1: number, x2: number, y2: number): boole
 
 // Original: linechecky(f1, f2, f3, f4)
 function checkLineOfSightAlt(startX: number, startY: number, endX: number, endY: number): boolean {
-    var _loc5_ = startX - endX;
-    var _loc6_ = startY - endY;
-    var _loc4_ = getDistance(_loc5_, _loc6_);
+    let deltaX: number = startX - endX;
+    let deltaY: number = startY - endY;
+    let distance: number = getDistance(deltaX, deltaY);
     grox = convertWorldToTileCoordinates(startX, startY);
     f5 = 2.5;
     f6 = 2;
-    if (_loc4_ > 0) {
-        _loc5_ /= _loc4_;
-        _loc6_ /= _loc4_;
-        _loc5_ *= 10;
-        _loc6_ *= 10;
-        var _loc3_ = 0;
-        while (_loc3_ < _loc4_) {
-            startX -= _loc5_;
-            startY -= _loc6_;
+    if (distance > 0) {
+        deltaX /= distance;
+        deltaY /= distance;
+        deltaX *= 10;
+        deltaY *= 10;
+        let step: number = 0;
+        while (step < distance) {
+            startX -= deltaX;
+            startY -= deltaY;
             updatePathfindingScoreAlt(convertWorldToTileCoordinates(startX + f6, startY + f6));
             updatePathfindingScoreAlt(convertWorldToTileCoordinates(startX - f6, startY + f6));
             updatePathfindingScoreAlt(convertWorldToTileCoordinates(startX - f6, startY - f6));
             updatePathfindingScoreAlt(convertWorldToTileCoordinates(startX + f6, startY - f6));
-            _loc3_ += 10;
+            step += 10;
         }
     }
     return f5 > 0;
@@ -5618,7 +5623,8 @@ function getLateItemRangeOffset(itemId: number): number {
 // Original: powerlevel()
 function updatePlayerPowerup(): void {
     _root.beenlev[_root.lev] = 2;
-    var _loc3_ = _root.fmode;
+    const previousFireMode: number = _root.fmode;
+    let pickupClip: any;
     if (!highs.empty) {
         if (fra - lastcraf > 30) {
             lastcraf = fra;
@@ -5647,9 +5653,9 @@ function updatePlayerPowerup(): void {
         showStatusText(_root.st1[highs.it]);
         showSecondaryStatusText(_root.st2x[highs.it]);
         if (highs.d._currentframe == 10) {
-            var _loc2_ = highs.d.d;
+            pickupClip = highs.d.d;
         } else {
-            _loc2_ = highs.d;
+            pickupClip = highs.d;
         }
         highs.empty = true;
         for (i in _root.ittt9) {
@@ -5992,10 +5998,10 @@ function updatePlayerPowerup(): void {
                     player.flyby = false;
                 }
                 highs.d.gotoAndStop(10);
-                _loc2_ = highs.d.d;
-                _loc2_.d.gotoAndPlay(1);
+                pickupClip = highs.d.d;
+                pickupClip.d.gotoAndPlay(1);
                 f11 = _root.it + getEarlyItemRangeOffset(_root.it);
-                _loc2_.d.d.gotoAndStop(f1);
+                pickupClip.d.d.gotoAndStop(f1);
                 _root.it = highs.it - getLateItemRangeOffset(highs.it);
                 highs.it = f11;
                 highs.empty = false;
@@ -6106,7 +6112,7 @@ function updatePlayerPowerup(): void {
         highs.dones = false;
     }
     nohit = false;
-    if (_root.fmode != _loc3_) {
+    if (_root.fmode != previousFireMode) {
     }
     ups[highs.it] = _root.ups[highs.it];
     if (highs.it == 54 || highs.it == 21) {
@@ -6250,9 +6256,9 @@ function getRandomJunkItem(): number {
             return 52;
         }
         f1 = random(_root.junxx.length);
-        var _loc2_ = _root.junxx[f1] * 1;
+        const junkItemId: number = _root.junxx[f1] * 1;
         _root.junxx.splice(f1, 1);
-        return _loc2_;
+        return junkItemId;
     }
     return getRandomTarotCard();
 }
@@ -6267,7 +6273,7 @@ function getRandomTarotCard(): number {
 
 // Original: pillc(trg)
 function pillc(trg): void {
-    var _loc3_ = false;
+    let shouldSkipReplace: boolean = false;
     if (trg > 7) {
         f2 = trg;
     } else if (trg == 4) {
@@ -6332,7 +6338,7 @@ function pillc(trg): void {
                 activatePassiveItem(61);
             }
         } else {
-            _loc3_ = true;
+            shouldSkipReplace = true;
             trg.dones = false;
             trg.fra = fra + 10;
         }
@@ -6347,7 +6353,7 @@ function pillc(trg): void {
         generateTarotCard(f2);
         _root.soundy("Book Page Turn 12.wav", 100);
     }
-    if (!_loc3_) {
+    if (!shouldSkipReplace) {
         if (f1) {
             if (!f3) {
                 f1 = _root.pilc;
@@ -6421,11 +6427,11 @@ function coinPickup(coin: any): number {
 
 // Original: ader(f1)
 function applyDamageOverTime(silent?: boolean): void {
-    var _loc2_ = false;
+    let refundedArmor: boolean = false;
     if (_root.chaps > 6 && player.hp < 1 && _root.armor > 0 && player.mhp > 0) {
         _root.armor -= 0.5;
         player.hp += 0.5;
-        _loc2_ = true;
+        refundedArmor = true;
     }
     if (player.hp > 0.5 || _root.armor <= 0) {
         f11 = _root.armor;
@@ -6435,7 +6441,7 @@ function applyDamageOverTime(silent?: boolean): void {
     } else {
         damagePlayer(0.5, 201);
     }
-    if (_loc2_ && player.hp >= 1) {
+    if (refundedArmor && player.hp >= 1) {
         _root.armor += 0.5;
         player.hp -= 0.5;
     }
@@ -7569,11 +7575,11 @@ function advanceAnimationFrame(targetSprite?: any, isLooped?: boolean): any {
         targetSprite.nextFrame();
     }
     if (targetSprite._currentframe == targetSprite._totalframes) {
-        var _loc2_ = targetSprite._parent._currentframe;
+        const parentFrame: number = targetSprite._parent._currentframe;
         if (!isLooped) {
             targetSprite._parent.gotoAndStop(1);
         }
-        return _loc2_;
+        return parentFrame;
     }
 }
 
@@ -7947,7 +7953,7 @@ function navigateAlongWalls(strength: number): void {
 function generateNewTarget(): void {
     f9 = [0, 1, 1, 0, 0, -1, -1, 0];
     f10 = 0;
-    const _loc1_: boolean = trg.s == 41 || trg.s == 44 || trg.s == 93 || trg.s == 97;
+    const isLargeEnemy: boolean = trg.s == 41 || trg.s == 44 || trg.s == 93 || trg.s == 97;
     while (trg.xpp == undefined && f10++ < 20) {
         trg.tiler = convertWorldToTileCoordinates(trg.xp, trg.yp);
         f8 = [];
@@ -8007,7 +8013,7 @@ function generateNewTarget(): void {
             a++;
         }
         f7 = 1.8;
-        if (_loc1_ || random(10) != 0) {
+        if (isLargeEnemy || random(10) != 0) {
             f7 = -1;
         }
         f6 = -1;
@@ -8127,22 +8133,22 @@ function spawnCircularProjectiles(f1: number, f2: number, f3: number, f4: number
     if (f5 == undefined) {
         f5 = Math.random() * 3.141592653589793;
     }
-    let _loc5_: boolean = false;
+    let usesPlayerVector: boolean = false;
     if (trg.eternal && trg.s == 102) {
         xxenf = f1 - player.xp;
         yyenf = f2 - player.yp;
-        _loc5_ = true;
+        usesPlayerVector = true;
     }
-    const _loc4_: number = (3.141592653589793 / f4) * 2;
-    let _loc1_: number = 0;
-    while (_loc1_ < f4) {
-        f5 += _loc4_;
+    const angleStep: number = (3.141592653589793 / f4) * 2;
+    let stepIndex: number = 0;
+    while (stepIndex < f4) {
+        f5 += angleStep;
         f6 = Math.sin(f5) * f3;
         f7 = Math.cos(f5) * f3;
-        if (f6 * xxenf + f7 * yyenf <= 1000 || !_loc5_) {
+        if (f6 * xxenf + f7 * yyenf <= 1000 || !usesPlayerVector) {
             spawnEnemyProjectile(f1, f2, 0, f6, f7, 0, 9, trg.s, true);
         }
-        _loc1_ = _loc1_ + 1;
+        stepIndex = stepIndex + 1;
     }
 }
 
@@ -8205,8 +8211,8 @@ function spawnEnemyProjectile(f1: number, f2: number, f3: number, f4: number, f5
             }
         }
     } else if (trg.s == 102) {
-        var _loc2_ = new flash.geom.Transform(projectile);
-        _loc2_.colorTransform = bull;
+        const projectileTransform: any = new flash.geom.Transform(projectile);
+        projectileTransform.colorTransform = bull;
     }
     if (trg == mheart && trg.eternal) {
         projectile._xscale *= 1.3;
@@ -8345,19 +8351,19 @@ function fireEnemyProjectiles(spawnX: number, spawnY: number, velocityX: number,
         shotType == 23
     ) {
         f5 = (-(calculateAngleFull(velocityX, velocityY) + 90) * 3.141592653589793) / 180;
-        var _loc6_ = 8;
+        let spreadCount: number = 8;
         if (trg.s == 36) {
-            _loc6_ = 16;
+            spreadCount = 16;
         } else if (trg.s == 46) {
-            _loc6_ = 12;
+            spreadCount = 12;
         }
-        f5 -= _loc6_ * 0.05;
+        f5 -= spreadCount * 0.05;
         f3 = 7;
         if (trg.s >= 49) {
             f7 = 9;
         }
         z = 0;
-        while (z < _loc6_) {
+        while (z < spreadCount) {
             f6 = Math.sin(f5) * f3;
             f7 = Math.cos(f5) * f3;
             trg2 = spawnEnemyProjectile(spawnX, spawnY, 0, f6, f7, 0, 9);
@@ -8664,9 +8670,9 @@ function updateEnemyFiring(attackRange: number, cooldownTime: number, forceFire?
 // Original: firewalk()
 function executeAutoFiring(): void {
     if (trg.fire <= 0) {
-        var _loc3_ = trg.xp;
-        var _loc2_ = trg.yp;
-        var _loc4_ = true;
+        const spawnX: number = trg.xp;
+        const spawnY: number = trg.yp;
+        let canFire: boolean = true;
         enf = getDistance(trg.xbew, trg.ybew);
         enf = -5 / enf;
         if (trg.s == 19) {
@@ -8679,17 +8685,17 @@ function executeAutoFiring(): void {
                     trg.yp + trg.ybew * 10
                 )
             ) {
-                _loc4_ = false;
+                canFire = false;
             }
         }
-        if (_loc4_) {
+        if (canFire) {
             if (trg.s == 11 && trg.specoz == 23) {
                 enf *= 2;
             }
             trg.fire = 40 + random(20);
-            var _loc1_ = createProjectile(
-                _loc3_,
-                _loc2_,
+            let projectile: any = createProjectile(
+                spawnX,
+                spawnY,
                 0,
                 -trg.xbew * enf,
                 -trg.ybew * enf,
@@ -8697,12 +8703,12 @@ function executeAutoFiring(): void {
                 9,
                 trg.s
             );
-            _loc1_.fd = 0.3;
-            _loc1_.dm = -5;
+            projectile.fd = 0.3;
+            projectile.dm = -5;
             if (trg.s == 19 && altboss) {
-                _loc1_ = createProjectile(
-                    _loc3_,
-                    _loc2_,
+                projectile = createProjectile(
+                    spawnX,
+                    spawnY,
                     0,
                     (-trg.xbew - trg.ybew * 0.2) * enf,
                     (trg.xbew * 0.2 - trg.ybew) * enf,
@@ -8710,11 +8716,11 @@ function executeAutoFiring(): void {
                     9,
                     trg.s
                 );
-                _loc1_.fd = 0.3;
-                _loc1_.dm = -5;
-                _loc1_ = createProjectile(
-                    _loc3_,
-                    _loc2_,
+                projectile.fd = 0.3;
+                projectile.dm = -5;
+                projectile = createProjectile(
+                    spawnX,
+                    spawnY,
                     0,
                     (-trg.xbew + trg.ybew * 0.2) * enf,
                     (-trg.xbew * 0.2 - trg.ybew) * enf,
@@ -8722,8 +8728,8 @@ function executeAutoFiring(): void {
                     9,
                     trg.s
                 );
-                _loc1_.fd = 0.3;
-                _loc1_.dm = -5;
+                projectile.fd = 0.3;
+                projectile.dm = -5;
             }
         }
     }
@@ -8771,16 +8777,18 @@ function findTarget(targetX?: number, targetY?: number): void {
         }
         f0 = checkCollision(trg.xp, trg.yp, targetX, targetY, 500);
         if (trg.xpp == undefined || trg.failfind > 20) {
+            let originX: number;
+            let originY: number;
             if (f0 > 0) {
                 f1 = 1.5 / f0;
                 trg.xbew += xenf * f1;
                 trg.ybew += yenf * f1;
                 enf = 30 / f0;
-                var _loc4_ = xenf * enf + trg.xp;
-                var _loc5_ = yenf * enf + trg.yp;
+                originX = xenf * enf + trg.xp;
+                originY = yenf * enf + trg.yp;
             } else {
-                _loc4_ = trg.xp;
-                _loc5_ = trg.yp;
+                originX = trg.xp;
+                originY = trg.yp;
             }
             i = 0;
             while (trg.xpp == undefined && i < 7 - trg.failfind * 0.3) {
@@ -8792,8 +8800,8 @@ function findTarget(targetX?: number, targetY?: number): void {
                         xenf = 0;
                     }
                 }
-                xenf = _loc4_ + cosineRandom(f10);
-                yenf = _loc5_ + cosineRandom() * 0.5;
+                xenf = originX + cosineRandom(f10);
+                yenf = originY + cosineRandom() * 0.5;
                 f1 = convertWorldToTileCoordinates(xenf, yenf);
                 if (trg.checked[f1]) {
                     i -= 0.7;
@@ -8872,8 +8880,8 @@ function checkEnvironmentalHazardCollision(x: number, y: number): boolean {
             f55 = x;
         }
         if ((getRoomType(x) > 1 && getRoomType(x) < 2) || f3) {
-            var _loc4_ = this["de" + x];
-            if ((_loc4_.fire && trg.s != 28) || f3) {
+            const hazardTile: any = this["de" + x];
+            if ((hazardTile.fire && trg.s != 28) || f3) {
                 relf = f3;
                 if (trg.s == 27) {
                     trg.dones = true;
@@ -8883,7 +8891,7 @@ function checkEnvironmentalHazardCollision(x: number, y: number): boolean {
                 if (f3) {
                     enf += 20;
                 }
-                if (trg.s == 29 && trg.alter != 2 && _loc4_.fire) {
+                if (trg.s == 29 && trg.alter != 2 && hazardTile.fire) {
                     trg.s = 54;
                     attachSpriteToEntity(trg, 54);
                     trg.hp += 20;
@@ -8909,14 +8917,14 @@ function checkEnvironmentalHazardCollision(x: number, y: number): boolean {
 function checkFireCollision(trg: any): boolean {
     trg3 = 0;
     siz = 38;
-    const _loc3_: number = 20;
+    const sampleOffset: number = 20;
     relf = true;
-    let _loc4_: boolean =
-        checkEnvironmentalHazardCollision(trg.xp + _loc3_, trg.yp + _loc3_) ||
-        checkEnvironmentalHazardCollision(trg.xp - _loc3_, trg.yp + _loc3_) ||
-        checkEnvironmentalHazardCollision(trg.xp + _loc3_, trg.yp - _loc3_) ||
-        checkEnvironmentalHazardCollision(trg.xp - _loc3_, trg.yp - _loc3_);
-    if (_loc4_) {
+    let hitFire: boolean =
+        checkEnvironmentalHazardCollision(trg.xp + sampleOffset, trg.yp + sampleOffset) ||
+        checkEnvironmentalHazardCollision(trg.xp - sampleOffset, trg.yp + sampleOffset) ||
+        checkEnvironmentalHazardCollision(trg.xp + sampleOffset, trg.yp - sampleOffset) ||
+        checkEnvironmentalHazardCollision(trg.xp - sampleOffset, trg.yp - sampleOffset);
+    if (hitFire) {
         if (!f7) {
             xenf = f4;
             yenf = f5;
@@ -8937,7 +8945,7 @@ function checkFireCollision(trg: any): boolean {
                         playslow = 10;
                     }
                 } else {
-                    _loc4_ = true;
+                    hitFire = true;
                     relf = 2;
                 }
             }
@@ -8946,24 +8954,24 @@ function checkFireCollision(trg: any): boolean {
     if (dang2 && !trg.flyby && !trg.flyai) {
         if (trg != player) {
             if (dang2.hitTest(trg.xp, trg.yp, true)) {
-                _loc4_ = true;
+                hitFire = true;
             }
         }
     }
-    return _loc4_;
+    return hitFire;
 }
 
 // Original: breakfloor(f1)
 function breakFloor(roomIndex: number): void {
     if (getRoomType(roomIndex) < 0.99) {
-        var _loc1_ = true;
+        let isNewBreak: boolean = true;
         for (i in brr) {
-            _loc1_ = _loc1_ && roomIndex != brr[i];
+            isNewBreak = isNewBreak && roomIndex != brr[i];
         }
         for (i in brr2) {
-            _loc1_ = _loc1_ && roomIndex != brr2[i];
+            isNewBreak = isNewBreak && roomIndex != brr2[i];
         }
-        if (_loc1_) {
+        if (isNewBreak) {
             v1 = [
                 getRoomType(roomIndex + 1) == 3,
                 getRoomType(roomIndex + rowz) == 3,
@@ -9157,8 +9165,8 @@ function playSplashEffect(): void {
         f11 = [];
         z = 0;
         while (z < 150) {
-            var _loc2_ = Math.random() * f4;
-            f5 = cosineRandom(_loc2_);
+            const splashRadius: number = Math.random() * f4;
+            f5 = cosineRandom(splashRadius);
             f6 = cosineRandom();
             f1 = trg.xp + f5;
             f2 = trg.yp + f6;
@@ -9181,7 +9189,7 @@ function playSplashEffect(): void {
                         } else {
                             damageTile(v2, 10);
                         }
-                        if (_loc2_ < 40) {
+                        if (splashRadius < 40) {
                             breakFloor(v2);
                         }
                     }
@@ -9493,21 +9501,37 @@ function spawnGibs(x?: number, y?: number): void {
             big = 3;
             f10 *= 1.3;
         }
-        var _loc1_ = createProjectile(x, y, 0, cosineRandom(f10), cosineRandom(f10) * 0.5, 0, f2);
+        const gibProjectile: any = createProjectile(
+            x,
+            y,
+            0,
+            cosineRandom(f10),
+            cosineRandom(f10) * 0.5,
+            0,
+            f2
+        );
         if (f11 || trg.s == 19) {
-            _loc1_.ybew *= 1.4;
-            _loc1_.d._xscale = _loc1_.d._yscale = 100 + random(70);
+            gibProjectile.ybew *= 1.4;
+            gibProjectile.d._xscale = gibProjectile.d._yscale = 100 + random(70);
         } else if (trg.s == 36 || trg.s == 71 || trg.s == 74) {
-            _loc1_.d._xscale = _loc1_.d._yscale = 140 + random(80);
+            gibProjectile.d._xscale = gibProjectile.d._yscale = 140 + random(80);
         }
         if (trg.frezz > 0) {
-            setColorTransform(_loc1_, 0.18, 0.22, 0.22, 60, 60, 60);
+            setColorTransform(gibProjectile, 0.18, 0.22, 0.22, 60, 60, 60);
         } else if (trg.poiss > 0 || trg.spl == 30) {
-            setColorTransform(_loc1_, 0.2, 1, 0.2, 0, 70, 17);
-            _loc1_.spl = 30;
+            setColorTransform(gibProjectile, 0.2, 1, 0.2, 0, 70, 17);
+            gibProjectile.spl = 30;
         } else if (trg.specol) {
             f1 = trg.specol;
-            setColorTransform(_loc1_, specol[f1][0], specol[f1][1], specol[f1][2], 0, 0, 0);
+            setColorTransform(
+                gibProjectile,
+                specol[f1][0],
+                specol[f1][1],
+                specol[f1][2],
+                0,
+                0,
+                0
+            );
         }
         i++;
     }
@@ -9515,34 +9539,34 @@ function spawnGibs(x?: number, y?: number): void {
 
 // Original: bombfail(f1, f2, f3, f4)
 function handleBombFailure(x: number, y: number, bombType?: number, effectId?: number): void {
-    let _loc1_ = createProjectile(x, y, 0, 0, 0, 0, 4);
-    _loc1_.pois = effectId;
-    _loc1_.dones = true;
+    const bombProjectile: any = createProjectile(x, y, 0, 0, 0, 0, 4);
+    bombProjectile.pois = effectId;
+    bombProjectile.dones = true;
     if (bombType == 6) {
-        _loc1_.dmg = 60;
-        _loc1_._xscale = _loc1_._yscale = 200;
-        _loc1_.d.gotoAndStop(2);
-        _loc1_.huge = true;
+        bombProjectile.dmg = 60;
+        bombProjectile._xscale = bombProjectile._yscale = 200;
+        bombProjectile.d.gotoAndStop(2);
+        bombProjectile.huge = true;
     } else if (bombType == 5) {
         trg.mager = true;
     } else if (bombType == 4) {
-        _loc1_.dmg = 30;
-        _loc1_._xscale = _loc1_._yscale = 113;
-        _loc1_.d.gotoAndStop(2);
+        bombProjectile.dmg = 30;
+        bombProjectile._xscale = bombProjectile._yscale = 113;
+        bombProjectile.d.gotoAndStop(2);
     } else if (bombType) {
-        _loc1_.dfr = true;
+        bombProjectile.dfr = true;
         if (effectId == 4) {
-            _loc1_.d.gotoAndStop(6);
+            bombProjectile.d.gotoAndStop(6);
         } else {
-            _loc1_.d.gotoAndStop(5);
+            bombProjectile.d.gotoAndStop(5);
         }
         if (blackout == 2) {
-            setColorTransform(_loc1_, 0, 0, 0, 0, 0, 0);
+            setColorTransform(bombProjectile, 0, 0, 0, 0, 0, 0);
         }
     } else {
-        _loc1_.d.gotoAndStop(2);
+        bombProjectile.d.gotoAndStop(2);
     }
-    return _loc1_;
+    return bombProjectile;
 }
 
 // Original: bomb(f1)
@@ -9983,8 +10007,8 @@ function executeBossAttack(projectileCount: number, useTargeting?: boolean, dama
                     trg2.dm = -4;
                 }
             } else {
-                var _loc3_ = new flash.geom.Transform(trg2);
-                _loc3_.colorTransform = bull;
+                const projectileTransform: any = new flash.geom.Transform(trg2);
+                projectileTransform.colorTransform = bull;
             }
         }
         i++;
@@ -10108,14 +10132,15 @@ function updatePlayerFire(): void {
             (ups[55] && (random(2) == 0 || ups[2])) ||
             (ups[87] && random(8) == 0)
         ) {
-            var _loc4_ = trg.xp;
-            var _loc3_ = trg.yp;
-            createProjectile(_loc4_, _loc3_, 0, -xxenf, -yyenf, 0, 2);
+            const spawnX: number = trg.xp;
+            const spawnY: number = trg.yp;
+            createProjectile(spawnX, spawnY, 0, -xxenf, -yyenf, 0, 2);
             if (ups[87]) {
-                createProjectile(_loc4_, _loc3_, 0, -yyenf, xxenf, 0, 2);
-                createProjectile(_loc4_, _loc3_, 0, yyenf, -xxenf, 0, 2);
+                createProjectile(spawnX, spawnY, 0, -yyenf, xxenf, 0, 2);
+                createProjectile(spawnX, spawnY, 0, yyenf, -xxenf, 0, 2);
             }
         }
+        let tearProjectile: any;
         if (ups[168] && !_root.bombnext) {
             trg.fire = -1;
             if (bombdrop <= 0) {
@@ -10124,48 +10149,48 @@ function updatePlayerFire(): void {
                 drop.d.gotoAndStop(70);
             }
         } else if (!f11) {
-            var _loc2_ = createProjectile(f1, f2, 0, xenf, yenf, 0, 2);
+            tearProjectile = createProjectile(f1, f2, 0, xenf, yenf, 0, 2);
             if (ups[52] && !_root.bombnext) {
                 trg.fire *= 3;
                 trg.fire += 10;
-                enf = 14 / getDistance(_loc2_.xbew, _loc2_.ybew);
-                _loc2_.xbew *= enf;
-                _loc2_.ybew *= enf;
-                _loc2_.s = 4;
-                attachSpriteToEntity(_loc2_, 4);
-                _loc2_.d.d.gotoAndPlay(30);
-                _loc2_.lfra = fra;
-                _loc2_.spl = -10;
-                _loc2_.flyby = false;
-                _loc2_.dmg *= 4;
-                _loc2_.playbomb = true;
+                enf = 14 / getDistance(tearProjectile.xbew, tearProjectile.ybew);
+                tearProjectile.xbew *= enf;
+                tearProjectile.ybew *= enf;
+                tearProjectile.s = 4;
+                attachSpriteToEntity(tearProjectile, 4);
+                tearProjectile.d.d.gotoAndPlay(30);
+                tearProjectile.lfra = fra;
+                tearProjectile.spl = -10;
+                tearProjectile.flyby = false;
+                tearProjectile.dmg *= 4;
+                tearProjectile.playbomb = true;
                 if (ups[106]) {
-                    _loc2_.dmg += 50;
-                    _loc2_._xscale = _loc2_._yscale = 123;
+                    tearProjectile.dmg += 50;
+                    tearProjectile._xscale = tearProjectile._yscale = 123;
                     if (ups[106]) {
-                        _loc2_.col = 5;
+                        tearProjectile.col = 5;
                     }
                 }
-                _loc2_.dmg -= 40;
+                tearProjectile.dmg -= 40;
             } else if (_root.bombnext) {
-                if (_loc2_ != player) {
+                if (tearProjectile != player) {
                     if (_root.bombnext == 2) {
-                        _loc2_.flir = true;
-                        attachSpriteToEntity(_loc2_, 497);
-                        enf = 14 / getDistance(_loc2_.xbew, _loc2_.ybew);
-                        _loc2_.xbew *= enf;
-                        _loc2_.ybew *= enf;
-                        _loc2_.s = 4;
-                        _loc2_.spl = -10;
-                        _loc2_.flyby = false;
-                        setColorTransform(_loc2_, 1, 1, 1, 0, 0, 0);
+                        tearProjectile.flir = true;
+                        attachSpriteToEntity(tearProjectile, 497);
+                        enf = 14 / getDistance(tearProjectile.xbew, tearProjectile.ybew);
+                        tearProjectile.xbew *= enf;
+                        tearProjectile.ybew *= enf;
+                        tearProjectile.s = 4;
+                        tearProjectile.spl = -10;
+                        tearProjectile.flyby = false;
+                        setColorTransform(tearProjectile, 1, 1, 1, 0, 0, 0);
                     } else {
-                        _loc2_.bomb = true;
-                        attachSpriteToEntity(_loc2_, 2);
-                        setColorTransform(_loc2_, 1, 1, 1, 0, 0, 0);
-                        _loc2_.d.gotoAndStop("head");
-                        _loc2_.dy -= 10;
-                        _loc2_.dm += 1.2;
+                        tearProjectile.bomb = true;
+                        attachSpriteToEntity(tearProjectile, 2);
+                        setColorTransform(tearProjectile, 1, 1, 1, 0, 0, 0);
+                        tearProjectile.d.gotoAndStop("head");
+                        tearProjectile.dy -= 10;
+                        tearProjectile.dm += 1.2;
                         trg.d.d.d.gotoAndStop(29);
                     }
                     _root.bombnext = false;
@@ -10173,25 +10198,25 @@ function updatePlayerFire(): void {
                 }
             } else if (ups[2] || ups[149]) {
                 if ((ups[169] && ups[2] != 1 && !ups[153]) || ups[149]) {
-                    _loc2_.xp = player.xp;
-                    _loc2_.yp = player.yp;
+                    tearProjectile.xp = player.xp;
+                    tearProjectile.yp = player.yp;
                     if (ups[149]) {
                         trg.fire * 2;
                         trg.fire += 10;
-                        _loc2_.bomb = true;
-                        _loc2_.bombo = true;
-                        _loc2_.d._xscale = _loc2_.d._yscale = 160;
+                        tearProjectile.bomb = true;
+                        tearProjectile.bombo = true;
+                        tearProjectile.d._xscale = tearProjectile.d._yscale = 160;
                         f1 = Math.random() * 0.2 + 0.7;
-                        _loc2_.xbew *= f1;
-                        _loc2_.ybew *= f1;
-                        _loc2_.fd = 0.6;
-                        _loc2_.dm *= 0.7;
-                        _loc2_.dm -= 13;
-                        _loc2_.dmg *= 2.5;
-                        _loc2_.dmg -= 35;
-                        setColorTransform(_loc2_, 0.5, 0.9, 0.4, 0, 0, 0);
+                        tearProjectile.xbew *= f1;
+                        tearProjectile.ybew *= f1;
+                        tearProjectile.fd = 0.6;
+                        tearProjectile.dm *= 0.7;
+                        tearProjectile.dm -= 13;
+                        tearProjectile.dmg *= 2.5;
+                        tearProjectile.dmg -= 35;
+                        setColorTransform(tearProjectile, 0.5, 0.9, 0.4, 0, 0, 0);
                         if (ups[115]) {
-                            _loc2_._alpha = 50;
+                            tearProjectile._alpha = 50;
                         }
                     }
                 } else {
@@ -10200,12 +10225,12 @@ function updatePlayerFire(): void {
                     } else {
                         v2 = 0.05;
                     }
-                    _loc2_.xbew -= yenf * v2;
-                    _loc2_.ybew += xenf * v2;
+                    tearProjectile.xbew -= yenf * v2;
+                    tearProjectile.ybew += xenf * v2;
                     f1 = trg.xp + yenf * sob * v1;
                     f2 = trg.yp - xenf * sob * v1;
                     trg3 = createProjectile(f1, f2, 0, xenf + yenf * v2, yenf - xenf * v2, 0, 2);
-                    trg3.sot = _loc2_;
+                    trg3.sot = tearProjectile;
                     f1 = trg.xp + xenf;
                     f2 = trg.yp + yenf;
                     if (ups[153]) {
@@ -10220,7 +10245,7 @@ function updatePlayerFire(): void {
                             0,
                             2
                         );
-                        trg3.sot = _loc2_;
+                        trg3.sot = tearProjectile;
                         trg3 = createProjectile(
                             f1 - yenf * v2 * 1.5,
                             f2 + xenf * v2,
@@ -10230,17 +10255,17 @@ function updatePlayerFire(): void {
                             0,
                             2
                         );
-                        trg3.sot = _loc2_;
+                        trg3.sot = tearProjectile;
                     } else {
                         trg3 = createProjectile(f1, f2, 0, xenf, yenf, 0, 2);
-                        trg3.sot = _loc2_;
+                        trg3.sot = tearProjectile;
                     }
                 }
             }
         }
         plox = 7 + trg.fire * 0.45;
         if (ups[118]) {
-            if (_loc2_.bomb) {
+            if (tearProjectile.bomb) {
                 plo = 1;
                 plox = 1;
                 trg.d.d.d.d.gotoAndStop(1);
@@ -10276,51 +10301,51 @@ function updatePlayerFire(): void {
         f2 = trg.yp;
         e = 0;
         while (e < folz.length) {
-            _loc2_ = folz[e];
+            const familiar: any = folz[e];
             if (
-                fra - _loc2_.lfra > trg.fire1 + 3 &&
-                !_loc2_.cat &&
-                !_loc2_.mon &&
-                !_loc2_.hol &&
-                !_loc2_.ni &&
-                !_loc2_.bum
+                fra - familiar.lfra > trg.fire1 + 3 &&
+                !familiar.cat &&
+                !familiar.mon &&
+                !familiar.hol &&
+                !familiar.ni &&
+                !familiar.bum
             ) {
-                if (_loc2_.maga) {
-                    _loc2_.outway = false;
-                    _loc2_.charge = true;
-                    _loc2_.xbew = xenf;
-                    _loc2_.ybew = yenf;
-                    _loc2_.xp = player.xp;
-                    _loc2_.yp = player.yp;
+                if (familiar.maga) {
+                    familiar.outway = false;
+                    familiar.charge = true;
+                    familiar.xbew = xenf;
+                    familiar.ybew = yenf;
+                    familiar.xp = player.xp;
+                    familiar.yp = player.yp;
                     if (Math.abs(xenf) > Math.abs(yenf)) {
-                        flipSpriteDirection(xenf, _loc2_.d);
-                        _loc2_.d.gotoAndStop(35);
+                        flipSpriteDirection(xenf, familiar.d);
+                        familiar.d.gotoAndStop(35);
                     } else if (yenf < 0) {
-                        _loc2_.d.gotoAndStop(36);
+                        familiar.d.gotoAndStop(36);
                     } else {
-                        _loc2_.d.gotoAndStop(37);
+                        familiar.d.gotoAndStop(37);
                     }
-                    _loc2_.lfra = fra + 80;
-                    _loc2_.dmg = 3.5;
-                } else if (_loc2_.baa != 5) {
-                    _loc2_.d.gotoAndStop(plo + 4);
-                    _loc2_.lfra = fra;
-                    if (_loc2_.laser) {
-                        _loc2_.d.gotoAndStop(plo + 45);
+                    familiar.lfra = fra + 80;
+                    familiar.dmg = 3.5;
+                } else if (familiar.baa != 5) {
+                    familiar.d.gotoAndStop(plo + 4);
+                    familiar.lfra = fra;
+                    if (familiar.laser) {
+                        familiar.d.gotoAndStop(plo + 45);
                         f1 = 1 / getDistance(xenf, yenf);
-                        _loc2_.xpp = xenf * f1;
-                        _loc2_.ypp = yenf * f1;
+                        familiar.xpp = xenf * f1;
+                        familiar.ypp = yenf * f1;
                         lassd = 3;
-                        showLaserEffect(_loc2_, 2);
+                        showLaserEffect(familiar, 2);
                         _root.soundy("RedLightning_Zap_" + random(3) + ".mp", 60);
                     } else {
                         if (!llss) {
                             _root.soundy("Tears_Fire_" + random(3) + ".mp");
                         }
-                        if (_loc2_.dou) {
+                        if (familiar.dou) {
                             babymode = 2;
-                        } else if (_loc2_.baa > 1) {
-                            babymode = _loc2_.baa;
+                        } else if (familiar.baa > 1) {
+                            babymode = familiar.baa;
                         } else {
                             babymode = 1;
                         }
@@ -10328,10 +10353,10 @@ function updatePlayerFire(): void {
                             f1 = [1, 2, 3, 4, 5, 6, 7];
                             babymode = f1[random(f1.length)];
                         }
-                        f1 = _loc2_.xp;
-                        f2 = _loc2_.yp;
+                        f1 = familiar.xp;
+                        f2 = familiar.yp;
                         f10 = doub;
-                        doub = _loc2_.dou;
+                        doub = familiar.dou;
                         if (babymode == 7) {
                             f3 = 0.2;
                             var trg3 = createProjectile(
@@ -10362,31 +10387,31 @@ function updatePlayerFire(): void {
                             var trg3 = createProjectile(f1, f2, 0, xenf, yenf, 0, 2);
                             trg3.d._xscale *= 0.8;
                             trg3.d._yscale *= 0.8;
-                            if (_loc2_.baa == 9) {
+                            if (familiar.baa == 9) {
                                 trg3.xbew *= -1;
                                 trg3.ybew *= -1;
                             }
                         }
-                        if (_loc2_.baa == 11) {
-                            _loc2_.d.gotoAndStop(plo + 156);
-                        } else if (_loc2_.baa == 10) {
-                            _loc2_.d.gotoAndStop(plo + 165);
-                        } else if (_loc2_.baa == 9) {
-                            _loc2_.d.gotoAndStop(plo + 142);
-                        } else if (_loc2_.baa == 8) {
-                            _loc2_.d.gotoAndStop(plo + 120);
-                        } else if (_loc2_.baa == 7) {
-                            _loc2_.d.gotoAndStop(plo + 111);
-                        } else if (_loc2_.baa == 6) {
-                            _loc2_.d.gotoAndStop(plo + 102);
-                        } else if (_loc2_.baa == 4) {
-                            _loc2_.d.gotoAndStop(plo + 68);
-                        } else if (_loc2_.baa == 3) {
-                            _loc2_.d.gotoAndStop(plo + 59);
-                        } else if (_loc2_.meat) {
-                            _loc2_.d.gotoAndStop(plo + 27);
-                        } else if (_loc2_.dou) {
-                            _loc2_.d.gotoAndStop(plo + 13);
+                        if (familiar.baa == 11) {
+                            familiar.d.gotoAndStop(plo + 156);
+                        } else if (familiar.baa == 10) {
+                            familiar.d.gotoAndStop(plo + 165);
+                        } else if (familiar.baa == 9) {
+                            familiar.d.gotoAndStop(plo + 142);
+                        } else if (familiar.baa == 8) {
+                            familiar.d.gotoAndStop(plo + 120);
+                        } else if (familiar.baa == 7) {
+                            familiar.d.gotoAndStop(plo + 111);
+                        } else if (familiar.baa == 6) {
+                            familiar.d.gotoAndStop(plo + 102);
+                        } else if (familiar.baa == 4) {
+                            familiar.d.gotoAndStop(plo + 68);
+                        } else if (familiar.baa == 3) {
+                            familiar.d.gotoAndStop(plo + 59);
+                        } else if (familiar.meat) {
+                            familiar.d.gotoAndStop(plo + 27);
+                        } else if (familiar.dou) {
+                            familiar.d.gotoAndStop(plo + 13);
                         }
                         doub = f10;
                     }
@@ -11167,19 +11192,19 @@ function updateFamiliarLogic(): void {
 
 // Original: slotf()
 function generateSlotMachineResult(): number {
-    var _loc1_ = 0;
+    let roll: number = 0;
     if (ups[46]) {
-        _loc1_ = 3 + random(18);
+        roll = 3 + random(18);
     } else {
-        _loc1_ = 3 + random(21);
+        roll = 3 + random(21);
     }
-    if (_loc1_ >= 9 && (random(10) != 0 || sloto)) {
-        _loc1_ = _loc1_ + 1;
+    if (roll >= 9 && (random(10) != 0 || sloto)) {
+        roll = roll + 1;
     }
-    if (_loc1_ == 7 && random(3) == 0) {
-        _loc1_ = 10;
+    if (roll == 7 && random(3) == 0) {
+        roll = 10;
     }
-    return _loc1_;
+    return roll;
 }
 
 // Original: sloty(f1)
@@ -11288,8 +11313,8 @@ function processAllEntityActions(): void {
         bull2.greenOffset = f2;
         bull2.blueOffset = f2;
     }
-    var _loc2_ = new flash.geom.Transform(blorz);
-    _loc2_.colorTransform = bull2;
+    const blorzTransform: any = new flash.geom.Transform(blorz);
+    blorzTransform.colorTransform = bull2;
     wormet = momet = magget = 0;
     if (fra % 3 == 0) {
         for (e in levz) {
@@ -11821,10 +11846,10 @@ function handleEntityDeath(): void {
         if (trg.eternal && random(3) == 0) {
             trg2 = createProjectile(trg.xp, trg.yp, 0, 0, 0, 0, 38.1);
         } else {
-            var _loc2_ = allets;
+            const previousAllets: boolean = allets;
             allets = false;
             trg2 = createProjectile(trg.xp, trg.yp, 0, 0, 0, 0, 77);
-            allets = _loc2_;
+            allets = previousAllets;
             trg2.fra = -100;
         }
         if (trg.eternal) {
@@ -12069,16 +12094,16 @@ function handleBossDeath(): void {
                     trg3.d._xscale = trg2.d._xscale = trg.d._xscale;
                     trg3.d._yscale = trg2.d._yscale = trg.d._yscale;
                     trg3.dmg = trg2.dmg = trg.dmg;
-                    var _loc1_ = 0;
-                    while (_loc1_ < globalProjectileCounter) {
-                        if (trg.hh[_loc1_]) {
-                            trg2.hh[_loc1_] = true;
-                            trg3.hh[_loc1_] = true;
+                    let projectileIndex: number = 0;
+                    while (projectileIndex < globalProjectileCounter) {
+                        if (trg.hh[projectileIndex]) {
+                            trg2.hh[projectileIndex] = true;
+                            trg3.hh[projectileIndex] = true;
                         } else {
-                            trg2.hh[_loc1_] = false;
-                            trg3.hh[_loc1_] = false;
+                            trg2.hh[projectileIndex] = false;
+                            trg3.hh[projectileIndex] = false;
                         }
-                        _loc1_ = _loc1_ + 1;
+                        projectileIndex = projectileIndex + 1;
                     }
                     trg3.sot = trg2;
                     if (ups[132]) {
@@ -13034,8 +13059,8 @@ function processAI(): void {
                             trg.sss != 100 &&
                             (trg.sss != 101 || !altboss)
                         ) {
-                            var _loc2_ = new flash.geom.Transform(trg);
-                            _loc2_.colorTransform = bull;
+                            const projectileTransform: any = new flash.geom.Transform(trg);
+                            projectileTransform.colorTransform = bull;
                             if (isaaaac) {
                                 trg.colo = bull;
                                 trg.spl = 10;
@@ -13538,16 +13563,16 @@ function handleAreaDamage(): void {
 
 // Original: spih()
 function spawnSpitMinion(): void {
-    var _loc1_ = spawnEntity(player.xp, player.yp, 50, 29.3);
-    _loc1_.fra = 0;
-    _loc1_.xpp = _loc1_.xp;
-    _loc1_.ypp = _loc1_.yp;
-    _loc1_.xp = trg.xp;
-    _loc1_.yp = trg.yp;
-    _loc1_.d.gotoAndStop(2);
-    _loc1_.d.d.gotoAndStop(5);
+    const minion: any = spawnEntity(player.xp, player.yp, 50, 29.3);
+    minion.fra = 0;
+    minion.xpp = minion.xp;
+    minion.ypp = minion.yp;
+    minion.xp = trg.xp;
+    minion.yp = trg.yp;
+    minion.d.gotoAndStop(2);
+    minion.d.d.gotoAndStop(5);
     tgr2.apf = true;
-    _loc1_.f1 = 100;
+    minion.f1 = 100;
 }
 
 // Original: bawssmart2()
@@ -13959,11 +13984,11 @@ function spawnSplashProjectiles(): void {
     noho = true;
     xxenf = trg.xp - player.xp;
     yyenf = trg.yp - player.yp;
-    var _loc1_ = 0;
-    while (_loc1_ < 4) {
-        var _loc2_ = xenf;
+    let rotationIndex: number = 0;
+    while (rotationIndex < 4) {
+        const previousX: number = xenf;
         xenf = yenf;
-        yenf = -_loc2_;
+        yenf = -previousX;
         if (xenf * xxenf + yenf * yyenf <= 1000) {
             trg2 = spawnEnemyProjectile(
                 trg.xp + xenf * 2,
@@ -13978,7 +14003,7 @@ function spawnSplashProjectiles(): void {
             );
             trg2.dm -= 1.3;
         }
-        _loc1_ = _loc1_ + 1;
+        rotationIndex = rotationIndex + 1;
     }
     noho = false;
 }
@@ -16171,18 +16196,18 @@ function breakdance(f0): void {
     if (getDistance(trg.xbew, trg.ybew) > 1 || f0 == 79) {
         trg.s = 4;
         f3 = Math.random() * 15;
-        var _loc1_ = 3;
+        let stepScale: number = 3;
         if (f0 == 79) {
-            _loc1_ = 3;
+            stepScale = 3;
             f3 *= 1.35;
         }
         if (f0 == 99) {
-            _loc1_ = 6;
+            stepScale = 6;
             f3 *= 3;
         }
         f3 = convertWorldToTileCoordinates(
-            Math.max(60, Math.min(560, trg.xp + trg.xbew * _loc1_ + cosineRandom(f3))),
-            Math.max(170, Math.min(410, trg.yp + trg.ybew * _loc1_ + cosineRandom(f3)))
+            Math.max(60, Math.min(560, trg.xp + trg.xbew * stepScale + cosineRandom(f3))),
+            Math.max(170, Math.min(410, trg.yp + trg.ybew * stepScale + cosineRandom(f3)))
         );
         convertTileToWorldCoordinates(f3);
         if (getRoomType(f3) >= 1 && getRoomType(f3) < 2) {
@@ -17656,8 +17681,8 @@ function telpx(f3?: any): void {
 
 // Original: smartd()
 function updateMidTierEnemyAI(): void {
-    var _loc0_ = null;
-    if ((_loc0_ = trg.s) === 79) {
+    let tempValue: any = null;
+    if ((tempValue = trg.s) === 79) {
         trg.xbew *= 0.8;
         trg.ybew *= 0.8;
         if (trg.specoz) {
@@ -17701,8 +17726,8 @@ function updateMidTierEnemyAI(): void {
                     if (advanceAnimationFrame()) {
                         trg.d.gotoAndStop(7);
                         trg.fire = 60;
-                        trg.ypp = _loc0_ = 0;
-                        trg.xpp = _loc0_;
+                        trg.ypp = tempValue = 0;
+                        trg.xpp = tempValue;
                     }
                     if (trg.d.d._currentframe > 15 && trg.d.d._currentframe < 50) {
                         showLaserEffect(trg);
@@ -17722,8 +17747,8 @@ function updateMidTierEnemyAI(): void {
                     if (trg.fire < 0) {
                         if (random(30) == 0 && trg.fire > -100) {
                             trg.fire = -101;
-                            trg.ypp = _loc0_ = 0;
-                            trg.xpp = _loc0_;
+                            trg.ypp = tempValue = 0;
+                            trg.xpp = tempValue;
                         }
                     } else if (random(40) == 0 && trg.fire < -180) {
                         trg.fire = 60;
@@ -17791,14 +17816,14 @@ function updateMidTierEnemyAI(): void {
             if (trg.eternal) {
                 breakdance(trg.s);
                 if (trg.sp > 0) {
-                    enf = _loc0_ = checkCollision(
+                    enf = tempValue = checkCollision(
                         trg.xp,
                         trg.yp,
                         player.xp + player.xbew * 5,
                         player.yp + player.ybew * 5,
                         10000
                     );
-                    if (_loc0_) {
+                    if (tempValue) {
                         if (checkLineOfSight(trg.xp, trg.yp, player.xp, player.yp)) {
                             enf = trg.sp / enf;
                             trg.xbew *= 0.94;
@@ -17933,31 +17958,31 @@ function updateLinkedEnemyConnection(linkedEntity: any, segmentIndex: number): v
         f3 += 120;
         i = 0;
         while (i < 19) {
-            var _loc2_ = trg["n" + i + " " + segmentIndex];
+            const segmentSprite: any = trg["n" + i + " " + segmentIndex];
             f1 = (16 - i) / 17;
-            _loc2_._x = -xenf * f1 - 6;
+            segmentSprite._x = -xenf * f1 - 6;
             f2 = Math.abs(i - 9) * 0.5;
             f2 = 16 - f2 * f2;
             f2 *= Math.max(0, f3 - enf) / f3;
-            _loc2_._y = -yenf * f1 - 35 + f2 * 1.5 + i * 0.8;
-            _loc2_._x /= Math.abs(trg._xscale / 100);
-            _loc2_._y /= Math.abs(trg._yscale / 100);
-            _loc2_._visible = true;
+            segmentSprite._y = -yenf * f1 - 35 + f2 * 1.5 + i * 0.8;
+            segmentSprite._x /= Math.abs(trg._xscale / 100);
+            segmentSprite._y /= Math.abs(trg._yscale / 100);
+            segmentSprite._visible = true;
             if (yenf < 0) {
-                _loc2_.swapDepths(80 - i - segmentIndex * 20);
+                segmentSprite.swapDepths(80 - i - segmentIndex * 20);
             } else {
-                _loc2_.swapDepths(3 + i + segmentIndex * 20);
+                segmentSprite.swapDepths(3 + i + segmentIndex * 20);
             }
             if (i == 18) {
-                _loc2_._visible = false;
+                segmentSprite._visible = false;
             }
             i++;
         }
     } else {
         i = 0;
         while (i < 19) {
-            _loc2_ = trg["n" + i + " " + segmentIndex];
-            _loc2_._visible = false;
+            const segmentSprite: any = trg["n" + i + " " + segmentIndex];
+            segmentSprite._visible = false;
             i++;
         }
     }
@@ -21877,8 +21902,8 @@ function updatePhysics(): void {
                         trg.dpppp + 123
                     );
                     if (trg.colo) {
-                        var _loc3_ = new flash.geom.Transform(trg2);
-                        _loc3_.colorTransform = trg.colo;
+                        const splatterTransform: any = new flash.geom.Transform(trg2);
+                        splatterTransform.colorTransform = trg.colo;
                     }
                     if (blackout == 2) {
                         setColorTransform(trg2, 0, 0, 0, 0, 0, 0);
@@ -22332,16 +22357,16 @@ function updatePhysics(): void {
                 }
                 if (trg.breaker) {
                     f1 = convertWorldToTileCoordinates(trg.xp, trg.yp);
-                    var _loc2_ = true;
+                    let shouldExplode: boolean = true;
                     i = 0;
                     while (i < door.length) {
                         trg = door[i];
                         if (trg.blo == f1) {
-                            _loc2_ = false;
+                            shouldExplode = false;
                         }
                         i++;
                     }
-                    if (_loc2_) {
+                    if (shouldExplode) {
                         createExplosionEffect(f1, trg.xbew, trg.ybew);
                     }
                 }
@@ -22681,32 +22706,32 @@ function showLaserEffect(trg, f50?, b2?): void {
     if (!f50) {
         playLaserSound();
     }
-    var _loc7_ = undefined;
     if ((fra + trg.e) % 2 == 0 || (trg == player && ups[118]) || f50) {
         if (f50) {
             f1 = trg.xp;
             f2 = trg.yp;
             lass = 700;
-            var _loc4_ = 0;
-            if ((_loc7_ = Math.abs(trg.ypp) > Math.abs(trg.xpp))) {
-                _loc4_ = ((f2 + 20) % roxx) - 20;
+            let gridOffset: number = 0;
+            const isVerticalShot: boolean = Math.abs(trg.ypp) > Math.abs(trg.xpp);
+            if (isVerticalShot) {
+                gridOffset = ((f2 + 20) % roxx) - 20;
                 if (trg.ypp < 0) {
-                    _loc4_ = -_loc4_;
+                    gridOffset = -gridOffset;
                 }
             } else {
-                _loc4_ = ((f1 + 20) % roxx) - 20;
+                gridOffset = ((f1 + 20) % roxx) - 20;
                 if (trg.xpp < 0) {
-                    _loc4_ = -_loc4_;
+                    gridOffset = -gridOffset;
                 }
             }
-            var _loc5_ = !ups[115];
+            const respectsWalls: boolean = !ups[115];
             i = 1;
             while (i < 700) {
                 f1 += trg.xpp * roxx;
                 f2 += trg.ypp * roxx;
                 f3 = getRoomType(convertWorldToTileCoordinates(f1, f2));
                 if (
-                    (f3 >= 1 && f3 != 3 && _loc5_) ||
+                    (f3 >= 1 && f3 != 3 && respectsWalls) ||
                     f2 < 140 ||
                     f2 > 440 ||
                     f1 > 615 ||
@@ -22717,7 +22742,7 @@ function showLaserEffect(trg, f50?, b2?): void {
                 }
                 i += roxx;
             }
-            lass -= _loc4_ - 7;
+            lass -= gridOffset - 7;
             lasx = trg.xp;
             lasy = trg.yp;
         }
@@ -23650,13 +23675,13 @@ function updatePlayerPosition(): void {
         if (f6 > 0) {
             f5++;
             f3 = Math.min(f6 - 1, random(4) + 1);
-            var _loc3_ = 0;
-            while (_loc3_ < f3) {
+            let dropIndex: number = 0;
+            while (dropIndex < f3) {
                 f5++;
                 f4 = random(5) + 2;
                 trg2 = createProjectile(player.xp, player.yp, 0, cosineRandom(f4), cosineRandom(f4), 0, f1);
                 trg2.col = 1;
-                _loc3_ = _loc3_ + 1;
+                dropIndex = dropIndex + 1;
             }
         }
         if (coinl == 4) {
@@ -23961,12 +23986,13 @@ function updatePlayerPosition(): void {
                         case 25:
                             f1 = 0;
                             f2 = 4;
-                            for (_loc3_ of projectileClips) {
-                                trg2 = projectileClips[_loc3_];
+                            let clipIndex: any;
+                            for (clipIndex of projectileClips) {
+                                trg2 = projectileClips[clipIndex];
                                 if ((trg2.s > 9 && trg2.s != 45) || trg2 == player) {
                                     if (trg2.hp > f2 && trg2.pow != 1 && trg2.pow != 2) {
                                         f2 = trg2.hp;
-                                        f1 = _loc3_;
+                                        f1 = clipIndex;
                                     }
                                 }
                             }
@@ -24881,44 +24907,44 @@ function updatePlayerPosition(): void {
 
 // Original: posw(f1, f2, f3, b2)
 function findValidSpawnPosition(x: number, y: number, radius: number, avoidPlayer?: boolean): void {
-    var _loc1_ = -100;
-    var _loc2_ = -100;
-    var _loc7_ = true;
-    while (checkHit(_loc1_, _loc2_) || getRoomType(convertWorldToTileCoordinates(_loc1_, _loc2_)) >= 0.2) {
-        _loc7_ = true;
+    let candidateX: number = -100;
+    let candidateY: number = -100;
+    let isClear: boolean = true;
+    while (checkHit(candidateX, candidateY) || getRoomType(convertWorldToTileCoordinates(candidateX, candidateY)) >= 0.2) {
+        isClear = true;
         if (radius > 500) {
             radius = 0;
         }
         radius += 5;
-        _loc1_ = x + cosineRandom(radius);
-        _loc2_ = y + cosineRandom();
+        candidateX = x + cosineRandom(radius);
+        candidateY = y + cosineRandom();
         if (trg.s == 101 || avoidPlayer) {
-            var _loc3_ = 0;
-            while (_loc3_ < projectileClips.length) {
-                var _loc5_ = projectileClips[_loc3_];
-                var _loc6_ = 50;
-                if (_loc5_ == player && avoidPlayer) {
-                    _loc6_ = 150;
+            let clipIndex: number = 0;
+            while (clipIndex < projectileClips.length) {
+                const clip: any = projectileClips[clipIndex];
+                let collisionRadius: number = 50;
+                if (clip == player && avoidPlayer) {
+                    collisionRadius = 150;
                 }
-                if (checkCollision(_loc1_, _loc2_, _loc5_.xp, _loc5_.yp, _loc6_) > 0) {
-                    _loc7_ = false;
-                    _loc1_ = -100;
-                    _loc2_ = -100;
+                if (checkCollision(candidateX, candidateY, clip.xp, clip.yp, collisionRadius) > 0) {
+                    isClear = false;
+                    candidateX = -100;
+                    candidateY = -100;
                 }
-                _loc3_ = _loc3_ + 1;
+                clipIndex = clipIndex + 1;
             }
         }
-        if (_loc7_) {
-            convertTileToWorldCoordinates(convertWorldToTileCoordinates(_loc1_, _loc2_));
-            _loc1_ = xenf;
-            _loc2_ = yenf;
+        if (isClear) {
+            convertTileToWorldCoordinates(convertWorldToTileCoordinates(candidateX, candidateY));
+            candidateX = xenf;
+            candidateY = yenf;
             if (random(100) != 0) {
                 for (z of projectileClips) {
-                    var _loc4_ = projectileClips[z];
-                    if (_loc4_.s == 5) {
-                        if (Math.abs(_loc4_.xp - _loc1_) < 20) {
-                            if (Math.abs(_loc4_.yp - _loc2_) < 20) {
-                                _loc1_ = -100;
+                    const projectile: any = projectileClips[z];
+                    if (projectile.s == 5) {
+                        if (Math.abs(projectile.xp - candidateX) < 20) {
+                            if (Math.abs(projectile.yp - candidateY) < 20) {
+                                candidateX = -100;
                             }
                         }
                     }
@@ -25075,23 +25101,23 @@ function spawnCollectibles(itemType: number, count: number): void {
                 chestoy += 10;
             }
         }
-        var _loc2_ = createProjectile(chestox, chestoy, 0, xenf, yenf, 0, itemType);
-        _loc2_.alt = true;
+        const pickup: any = createProjectile(chestox, chestoy, 0, xenf, yenf, 0, itemType);
+        pickup.alt = true;
         if (itemType == 5.1) {
-            _loc2_.fra -= 15;
+            pickup.fra -= 15;
             trg.done = true;
             if (trg == 2 && _root.locker[18] && !ups[90]) {
-                _loc2_.alt = false;
-                _loc2_.it = 90;
+                pickup.alt = false;
+                pickup.it = 90;
             }
         }
         if (itemType == 5 && trg == 2) {
-            _loc2_.col = 3;
+            pickup.col = 3;
         }
         if (itemType == 5.05 || itemType == 5.06) {
             if (trg != 2) {
-                _loc2_._xscale = trg._xscale * 0.8;
-                _loc2_._yscale = _loc2_._xscale;
+                pickup._xscale = trg._xscale * 0.8;
+                pickup._yscale = pickup._xscale;
             }
         }
         if (f10 < 0) {
@@ -27119,33 +27145,33 @@ function appendSerializedValue(value: any): void {
 // Original: sub(f3)
 function parseSerializedValue(parseAsArray?: boolean): any {
     f1++;
-    let _loc1_: any = checker2[f1];
+    let rawValue: any = checker2[f1];
     if (parseAsArray) {
-        _loc1_ = _loc1_.split("'");
-        for (z of _loc1_) {
-            _loc1_[z] *= 1;
-            if (_loc1_[z] <= 0) {
-                _loc1_[z] = 0;
+        rawValue = rawValue.split("'");
+        for (z of rawValue) {
+            rawValue[z] *= 1;
+            if (rawValue[z] <= 0) {
+                rawValue[z] = 0;
             }
         }
-        return _loc1_;
+        return rawValue;
     }
-    if (_loc1_ * 1 > 0) {
-        _loc1_ *= 1;
+    if (rawValue * 1 > 0) {
+        rawValue *= 1;
     }
-    if (_loc1_ == "undefined") {
-        _loc1_ = undefined;
+    if (rawValue == "undefined") {
+        rawValue = undefined;
     }
-    if (_loc1_ == "true") {
-        _loc1_ = true;
+    if (rawValue == "true") {
+        rawValue = true;
     }
-    if (_loc1_ == "false") {
-        _loc1_ = false;
+    if (rawValue == "false") {
+        rawValue = false;
     }
-    if (_loc1_ == "0") {
-        _loc1_ = 0;
+    if (rawValue == "0") {
+        rawValue = 0;
     }
-    return _loc1_;
+    return rawValue;
 }
 
 // Original: aloc()
@@ -28098,17 +28124,18 @@ export function toggleFullscreen(forceToggle?: boolean): void {
 // Original: callit(f1)
 export function launchAchievementApp(achievementId: string): void {
     if (!linx) {
-        var _loc2_ = mdm.Application.path;
+        const appPath: string = mdm.Application.path;
+        let processHandle: any;
         if (win) {
-            var _loc3_ = mdm.Process.create(
+            processHandle = mdm.Process.create(
                 "My App",
                 0,
                 0,
                 500,
                 600,
                 "",
-                _loc2_ + "FlashAchievements.exe " + achievementId,
-                _loc2_,
+                appPath + "FlashAchievements.exe " + achievementId,
+                appPath,
                 2,
                 4
             );
@@ -28120,15 +28147,15 @@ export function launchAchievementApp(achievementId: string): void {
                 achievementId = " " + achievementId;
             }
             fuk = !fuk;
-            _loc3_ = mdm.Process.create(
+            processHandle = mdm.Process.create(
                 "My App",
                 0,
                 0,
                 500,
                 600,
                 "",
-                _loc2_ + "FlashAchievements " + achievementId,
-                _loc2_,
+                appPath + "FlashAchievements " + achievementId,
+                appPath,
                 2,
                 4
             );
@@ -28338,12 +28365,12 @@ function updateDarkness(intensity?: number): void {
         colo.redOffset = f2;
         colo.greenOffset = f2;
         colo.blueOffset = f2;
-        var _loc4_ = new flash.geom.Transform(this);
-        _loc4_.colorTransform = colo;
+        const screenTransform: any = new flash.geom.Transform(this);
+        screenTransform.colorTransform = colo;
     } else if (_root.a.fra < 50) {
         colo = new flash.geom.ColorTransform();
-        _loc4_ = new flash.geom.Transform(this);
-        _loc4_.colorTransform = colo;
+        const screenTransform: any = new flash.geom.Transform(this);
+        screenTransform.colorTransform = colo;
     }
     dda = getTimer();
 }
@@ -28364,10 +28391,10 @@ let onEnterFrame_init = () => {
         nosave = 0;
         gosave = false;
         if (!linx) {
-            var _loc2_ = mdm.Application.path;
-            mdm.FileSystem.saveFile(_loc2_ + "myFile.txt", "10");
-            _loc2_ = mdm.Application.path;
-            mdm.FileSystem.saveFile(_loc2_ + "serial.txt", saverr);
+            let appPath: string = mdm.Application.path;
+            mdm.FileSystem.saveFile(appPath + "myFile.txt", "10");
+            appPath = mdm.Application.path;
+            mdm.FileSystem.saveFile(appPath + "serial.txt", saverr);
         }
     }
     updateDarkness();
