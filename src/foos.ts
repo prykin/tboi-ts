@@ -3725,31 +3725,31 @@ function rotateTowardsAngle(target: any, angle: number): void {
     target.gotoAndStop(Math.round((angle / 360) * 72) + 1);
 }
 
-// Original:
-function pff(f1, f2): void {
-    if (trg.gridder[f1] >= 0 && trg.gridder[f1] < 1) {
-        if (trg.gridder[f1] == 0) {
-            f2 = f2 - 1;
+// Original: pff(f1, f2)
+function enqueuePathfindingTile(tileIndex: number, cost: number): void {
+    if (trg.gridder[tileIndex] >= 0 && trg.gridder[tileIndex] < 1) {
+        if (trg.gridder[tileIndex] == 0) {
+            cost = cost - 1;
         } else {
-            f2 -= 7;
+            cost -= 7;
         }
-        trg.gridder[f1] = f2;
-        acts2.push(f1);
+        trg.gridder[tileIndex] = cost;
+        acts2.push(tileIndex);
     }
 }
 
-// Original:
-function pff1(f1, f2): void {
-    if (trg.gridder[f1] + f2 * 3 > v3 && trg.gridder[f1] < 0) {
-        v3 = trg.gridder[f1];
-        v4 = f1;
+// Original: pff1(f1, f2)
+function updateBestPathCandidate(tileIndex: number, bias: number): void {
+    if (trg.gridder[tileIndex] + bias * 3 > v3 && trg.gridder[tileIndex] < 0) {
+        v3 = trg.gridder[tileIndex];
+        v4 = tileIndex;
     }
 }
 
-// Original:
-function pff2(f1): void {
-    if (getRoomType(f1) != 0) {
-        convertTileToWorldCoordinates(f1);
+// Original: pff2(f1)
+function updateRoomBoundsFromTile(tileIndex: number): void {
+    if (getRoomType(tileIndex) != 0) {
+        convertTileToWorldCoordinates(tileIndex);
         if (Math.abs(xenf) > 0 && Math.abs(yenf) > 0) {
             if (
                 Math.abs(xenf - trg.xp) < roxx * 0.8 &&
@@ -5291,7 +5291,7 @@ function findPath(entity: any, targetX: number, targetY: number, speedMultiplier
                 z = -1;
                 while (z > -100 && entity.gridder[v2] >= 0) {
                     if (z == -1) {
-                        pff(v1, -1);
+                        enqueuePathfindingTile(v1, -1);
                     } else {
                         for (e in acts) {
                             v1 = entity.gridder[acts[e]];
@@ -5299,10 +5299,22 @@ function findPath(entity: any, targetX: number, targetY: number, speedMultiplier
                                 acts2.push(acts[e]);
                             } else {
                                 convertTileToWorldCoordinates(acts[e]);
-                                pff(convertWorldToTileCoordinates(xenf, yenf + roxx), v1);
-                                pff(convertWorldToTileCoordinates(xenf + roxx, yenf), v1);
-                                pff(convertWorldToTileCoordinates(xenf - roxx, yenf), v1);
-                                pff(convertWorldToTileCoordinates(xenf, yenf - roxx), v1);
+                                enqueuePathfindingTile(
+                                    convertWorldToTileCoordinates(xenf, yenf + roxx),
+                                    v1
+                                );
+                                enqueuePathfindingTile(
+                                    convertWorldToTileCoordinates(xenf + roxx, yenf),
+                                    v1
+                                );
+                                enqueuePathfindingTile(
+                                    convertWorldToTileCoordinates(xenf - roxx, yenf),
+                                    v1
+                                );
+                                enqueuePathfindingTile(
+                                    convertWorldToTileCoordinates(xenf, yenf - roxx),
+                                    v1
+                                );
                             }
                         }
                     }
@@ -5343,7 +5355,7 @@ function findPath(entity: any, targetX: number, targetY: number, speedMultiplier
                             b1 = levz[testarr[e - 1]] == 0 || levz[testarr[targetX]] == 0;
                         }
                         if (e == 0 || e == 2 || e == 4 || e == 6) {
-                            pff1(testarr[e], 0);
+                            updateBestPathCandidate(testarr[e], 0);
                         }
                     }
                 }
@@ -5553,12 +5565,12 @@ function checkLineOfSight(x1: number, y1: number, x2: number, y2: number): boole
     return f5 > 0;
 }
 
-// Original:
-function linechecky(f1, f2, f3, f4): boolean {
-    var _loc5_ = f1 - f3;
-    var _loc6_ = f2 - f4;
+// Original: linechecky(f1, f2, f3, f4)
+function checkLineOfSightAlt(startX: number, startY: number, endX: number, endY: number): boolean {
+    var _loc5_ = startX - endX;
+    var _loc6_ = startY - endY;
     var _loc4_ = getDistance(_loc5_, _loc6_);
-    grox = f3 = convertWorldToTileCoordinates(f1, f2);
+    grox = convertWorldToTileCoordinates(startX, startY);
     f5 = 2.5;
     f6 = 2;
     if (_loc4_ > 0) {
@@ -5568,12 +5580,12 @@ function linechecky(f1, f2, f3, f4): boolean {
         _loc6_ *= 10;
         var _loc3_ = 0;
         while (_loc3_ < _loc4_) {
-            f1 -= _loc5_;
-            f2 -= _loc6_;
-            updatePathfindingScoreAlt(convertWorldToTileCoordinates(f1 + f6, f2 + f6));
-            updatePathfindingScoreAlt(convertWorldToTileCoordinates(f1 - f6, f2 + f6));
-            updatePathfindingScoreAlt(convertWorldToTileCoordinates(f1 - f6, f2 - f6));
-            updatePathfindingScoreAlt(convertWorldToTileCoordinates(f1 + f6, f2 - f6));
+            startX -= _loc5_;
+            startY -= _loc6_;
+            updatePathfindingScoreAlt(convertWorldToTileCoordinates(startX + f6, startY + f6));
+            updatePathfindingScoreAlt(convertWorldToTileCoordinates(startX - f6, startY + f6));
+            updatePathfindingScoreAlt(convertWorldToTileCoordinates(startX - f6, startY - f6));
+            updatePathfindingScoreAlt(convertWorldToTileCoordinates(startX + f6, startY - f6));
             _loc3_ += 10;
         }
     }
@@ -7506,39 +7518,45 @@ function advanceToNextChapter(): void {
     beginNextRun(false);
 }
 
-// Original:
-function pull(f1, f2, f3, f4, f5): void {
-    if (f1 == 0) {
+// Original: pull(f1, f2, f3, f4, f5)
+function applyChainConstraint(
+    firstIndex: number,
+    secondIndex: number,
+    targetLength: number,
+    tension: number,
+    legIndex: number
+): void {
+    if (firstIndex == 0) {
         v = 0.8;
     } else {
         v = 1.2;
     }
     v = 1;
-    f1 = projectileClips[f1];
-    f2 = projectileClips[f2];
-    f5 = leg[f5];
-    f5._x = f1._x;
-    f5._y = f1._y;
-    xenf = f1._x - f2._x;
-    yenf = f1._y - f2._y;
-    f5._rotation = (Math.atan(-xenf / yenf) / 3.141592653589793) * 180 + 90;
+    const first = projectileClips[firstIndex];
+    const second = projectileClips[secondIndex];
+    const link = leg[legIndex];
+    link._x = first._x;
+    link._y = first._y;
+    xenf = first._x - second._x;
+    yenf = first._y - second._y;
+    link._rotation = (Math.atan(-xenf / yenf) / 3.141592653589793) * 180 + 90;
     if (yenf >= 0) {
-        f5._rotation += 180;
+        link._rotation += 180;
     }
     enf = Math.sqrt(xenf * xenf + yenf * yenf);
-    f5._xscale = enf;
-    f5._yscale = 50;
-    xenf = f1._x + f1.xbew - f2._x - f2.xbew;
-    yenf = f1._y + f1.ybew - f2._y - f2.ybew;
+    link._xscale = enf;
+    link._yscale = 50;
+    xenf = first._x + first.xbew - second._x - second.xbew;
+    yenf = first._y + first.ybew - second._y - second.ybew;
     enf = Math.sqrt(xenf * xenf + yenf * yenf);
     if (enf != 0) {
-        enf = (f3 - enf) / enf;
-        xenf *= enf * f4;
-        yenf *= enf * f4;
-        f1.xbew += xenf * v;
-        f1.ybew += yenf * v;
-        f2.xbew -= xenf / v;
-        f2.ybew -= yenf / v;
+        enf = (targetLength - enf) / enf;
+        xenf *= enf * tension;
+        yenf *= enf * tension;
+        first.xbew += xenf * v;
+        first.ybew += yenf * v;
+        second.xbew -= xenf / v;
+        second.ybew -= yenf / v;
     }
 }
 
@@ -8479,7 +8497,7 @@ function updateEnemyFiring(attackRange: number, cooldownTime: number, forceFire?
     if (((fra + trg.e) % 7 == 0 || forceFire) && !b1) {
         if (trg.fire <= 0) {
             if ((enf = checkCollision(trg.xp, trg.yp, player.xp, player.yp, attackRange))) {
-                if (linechecky(trg.xp, trg.yp, player.xp, player.yp)) {
+                if (checkLineOfSightAlt(trg.xp, trg.yp, player.xp, player.yp)) {
                     if (trg.s == 42) {
                         trg.d.gotoAndStop(2);
                     } else {
@@ -8989,7 +9007,7 @@ function checkPath(trg, v2, v3): number | false {
     z = -1;
     while (z > -100 && trg.gridder[v2] >= 0) {
         if (z == -1) {
-            pff(v1, -1);
+            enqueuePathfindingTile(v1, -1);
         } else {
             for (i in acts) {
                 v1 = trg.gridder[acts[i]];
@@ -8997,10 +9015,10 @@ function checkPath(trg, v2, v3): number | false {
                     acts2.push(acts[i]);
                 } else {
                     convertTileToWorldCoordinates(acts[i]);
-                    pff(convertWorldToTileCoordinates(xenf, yenf + roxx), v1);
-                    pff(convertWorldToTileCoordinates(xenf + roxx, yenf), v1);
-                    pff(convertWorldToTileCoordinates(xenf - roxx, yenf), v1);
-                    pff(convertWorldToTileCoordinates(xenf, yenf - roxx), v1);
+                    enqueuePathfindingTile(convertWorldToTileCoordinates(xenf, yenf + roxx), v1);
+                    enqueuePathfindingTile(convertWorldToTileCoordinates(xenf + roxx, yenf), v1);
+                    enqueuePathfindingTile(convertWorldToTileCoordinates(xenf - roxx, yenf), v1);
+                    enqueuePathfindingTile(convertWorldToTileCoordinates(xenf, yenf - roxx), v1);
                 }
             }
         }
@@ -11307,7 +11325,7 @@ function processAllEntityActions(): void {
                         if ((enf = checkCollision(trg.xp, trg.yp, player.xp, player.yp, 160))) {
                             f1 = 20 / enf;
                             if (
-                                linechecky(
+                                checkLineOfSightAlt(
                                     trg.xp - xenf * f1,
                                     trg.yp - yenf * f1,
                                     player.xp,
@@ -13518,8 +13536,8 @@ function handleAreaDamage(): void {
     }
 }
 
-// Original:
-function spih(): void {
+// Original: spih()
+function spawnSpitMinion(): void {
     var _loc1_ = spawnEntity(player.xp, player.yp, 50, 29.3);
     _loc1_.fra = 0;
     _loc1_.xpp = _loc1_.xp;
@@ -13929,8 +13947,8 @@ function updateStandardEnemyBehaviors(): void {
     }
 }
 
-// Original:
-function splush(): void {
+// Original: splush()
+function spawnSplashProjectiles(): void {
     if (trg.firee <= 0) {
         trg.firee = 0;
     }
@@ -14283,7 +14301,7 @@ function updateSimpleEnemyBehaviors(): void {
                 case 2:
                     if (trg.eternal && altboss) {
                         if (trg.d.d._currentframe >= 3 && trg.d.d._currentframe < 6) {
-                            splush();
+                            spawnSplashProjectiles();
                         }
                     }
                     if (trg.d.d._currentframe == 3) {
@@ -14296,7 +14314,7 @@ function updateSimpleEnemyBehaviors(): void {
                 case 6:
                     if (trg.eternal && altboss) {
                         if (trg.d.d._currentframe >= 6 && trg.d.d._currentframe < 9) {
-                            splush();
+                            spawnSplashProjectiles();
                         }
                     }
                     if (trg.d.d._currentframe == 6) {
@@ -14309,7 +14327,7 @@ function updateSimpleEnemyBehaviors(): void {
                 case 9:
                     if (trg.eternal && altboss) {
                         if (trg.d.d._currentframe >= 19 && trg.d.d._currentframe <= 22) {
-                            splush();
+                            spawnSplashProjectiles();
                         }
                     }
                     if (trg.d.d._currentframe == 17) {
@@ -14423,7 +14441,7 @@ function updateSimpleEnemyBehaviors(): void {
                 case 3:
                     if (trg.d.d._currentframe == 18) {
                         if (altboss) {
-                            spih();
+                            spawnSpitMinion();
                         }
                     }
                     if (trg.d.d._currentframe == 20) {
@@ -14595,7 +14613,7 @@ function updateSimpleEnemyBehaviors(): void {
                     if (trg.d.d._currentframe == 9) {
                         if (altboss) {
                             if (random(3) == 0) {
-                                spih();
+                                spawnSpitMinion();
                             } else if (random(2) == 0 && ashut < 5) {
                                 executeBoilAttack();
                                 executeBoilAttack();
@@ -22789,8 +22807,8 @@ function showLaserEffect(trg, f50?, b2?): void {
     }
 }
 
-// Original:
-function laps(): void {
+// Original: laps()
+function updateDoorAndLadderInteraction(): void {
     keyhole = false;
     if (keypoww > 0) {
         keypoww -= 0.2;
@@ -23076,8 +23094,8 @@ function doubleResource(amount: number): number {
     return Math.max(amount * 2, 2);
 }
 
-// Original:
-function spaceitem(): void {
+// Original: spaceitem()
+function useActiveItem(): void {
     nospo--;
     if (spac && fra > 10 && player._visible && nospo <= 0) {
         if (!nosp) {
@@ -24245,7 +24263,7 @@ function updatePlayerPosition(): void {
                 player.pilc = _root.pilc;
                 _root.pilc = undefined;
             }
-            spaceitem();
+            useActiveItem();
         }
         f1 = _root.bmode;
         if (demon > 0 || ups[122]) {
@@ -24858,7 +24876,7 @@ function updatePlayerPosition(): void {
         trg.xbew *= 0.7 + _root.playsp * 0.075;
         trg.ybew *= 0.7 + _root.playsp * 0.075;
     }
-    laps();
+    updateDoorAndLadderInteraction();
 }
 
 // Original: posw(f1, f2, f3, b2)
