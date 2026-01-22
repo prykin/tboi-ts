@@ -1818,7 +1818,7 @@ function attachSpriteToEntity(entity: any, spriteId: number | string): void {
 }
 
 // Original: abr()
-function abr(): string {
+function getMonsterGruntVariantLetter(): string {
     if (fra2) {
         return "A";
     }
@@ -1931,7 +1931,7 @@ export function createProjectile(spawnX: number, spawnY: number, rotationRadians
         case 64:
         case 65:
         case 66:
-            _root.soundy("Monster_Grunt_0_" + abr() + ".mp", 100);
+            _root.soundy("Monster_Grunt_0_" + getMonsterGruntVariantLetter() + ".mp", 100);
             break;
         case 38:
     }
@@ -4250,7 +4250,7 @@ export function checkItemOwned(itemId: number): boolean {
 }
 
 // Original: playerhurt(f1, f2, f3)
-function damagePlayer(damage: number, f2: number, damageArmor?: boolean): boolean {
+function damagePlayer(damage: number, sourceId: number, preventDeath?: boolean): boolean {
     player.hp = Math.min(player.hp, player.mhp);
     if (_root.chaps > 6) {
         damage = Math.max(damage, 1);
@@ -4258,7 +4258,7 @@ function damagePlayer(damage: number, f2: number, damageArmor?: boolean): boolea
     if (ups[108]) {
         damage = 0.5;
     }
-    if (f2 == 45) {
+    if (sourceId == 45) {
         if (trrisx + 50 + random(130) <= fra) {
             trrisx = fra;
             _root.soundy("Mom_Vox_EvilLaugh.mp");
@@ -4291,9 +4291,9 @@ function damagePlayer(damage: number, f2: number, damageArmor?: boolean): boolea
                     _root.soundy("Vamp_Gulp.mp");
                 }
             }
-            lastk = f2;
+            lastk = sourceId;
             plah = true;
-            if (f2 <= 200) {
+            if (sourceId <= 200) {
                 _root.nodmg = false;
             }
             if (_root.armor > 0) {
@@ -4308,10 +4308,10 @@ function damagePlayer(damage: number, f2: number, damageArmor?: boolean): boolea
                 }
                 _root.armor = 0;
                 player.hp -= damage;
-                if (_root.devil != 2 && _root.devil != 3 && f2 <= 200) {
+                if (_root.devil != 2 && _root.devil != 3 && sourceId <= 200) {
                     _root.devil = false;
                 }
-                if (f2 <= 200) {
+                if (sourceId <= 200) {
                     bossdmg = false;
                 }
             }
@@ -4391,13 +4391,13 @@ function damagePlayer(damage: number, f2: number, damageArmor?: boolean): boolea
             if (
                 ((player.hp <= 0 && _root.armor <= 0 && !_root.eta) ||
                     !(player.mhp > 0 || _root.armor > 0 || _root.eta)) &&
-                !damageArmor
+                !preventDeath
             ) {
                 player.d.gotoAndStop(6);
                 player.d.d.gotoAndStop(sk);
                 player.dones = true;
             } else {
-                if (damageArmor && player.hp <= 0) {
+                if (preventDeath && player.hp <= 0) {
                     player.hp = 0.5;
                 }
                 player.d.gotoAndStop(2);
@@ -5481,12 +5481,12 @@ function updatePathfindingScoreAlt(roomIndex: number): void {
 }
 
 // Original: linecheckxx(f1, f2, f3, f4)
-function checkLineOfSightExtended2(f1: number, f2: number, f3: number, f4: number): boolean {
-    let _loc5_: number = f1 - f3;
-    let _loc6_: number = f2 - f4;
+function checkLineOfSightExtended2(startX: number, startY: number, endX: number, endY: number): boolean {
+    let _loc5_: number = startX - endX;
+    let _loc6_: number = startY - endY;
     let _loc7_: number = getDistance(_loc5_, _loc6_);
     let _loc8_: number = 2.5;
-    grox = convertWorldToTileCoordinates(f1, f2);
+    grox = convertWorldToTileCoordinates(startX, startY);
     if (_loc7_ > 0) {
         _loc5_ /= _loc7_;
         _loc6_ /= _loc7_;
@@ -5494,14 +5494,14 @@ function checkLineOfSightExtended2(f1: number, f2: number, f3: number, f4: numbe
         _loc6_ *= 10;
         let _loc2_: number = 0;
         while (_loc2_ < _loc7_) {
-            f1 -= _loc5_;
-            f2 -= _loc6_;
-            f3 = convertWorldToTileCoordinates(f1, f2);
+            startX -= _loc5_;
+            startY -= _loc6_;
+            const tileIndex = convertWorldToTileCoordinates(startX, startY);
             if (
-                getRoomType(f3) >= 1.8 &&
-                getRoomType(f3) != 1.85 &&
-                getRoomType(f3) != 3 &&
-                f3 != gro
+                getRoomType(tileIndex) >= 1.8 &&
+                getRoomType(tileIndex) != 1.85 &&
+                getRoomType(tileIndex) != 3 &&
+                tileIndex != gro
             ) {
                 _loc8_ = -1;
             }
@@ -8994,23 +8994,23 @@ function renderBrokenFloors(): void {
 }
 
 // Original: pathcheck(trg, v2, v3) *unused
-function checkPath(trg, v2, v3): number | false {
-    v1 = convertWorldToTileCoordinates(trg.xp, trg.yp);
-    trg.gridder = levz.slice(0, -1);
+function checkPath(entity: any, targetTile: number, blockedTiles: number[]): number | false {
+    v1 = convertWorldToTileCoordinates(entity.xp, entity.yp);
+    entity.gridder = levz.slice(0, -1);
     z = 0;
-    for (z of v3) {
-        trg.gridder[v3[z]] = 1;
+    for (z of blockedTiles) {
+        entity.gridder[blockedTiles[z]] = 1;
     }
-    trg.gridder[v2] = 0;
+    entity.gridder[targetTile] = 0;
     acts = [];
     acts2 = [];
     z = -1;
-    while (z > -100 && trg.gridder[v2] >= 0) {
+    while (z > -100 && entity.gridder[targetTile] >= 0) {
         if (z == -1) {
             enqueuePathfindingTile(v1, -1);
         } else {
             for (i in acts) {
-                v1 = trg.gridder[acts[i]];
+                v1 = entity.gridder[acts[i]];
                 if (v1 < z) {
                     acts2.push(acts[i]);
                 } else {
@@ -9028,7 +9028,7 @@ function checkPath(trg, v2, v3): number | false {
         z--;
     }
     if (z < -99) {
-        trg.gridder = 0;
+        entity.gridder = 0;
         return false;
     }
     return z;
@@ -16790,7 +16790,7 @@ function updateSpecialEnemyBehaviors(): void {
                                 23
                             );
                             _root.soundy("summonsound.wav", 80);
-                            _root.soundy("Monster_Grunt_2_" + abr() + ".mp", 100);
+                            _root.soundy("Monster_Grunt_2_" + getMonsterGruntVariantLetter() + ".mp", 100);
                             trg2.apf = true;
                             trg2.gogo = true;
                             trg2.xpp = trg.d._xscale / 100;
@@ -18533,7 +18533,7 @@ function handleAdvancedMovement(): void {
                     break;
                 case 5:
                     if (trg.d.d._currentframe == 20) {
-                        _root.soundy("Monster_Grunt_2_" + abr() + ".mp", 100);
+                        _root.soundy("Monster_Grunt_2_" + getMonsterGruntVariantLetter() + ".mp", 100);
                         trg2 = [];
                         f1 = 5;
                         if (trg.specoz == 16) {
@@ -18559,7 +18559,7 @@ function handleAdvancedMovement(): void {
                     break;
                 case 6:
                     if (trg.d.d._currentframe == 18) {
-                        _root.soundy("Monster_Grunt_1_" + abr() + ".mp", 100);
+                        _root.soundy("Monster_Grunt_1_" + getMonsterGruntVariantLetter() + ".mp", 100);
                         trg2 = [];
                         f5 = 5;
                         if (altboss) {
@@ -18591,7 +18591,7 @@ function handleAdvancedMovement(): void {
                         } else if (altboss) {
                             spawnCircularProjectiles(trg.xp, trg.yp, 8, 8);
                         }
-                        _root.soundy("Monster_Grunt_4_" + abr() + ".mp", 100);
+                        _root.soundy("Monster_Grunt_4_" + getMonsterGruntVariantLetter() + ".mp", 100);
                     }
             }
             dukes = 0;
@@ -18956,7 +18956,7 @@ function updateMajorBossAI(): void {
                             1000
                         );
                         f1 = true;
-                        _root.soundy("Monster_Grunt_2_" + abr() + ".mp", 100);
+                        _root.soundy("Monster_Grunt_2_" + getMonsterGruntVariantLetter() + ".mp", 100);
                         enf = getDistance(xenf, yenf);
                         enf = -9.2 / enf;
                         xenf *= enf;
@@ -19968,7 +19968,7 @@ function updateAllEnemyAI(): void {
                             trg2.push(createProjectile(trg.xp, 120, 0, 0, 0, 0, 66));
                             trg2.push(createProjectile(trg.xp, 460, 0, 0, 0, 0, 66));
                             _root.soundy("summonsound.wav", 150);
-                            _root.soundy("Monster_Grunt_0_" + abr() + ".mp", 100);
+                            _root.soundy("Monster_Grunt_0_" + getMonsterGruntVariantLetter() + ".mp", 100);
                             for (z of trg2) {
                                 trg2[z].sic = true;
                                 trg2[z].apf = true;
@@ -20318,10 +20318,10 @@ function updateAllEnemyAI(): void {
                         );
                         if (trg.d.d._currentframe == 20) {
                             f1 = true;
-                            _root.soundy("Monster_Grunt_2_" + abr() + ".mp", 100);
+                            _root.soundy("Monster_Grunt_2_" + getMonsterGruntVariantLetter() + ".mp", 100);
                         } else {
                             f1 = 2;
-                            _root.soundy("Monster_Grunt_1_" + abr() + ".mp", 100);
+                            _root.soundy("Monster_Grunt_1_" + getMonsterGruntVariantLetter() + ".mp", 100);
                         }
                         enf = getDistance(xenf, yenf);
                         enf = -8.2 / enf;
@@ -22926,7 +22926,7 @@ function randomRoll(amount?: number): boolean {
 }
 
 // Original: tart(f1, f3)
-function generateTarotCard(f1: number, hideStatus?: boolean): string {
+function generateTarotCard(cardId: number, hideStatus?: boolean): string {
     let names: string[] = [
         "X Wheel of fortune",
         "XV The Devil",
@@ -22956,7 +22956,7 @@ function generateTarotCard(f1: number, hideStatus?: boolean): string {
     names[65] = "2 of Hearts";
     names[66] = "2 of Diamonds";
     names[67] = "The Joker";
-    const text: string = names[f1 - 7];
+    const text: string = names[cardId - 7];
     if (!hideStatus) {
         showStatusText(text);
     }
